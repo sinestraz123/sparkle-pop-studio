@@ -1,8 +1,7 @@
 
 import { SidebarTrigger } from '@/components/ui/sidebar';
-import { Bell, Search, LogOut } from 'lucide-react';
+import { Bell, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 
@@ -19,13 +18,6 @@ export function Header() {
     <header className="flex h-16 items-center justify-between border-b border-border bg-background px-6">
       <div className="flex items-center gap-4">
         <SidebarTrigger className="h-8 w-8" />
-        <div className="relative w-96">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input 
-            placeholder="Search announcements..." 
-            className="pl-10 bg-muted/30 border-gray-200 focus:border-green-500 focus:ring-green-500"
-          />
-        </div>
       </div>
       
       <div className="flex items-center gap-3">
