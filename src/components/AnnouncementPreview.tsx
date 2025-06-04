@@ -34,6 +34,68 @@ export const AnnouncementPreview: React.FC<AnnouncementPreviewProps> = ({ announ
     }
   };
 
+  const getVideoEmbedUrl = (url: string) => {
+    if (!url) return '';
+    
+    // YouTube
+    const youtubeRegex = /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/;
+    const youtubeMatch = url.match(youtubeRegex);
+    if (youtubeMatch) {
+      return `https://www.youtube.com/embed/${youtubeMatch[1]}`;
+    }
+    
+    // Vimeo
+    const vimeoRegex = /vimeo\.com\/(\d+)/;
+    const vimeoMatch = url.match(vimeoRegex);
+    if (vimeoMatch) {
+      return `https://player.vimeo.com/video/${vimeoMatch[1]}`;
+    }
+    
+    // Direct video URL
+    return url;
+  };
+
+  const renderMedia = () => {
+    if (announcement.video_url) {
+      const embedUrl = getVideoEmbedUrl(announcement.video_url);
+      const isDirectVideo = !embedUrl.includes('youtube.com') && !embedUrl.includes('vimeo.com');
+      
+      return (
+        <div className="aspect-video bg-black relative overflow-hidden">
+          {isDirectVideo ? (
+            <video 
+              src={embedUrl}
+              controls
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <iframe
+              src={embedUrl}
+              className="w-full h-full"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          )}
+        </div>
+      );
+    }
+    
+    if (announcement.image_url) {
+      return (
+        <div className="aspect-video bg-gradient-to-br from-green-400 via-blue-500 to-red-500 relative overflow-hidden">
+          <img 
+            src={announcement.image_url} 
+            alt="Announcement media"
+            className="w-full h-full object-contain"
+          />
+        </div>
+      );
+    }
+    
+    return null;
+  };
+
   if (announcement.type === 'banner' && announcement.position === 'top') {
     return (
       <div className="absolute top-0 left-0 right-0 z-50">
@@ -82,15 +144,7 @@ export const AnnouncementPreview: React.FC<AnnouncementPreviewProps> = ({ announ
           </div>
         )}
 
-        {announcement.image_url && (
-          <div className="aspect-video bg-gradient-to-br from-green-400 via-blue-500 to-red-500 relative overflow-hidden">
-            <img 
-              src={announcement.image_url} 
-              alt="Chrome Extension"
-              className="w-full h-full object-contain"
-            />
-          </div>
-        )}
+        {renderMedia()}
 
         <div className="p-6">
           <h2 
