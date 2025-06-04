@@ -81,6 +81,101 @@ export type Database = {
         }
         Relationships: []
       }
+      checklist_items: {
+        Row: {
+          checklist_id: string
+          created_at: string
+          description: string | null
+          id: string
+          media_type: string | null
+          media_url: string | null
+          order_index: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          checklist_id: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          media_type?: string | null
+          media_url?: string | null
+          order_index?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          checklist_id?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          media_type?: string | null
+          media_url?: string | null
+          order_index?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "checklist_items_checklist_id_fkey"
+            columns: ["checklist_id"]
+            isOneToOne: false
+            referencedRelation: "checklists"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      checklists: {
+        Row: {
+          auto_hide: boolean | null
+          button_text: string | null
+          button_url: string | null
+          completions: number | null
+          created_at: string
+          description: string | null
+          id: string
+          progress_bar_color: string | null
+          show_progress: boolean | null
+          status: string | null
+          title: string
+          updated_at: string
+          user_id: string
+          views: number | null
+        }
+        Insert: {
+          auto_hide?: boolean | null
+          button_text?: string | null
+          button_url?: string | null
+          completions?: number | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          progress_bar_color?: string | null
+          show_progress?: boolean | null
+          status?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+          views?: number | null
+        }
+        Update: {
+          auto_hide?: boolean | null
+          button_text?: string | null
+          button_url?: string | null
+          completions?: number | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          progress_bar_color?: string | null
+          show_progress?: boolean | null
+          status?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+          views?: number | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
