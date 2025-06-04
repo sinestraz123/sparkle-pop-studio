@@ -78,102 +78,131 @@ export function AuthForm() {
   };
 
   return (
-    <Card className="shadow-xl border-0">
-      <CardHeader className="text-center space-y-4 pb-8">
-        <div className="mx-auto w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
+    <div className="w-full max-w-md mx-auto">
+      <div className="mb-8 text-center">
+        <div className="mx-auto w-12 h-12 bg-emerald-500 rounded-lg flex items-center justify-center mb-6">
           <span className="text-white font-bold text-xl">L</span>
         </div>
-        <div>
-          <CardTitle className="text-3xl font-bold text-gray-900">
-            {isLogin ? 'Welcome back' : 'Create account'}
-          </CardTitle>
-          <CardDescription className="text-gray-600 mt-2">
-            {isLogin ? 'Sign in to your Likemetric account' : 'Start building with Likemetric today'}
-          </CardDescription>
-        </div>
-      </CardHeader>
-      
-      <CardContent className="space-y-6">
+        <h1 className="text-2xl font-semibold text-gray-900 mb-2">
+          {isLogin ? 'Welcome back' : 'Get started'}
+        </h1>
+        <p className="text-gray-600 text-sm">
+          {isLogin ? 'Sign in to your account' : 'Create a new account'}
+        </p>
+      </div>
+
+      <div className="space-y-4 mb-6">
         <Button
           onClick={handleGoogleAuth}
           variant="outline"
-          className="w-full h-12 border-gray-300 hover:border-gray-400 transition-colors"
+          className="w-full h-11 border-gray-300 hover:border-gray-400 bg-white text-gray-700 font-medium"
           type="button"
         >
-          <Chrome className="w-5 h-5 mr-3 text-red-500" />
+          <Chrome className="w-4 h-4 mr-3" />
           Continue with Google
         </Button>
+      </div>
 
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t border-gray-300" />
-          </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-white px-2 text-gray-500">Or continue with email</span>
-          </div>
+      <div className="relative mb-6">
+        <div className="absolute inset-0 flex items-center">
+          <span className="w-full border-t border-gray-200" />
         </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-white px-2 text-gray-500">or</span>
+        </div>
+      </div>
 
-        <form onSubmit={handleEmailAuth} className="space-y-4">
-          {!isLogin && (
-            <div className="space-y-2">
-              <Label htmlFor="fullName">Full name</Label>
-              <Input
-                id="fullName"
-                type="text"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                required={!isLogin}
-                className="h-11"
-                placeholder="Enter your full name"
-              />
-            </div>
-          )}
-          
+      <form onSubmit={handleEmailAuth} className="space-y-4">
+        {!isLogin && (
           <div className="space-y-2">
-            <Label htmlFor="email">Email address</Label>
+            <Label htmlFor="fullName" className="text-sm font-medium text-gray-700">
+              Full name
+            </Label>
             <Input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="h-11"
-              placeholder="Enter your email"
+              id="fullName"
+              type="text"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              required={!isLogin}
+              className="h-11 border-gray-300 focus:border-emerald-500 focus:ring-emerald-500"
+              placeholder="Enter your full name"
             />
           </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="h-11"
-              placeholder="Enter your password"
-            />
-          </div>
-
-          <Button
-            type="submit"
-            className="w-full h-11 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium"
-            disabled={loading}
-          >
-            {loading ? 'Loading...' : (isLogin ? 'Sign in' : 'Create account')}
-          </Button>
-        </form>
-
-        <div className="text-center">
-          <button
-            type="button"
-            onClick={() => setIsLogin(!isLogin)}
-            className="text-sm text-blue-600 hover:text-blue-700 font-medium"
-          >
-            {isLogin ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
-          </button>
+        )}
+        
+        <div className="space-y-2">
+          <Label htmlFor="email" className="text-sm font-medium text-gray-700">
+            Email
+          </Label>
+          <Input
+            id="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            className="h-11 border-gray-300 focus:border-emerald-500 focus:ring-emerald-500"
+            placeholder="you@example.com"
+          />
         </div>
-      </CardContent>
-    </Card>
+        
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <Label htmlFor="password" className="text-sm font-medium text-gray-700">
+              Password
+            </Label>
+            {isLogin && (
+              <button
+                type="button"
+                className="text-sm text-emerald-600 hover:text-emerald-700 font-medium"
+              >
+                Forgot Password?
+              </button>
+            )}
+          </div>
+          <Input
+            id="password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            className="h-11 border-gray-300 focus:border-emerald-500 focus:ring-emerald-500"
+            placeholder="Enter your password"
+          />
+        </div>
+
+        <Button
+          type="submit"
+          className="w-full h-11 bg-emerald-500 hover:bg-emerald-600 text-white font-medium"
+          disabled={loading}
+        >
+          {loading ? 'Loading...' : (isLogin ? 'Sign In' : 'Sign Up')}
+        </Button>
+      </form>
+
+      <div className="mt-6 text-center">
+        <button
+          type="button"
+          onClick={() => setIsLogin(!isLogin)}
+          className="text-sm text-gray-600 hover:text-gray-800"
+        >
+          {isLogin ? "Don't have an account? " : "Already have an account? "}
+          <span className="text-emerald-600 hover:text-emerald-700 font-medium">
+            {isLogin ? 'Sign Up Now' : 'Sign In'}
+          </span>
+        </button>
+      </div>
+
+      <div className="mt-8 text-center text-xs text-gray-500">
+        By continuing, you agree to Likemetric's{' '}
+        <button className="text-emerald-600 hover:text-emerald-700 underline">
+          Terms of Service
+        </button>{' '}
+        and{' '}
+        <button className="text-emerald-600 hover:text-emerald-700 underline">
+          Privacy Policy
+        </button>
+        , and to receive periodic emails with updates.
+      </div>
+    </div>
   );
 }

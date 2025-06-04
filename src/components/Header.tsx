@@ -23,22 +23,22 @@ export function Header() {
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input 
             placeholder="Search announcements..." 
-            className="pl-10 bg-muted/30"
+            className="pl-10 bg-muted/30 border-gray-200 focus:border-emerald-500 focus:ring-emerald-500"
           />
         </div>
       </div>
       
       <div className="flex items-center gap-3">
-        <Button variant="ghost" size="icon" className="relative">
+        <Button variant="ghost" size="icon" className="relative hover:bg-gray-100">
           <Bell className="h-5 w-5" />
-          <span className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-red-500"></span>
+          <span className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-emerald-500"></span>
         </Button>
         
-        <Button variant="ghost" size="icon" onClick={handleSignOut}>
+        <Button variant="ghost" size="icon" onClick={handleSignOut} className="hover:bg-gray-100">
           <LogOut className="h-5 w-5" />
         </Button>
         
-        <div className="h-8 w-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center">
+        <div className="h-8 w-8 rounded-full bg-gradient-to-r from-emerald-500 to-emerald-600 flex items-center justify-center">
           <span className="text-xs font-semibold text-white">
             {user?.email?.charAt(0).toUpperCase() || 'U'}
           </span>
