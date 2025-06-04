@@ -13,14 +13,21 @@ export const useNews = (newsId?: string) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (newsId) {
+    console.log('useNews effect triggered with newsId:', newsId, 'user:', user?.id);
+    if (newsId && user) {
       fetchNewsItem();
+    } else if (!newsId) {
+      setLoading(false);
     }
-  }, [newsId]);
+  }, [newsId, user?.id]);
 
   const fetchNewsItem = async () => {
-    if (!newsId || !user) return;
+    if (!newsId || !user) {
+      console.log('Cannot fetch news item - missing newsId or user');
+      return;
+    }
 
+    console.log('Fetching news item with ID:', newsId);
     setLoading(true);
     try {
       const { data, error } = await supabase
@@ -30,7 +37,12 @@ export const useNews = (newsId?: string) => {
         .eq('user_id', user.id)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching news item:', error);
+        throw error;
+      }
+      
+      console.log('Fetched news item:', data);
       setNewsItem(data);
     } catch (error) {
       console.error('Error fetching news item:', error);
@@ -45,8 +57,12 @@ export const useNews = (newsId?: string) => {
   };
 
   const createNews = async (newsData: any) => {
-    if (!user) return;
+    if (!user) {
+      console.log('Cannot create news - no user');
+      return;
+    }
 
+    console.log('Creating news with data:', newsData);
     setLoading(true);
     try {
       const { data, error } = await supabase
@@ -58,8 +74,12 @@ export const useNews = (newsId?: string) => {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error creating news item:', error);
+        throw error;
+      }
 
+      console.log('Created news item:', data);
       toast({
         title: "Success",
         description: "News item created successfully",
@@ -80,8 +100,12 @@ export const useNews = (newsId?: string) => {
   };
 
   const updateNews = async (id: string, newsData: any) => {
-    if (!user) return;
+    if (!user) {
+      console.log('Cannot update news - no user');
+      return;
+    }
 
+    console.log('Updating news with ID:', id, 'data:', newsData);
     setLoading(true);
     try {
       const { data, error } = await supabase
@@ -92,8 +116,12 @@ export const useNews = (newsId?: string) => {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error updating news item:', error);
+        throw error;
+      }
 
+      console.log('Updated news item:', data);
       setNewsItem(data);
       toast({
         title: "Success",
@@ -114,8 +142,12 @@ export const useNews = (newsId?: string) => {
   };
 
   const deleteNews = async (id: string) => {
-    if (!user) return;
+    if (!user) {
+      console.log('Cannot delete news - no user');
+      return;
+    }
 
+    console.log('Deleting news with ID:', id);
     setLoading(true);
     try {
       const { error } = await supabase
@@ -124,8 +156,12 @@ export const useNews = (newsId?: string) => {
         .eq('id', id)
         .eq('user_id', user.id);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error deleting news item:', error);
+        throw error;
+      }
 
+      console.log('Deleted news item successfully');
       toast({
         title: "Success",
         description: "News item deleted successfully",

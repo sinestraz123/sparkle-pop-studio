@@ -1,98 +1,113 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { NewsBuilderHeader } from "./NewsBuilderHeader";
 import { NewsContentSection } from "./NewsContentSection";
 import { NewsSettingsSection } from "./NewsSettingsSection";
 import { NewsPreview } from "./NewsPreview";
 import { useNews } from "@/hooks/useNews";
-import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Card } from "@/components/ui/card";
 
 interface NewsBuilderProps {
   newsId?: string;
 }
 
 export function NewsBuilder({ newsId }: NewsBuilderProps) {
-  const { newsItem, updateNews, createNews } = useNews(newsId);
-  const [activeAccordion, setActiveAccordion] = useState<string>("content");
+  console.log('NewsBuilder component rendering with newsId:', newsId);
+  
+  const { newsItem, loading, createNews, updateNews, deleteNews } = useNews(newsId);
+  const [localData, setLocalData] = useState({
+    title: "",
+    description: "",
+    content: "",
+    type: "news",
+    category: "general",
+    link_url: "",
+    image_url: "",
+    author_name: "",
+    status: "draft"
+  });
 
-  const handleSave = async (data: any) => {
-    if (newsId && newsItem) {
-      await updateNews(newsId, data);
-    } else {
-      await createNews(data);
+  console.log('NewsBuilder state:', { newsItem, loading, localData });
+
+  useEffect(() => {
+    if (newsItem) {
+      console.log('Setting local data from newsItem:', newsItem);
+      setLocalData({
+        title: newsItem.title || "",
+        description: newsItem.description || "",
+        content: newsItem.content || "",
+        type: newsItem.type || "news",
+        category: newsItem.category || "general",
+        link_url: newsItem.link_url || "",
+        image_url: newsItem.image_url || "",
+        author_name: newsItem.author_name || "",
+        status: newsItem.status || "draft"
+      });
+    }
+  }, [newsItem]);
+
+  const handleSave = async (data = localData) => {
+    console.log('Saving news data:', data);
+    try {
+      if (newsId) {
+        await updateNews(newsId, data);
+      } else {
+        await createNews(data);
+      }
+    } catch (error) {
+      console.error('Error saving news:', error);
     }
   };
 
+  const handleDataChange = (updates: Partial<typeof localData>) => {
+    console.log('Updating local data:', updates);
+    setLocalData(prev => ({ ...prev, ...updates }));
+  };
+
+  if (loading) {
+    console.log('NewsBuilder is loading...');
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-lg">Loading news builder...</div>
+      </div>
+    );
+  }
+
+  const isNew = !newsId || !newsItem;
+
   return (
-    <div className="h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       <NewsBuilderHeader 
-        newsItem={newsItem}
+        newsItem={localData}
         onSave={handleSave}
-        isNew={!newsId}
+        isNew={isNew}
       />
       
-      <ResizablePanelGroup direction="horizontal" className="h-[calc(100vh-64px)]">
-        <ResizablePanel defaultSize={50} minSize={30}>
-          <div className="h-full p-6 overflow-auto">
-            <div className="max-w-2xl mx-auto">
-              <h2 className="text-2xl font-bold mb-6">News Builder</h2>
+      <div className="flex-1 flex overflow-hidden">
+        <div className="flex-1 flex">
+          <div className="w-1/2 border-r bg-white overflow-auto">
+            <div className="p-6 space-y-6">
+              <NewsContentSection 
+                data={localData}
+                onChange={handleDataChange}
+              />
               
-              <Accordion 
-                type="single" 
-                value={activeAccordion} 
-                onValueChange={setActiveAccordion}
-                className="space-y-4"
-              >
-                <AccordionItem value="content" className="bg-white rounded-lg border">
-                  <AccordionTrigger className="px-6 py-4 hover:no-underline">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                        <span className="text-sm font-medium text-blue-600">1</span>
-                      </div>
-                      <span className="font-medium">Content</span>
-                    </div>
-                  </AccordionTrigger>
-                  <AccordionContent className="px-6 pb-6">
-                    <NewsContentSection 
-                      newsItem={newsItem}
-                      onChange={handleSave}
-                    />
-                  </AccordionContent>
-                </AccordionItem>
-
-                <AccordionItem value="settings" className="bg-white rounded-lg border">
-                  <AccordionTrigger className="px-6 py-4 hover:no-underline">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                        <span className="text-sm font-medium text-green-600">2</span>
-                      </div>
-                      <span className="font-medium">Settings</span>
-                    </div>
-                  </AccordionTrigger>
-                  <AccordionContent className="px-6 pb-6">
-                    <NewsSettingsSection 
-                      newsItem={newsItem}
-                      onChange={handleSave}
-                    />
-                  </AccordionContent>
-                </AccordionItem>
-              </Accordion>
+              <NewsSettingsSection 
+                data={localData}
+                onChange={handleDataChange}
+              />
             </div>
           </div>
-        </ResizablePanel>
-        
-        <ResizableHandle />
-        
-        <ResizablePanel defaultSize={50} minSize={30}>
-          <div className="h-full bg-white border-l">
-            <div className="h-full p-6">
-              <h3 className="text-lg font-semibold mb-4">Preview</h3>
-              <NewsPreview newsItem={newsItem} />
+          
+          <div className="w-1/2 bg-gray-100 overflow-auto">
+            <div className="p-6">
+              <Card className="h-full">
+                <NewsPreview data={localData} />
+              </Card>
             </div>
           </div>
-        </ResizablePanel>
-      </ResizablePanelGroup>
+        </div>
+      </div>
     </div>
   );
 }
