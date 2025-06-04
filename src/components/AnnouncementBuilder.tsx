@@ -53,20 +53,6 @@ export const AnnouncementBuilder: React.FC<AnnouncementBuilderProps> = ({
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const result = e.target?.result as string;
-        updateFormData('image_url', result);
-        updateFormData('video_url', '');
-        setMediaType('image');
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
   const handleVideoUrlChange = (url: string) => {
     updateFormData('video_url', url);
     updateFormData('image_url', '');
@@ -116,7 +102,7 @@ export const AnnouncementBuilder: React.FC<AnnouncementBuilderProps> = ({
                 mediaType={mediaType}
                 updateFormData={updateFormData}
                 onMediaTypeChange={handleMediaTypeChange}
-                onImageUpload={handleImageUpload}
+                onImageUpload={() => {}} // This prop is no longer used but kept for compatibility
                 onVideoUrlChange={handleVideoUrlChange}
               />
 

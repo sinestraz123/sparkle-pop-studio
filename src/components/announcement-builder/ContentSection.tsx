@@ -1,9 +1,10 @@
 
 import React from 'react';
-import { Type, Upload } from 'lucide-react';
+import { Type, Upload, Loader2 } from 'lucide-react';
 import { AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { useImageUpload } from '@/hooks/useImageUpload';
 
 interface ContentSectionProps {
   formData: any;
@@ -19,9 +20,22 @@ export const ContentSection: React.FC<ContentSectionProps> = ({
   mediaType,
   updateFormData,
   onMediaTypeChange,
-  onImageUpload,
   onVideoUrlChange,
 }) => {
+  const { uploadImage, isUploading } = useImageUpload();
+
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const imageUrl = await uploadImage(file);
+      if (imageUrl) {
+        updateFormData('image_url', imageUrl);
+        updateFormData('video_url', '');
+        onMediaTypeChange('image');
+      }
+    }
+  };
+
   return (
     <AccordionItem value="content" className="border rounded-lg px-4">
       <AccordionTrigger className="hover:no-underline">
@@ -85,18 +99,37 @@ export const ContentSection: React.FC<ContentSectionProps> = ({
                 <input
                   type="file"
                   accept="image/*,.gif"
-                  onChange={onImageUpload}
+                  onChange={handleImageUpload}
                   className="hidden"
                   id="image-upload"
+                  disabled={isUploading}
                 />
                 <label htmlFor="image-upload" className="cursor-pointer">
-                  <Upload className="h-8 w-8 mx-auto mb-2 text-gray-400" />
-                  <p className="text-sm text-gray-600">Click to upload image or GIF</p>
-                  <p className="text-xs text-gray-400">PNG, JPG, GIF up to 10MB</p>
+                  {isUploading ? (
+                    <div className="flex flex-col items-center">
+                      <Loader2 className="h-8 w-8 mx-auto mb-2 text-blue-500 animate-spin" />
+                      <p className="text-sm text-gray-600">Uploading...</p>
+                    </div>
+                  ) : (
+                    <div>
+                      <Upload className="h-8 w-8 mx-auto mb-2 text-gray-400" />
+                      <p className="text-sm text-gray-600">Click to upload image or GIF</p>
+                      <p className="text-xs text-gray-400">PNG, JPG, GIF up to 10MB</p>
+                    </div>
+                  )}
                 </label>
               </div>
-              {formData.image_url && (
-                <div className="text-xs text-green-600">✓ Image uploaded</div>
+              {formData.image_url && !isUploading && (
+                <div className="space-y-2">
+                  <div className="text-xs text-green-600">✓ Image uploaded successfully</div>
+                  <div className="relative">
+                    <img 
+                      src={formData.image_url} 
+                      alt="Uploaded preview" 
+                      className="w-full h-32 object-cover rounded-lg border"
+                    />
+                  </div>
+                </div>
               )}
             </div>
           )}
