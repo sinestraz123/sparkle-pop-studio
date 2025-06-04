@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Plus, Eye, MousePointer, Calendar, MoreHorizontal, Edit, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -6,14 +5,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useAnnouncements } from '@/hooks/useAnnouncements';
-import { AnnouncementForm } from '@/components/AnnouncementForm';
+import { AnnouncementBuilder } from '@/components/AnnouncementBuilder';
 import { Tables } from '@/integrations/supabase/types';
 import { useToast } from '@/hooks/use-toast';
 
 type Announcement = Tables<'announcements'>;
 
 const Builder = () => {
-  const [showForm, setShowForm] = useState(false);
+  const [showBuilder, setShowBuilder] = useState(false);
   const [editingAnnouncement, setEditingAnnouncement] = useState<Announcement | null>(null);
   const { toast } = useToast();
 
@@ -63,7 +62,7 @@ const Builder = () => {
           title: "Success",
           description: "Announcement created successfully",
         });
-        setShowForm(false);
+        setShowBuilder(false);
       },
       onError: (error) => {
         toast({
@@ -86,7 +85,7 @@ const Builder = () => {
           description: "Announcement updated successfully",
         });
         setEditingAnnouncement(null);
-        setShowForm(false);
+        setShowBuilder(false);
       },
       onError: (error) => {
         toast({
@@ -122,24 +121,22 @@ const Builder = () => {
 
   const handleEdit = (announcement: Announcement) => {
     setEditingAnnouncement(announcement);
-    setShowForm(true);
+    setShowBuilder(true);
   };
 
-  const handleCancel = () => {
-    setShowForm(false);
+  const handleBack = () => {
+    setShowBuilder(false);
     setEditingAnnouncement(null);
   };
 
-  if (showForm) {
+  if (showBuilder) {
     return (
-      <div className="p-6">
-        <AnnouncementForm
-          announcement={editingAnnouncement}
-          onSubmit={editingAnnouncement ? handleUpdateAnnouncement : handleCreateAnnouncement}
-          onCancel={handleCancel}
-          isLoading={isCreating || isUpdating}
-        />
-      </div>
+      <AnnouncementBuilder
+        announcement={editingAnnouncement}
+        onSave={editingAnnouncement ? handleUpdateAnnouncement : handleCreateAnnouncement}
+        onBack={handleBack}
+        isLoading={isCreating || isUpdating}
+      />
     );
   }
 
@@ -160,7 +157,7 @@ const Builder = () => {
           <p className="text-muted-foreground mt-1">Create and manage your announcement campaigns</p>
         </div>
         <Button 
-          onClick={() => setShowForm(true)}
+          onClick={() => setShowBuilder(true)}
           className="bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700"
         >
           <Plus className="mr-2 h-4 w-4" />
@@ -326,7 +323,7 @@ const Builder = () => {
               Create your first announcement to engage with your users
             </p>
             <Button 
-              onClick={() => setShowForm(true)}
+              onClick={() => setShowBuilder(true)}
               className="bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700"
             >
               <Plus className="mr-2 h-4 w-4" />
