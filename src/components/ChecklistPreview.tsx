@@ -84,28 +84,33 @@ export const ChecklistPreview: React.FC<ChecklistPreviewProps> = ({ config }) =>
     }
   };
 
+  const handleButtonClick = () => {
+    if (config.button_url) {
+      window.open(config.button_url, '_blank');
+    }
+  };
+
   return (
     <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50">
-      <div className="relative bg-white rounded-lg shadow-2xl max-w-md mx-auto p-6">
+      <div className="relative bg-white rounded-xl shadow-2xl max-w-md mx-auto p-6 border border-gray-100">
         {/* Close button */}
         <button 
           onClick={() => setIsVisible(false)}
-          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
         >
           <X className="h-4 w-4" />
         </button>
 
         {/* Header */}
         <div className="mb-6 pr-8">
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">{config.title}</h2>
+          <h2 className="text-xl font-bold text-gray-900 mb-2">{config.title}</h2>
           <p className="text-sm text-gray-600 mb-4">{config.description}</p>
           
           {/* Progress Bar */}
           {config.show_progress && (
             <div className="mb-4">
               <div className="flex items-center justify-between text-sm text-gray-600 mb-2">
-                <span>{completedCount} / {totalCount}</span>
-                <span>{Math.round(progressPercentage)}%</span>
+                <span className="font-medium">{completedCount}/{totalCount}</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
                 <div 
@@ -121,16 +126,20 @@ export const ChecklistPreview: React.FC<ChecklistPreviewProps> = ({ config }) =>
         </div>
 
         {/* Checklist Items */}
-        <div className="space-y-4 mb-6">
+        <div className="space-y-3 mb-6">
           {config.items.map((item) => (
-            <div key={item.id} className="flex items-start space-x-3">
+            <div key={item.id} className="flex items-start space-x-3 p-2 rounded-lg hover:bg-gray-50 transition-colors">
               <Checkbox 
                 checked={completedItems.has(item.id)}
                 onCheckedChange={() => toggleItem(item.id)}
-                className="mt-1"
+                className="mt-0.5 data-[state=checked]:bg-black data-[state=checked]:border-black"
               />
               <div className="flex-1 min-w-0">
-                <div className={`font-medium text-sm ${completedItems.has(item.id) ? 'line-through text-gray-500' : 'text-gray-900'}`}>
+                <div className={`font-medium text-sm transition-all duration-200 ${
+                  completedItems.has(item.id) 
+                    ? 'line-through text-gray-500' 
+                    : 'text-gray-900'
+                }`}>
                   {item.title}
                 </div>
                 {item.description && (
@@ -144,23 +153,30 @@ export const ChecklistPreview: React.FC<ChecklistPreviewProps> = ({ config }) =>
           ))}
         </div>
 
-        {/* Action Button */}
-        {config.button_text && (
-          <Button 
-            className="w-full bg-gray-900 hover:bg-gray-800 text-white"
-            onClick={() => window.open(config.button_url, '_blank')}
-          >
-            {config.button_text}
-          </Button>
+        {/* Action Button - only show if button text and URL are provided */}
+        {config.button_text && config.button_url && (
+          <div className="mb-4">
+            <Button 
+              className="w-full bg-black hover:bg-gray-800 text-white font-medium rounded-lg h-12 text-sm"
+              onClick={handleButtonClick}
+            >
+              {config.button_text}
+            </Button>
+          </div>
         )}
 
         {/* Footer */}
-        <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
+        <div className="flex items-center justify-between pt-4 border-t border-gray-100">
           <div className="flex items-center text-xs text-gray-500">
             <span className="mr-1">⚡</span>
-            <span>Powered by EngageHub</span>
+            <span>Powered by Likemetric</span>
           </div>
-          <Button variant="ghost" size="sm" className="text-xs text-gray-500">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="text-xs text-gray-500 hover:text-gray-700"
+            onClick={() => setIsVisible(false)}
+          >
             Skip
           </Button>
         </div>
