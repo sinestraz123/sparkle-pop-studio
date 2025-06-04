@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -33,9 +32,10 @@ interface SurveyConfig {
 
 interface SurveyPreviewProps {
   config: SurveyConfig;
+  isPreview?: boolean; // Add prop to distinguish between preview and actual survey
 }
 
-export const SurveyPreview: React.FC<SurveyPreviewProps> = ({ config }) => {
+export const SurveyPreview: React.FC<SurveyPreviewProps> = ({ config, isPreview = false }) => {
   const [isVisible, setIsVisible] = useState(true);
   const [responses, setResponses] = useState<Record<string, any>>({});
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -64,8 +64,12 @@ export const SurveyPreview: React.FC<SurveyPreviewProps> = ({ config }) => {
   if (!isVisible) return null;
 
   if (isSubmitted) {
+    const containerClasses = isPreview 
+      ? "flex items-center justify-center h-full p-8"
+      : "fixed inset-0 bg-black/30 flex items-end justify-center pb-20 z-50";
+
     return (
-      <div className="fixed inset-0 bg-black/30 flex items-end justify-center pb-20 z-50">
+      <div className={containerClasses}>
         <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 p-8 text-center animate-fade-in">
           <div className="text-green-500 text-4xl mb-4">✓</div>
           <h3 className="text-xl font-semibold mb-2 text-gray-800">Thank you!</h3>
@@ -191,8 +195,13 @@ export const SurveyPreview: React.FC<SurveyPreviewProps> = ({ config }) => {
     }
   };
 
+  // Different container styles based on whether it's a preview or actual survey
+  const containerClasses = isPreview 
+    ? "flex items-center justify-center h-full p-8"
+    : "fixed inset-0 bg-black/30 flex items-end justify-center pb-20 z-50";
+
   return (
-    <div className="fixed inset-0 bg-black/30 flex items-end justify-center pb-20 z-50">
+    <div className={containerClasses}>
       <div 
         className="relative rounded-2xl shadow-2xl max-w-md w-full mx-4 p-8 border border-gray-100 animate-fade-in"
         style={{ backgroundColor: config.background_color }}

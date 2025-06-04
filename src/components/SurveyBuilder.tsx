@@ -165,7 +165,7 @@ export const SurveyBuilder: React.FC<SurveyBuilderProps> = ({
           yourwebsite.com
         </div>
         
-        <SurveyPreview config={formData} />
+        <SurveyPreview config={formData} isPreview={true} />
       </div>
     </div>
   );
