@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ArrowLeft, Eye } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
@@ -42,28 +42,13 @@ export const BuilderHeader: React.FC<BuilderHeaderProps> = ({
         </div>
       </div>
       
-      <h1 className="text-xl font-semibold mb-4">Edit nudge</h1>
-      
-      <div className="flex gap-2">
-        <Button 
-          variant={previewMode ? "outline" : "default"} 
-          size="sm"
-          onClick={() => onPreviewToggle(false)}
-        >
-          Edit
-        </Button>
-        <Button 
-          variant={previewMode ? "default" : "outline"} 
-          size="sm"
-          onClick={() => onPreviewToggle(true)}
-        >
-          <Eye className="h-4 w-4 mr-2" />
-          Preview
-        </Button>
+      <div className="flex items-center justify-between">
+        <h1 className="text-xl font-semibold">Edit Announcement</h1>
+        
         <Button 
           onClick={onSave}
           disabled={isLoading}
-          className="bg-blue-600 hover:bg-blue-700"
+          className="bg-black hover:bg-gray-800 text-white"
           size="sm"
         >
           Save
