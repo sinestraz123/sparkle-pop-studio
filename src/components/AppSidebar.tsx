@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { 
   LayoutDashboard, 
@@ -26,6 +26,8 @@ import {
   SidebarFooter,
   useSidebar,
 } from '@/components/ui/sidebar';
+import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
 
 const mainItems = [
   { title: 'Dashboard', url: '/', icon: LayoutDashboard },
@@ -42,9 +44,38 @@ const settingsItems = [
 
 export function AppSidebar() {
   const { state } = useSidebar();
+  const { user } = useAuth();
   const location = useLocation();
   const currentPath = location.pathname;
   const collapsed = state === 'collapsed';
+  const [userProfile, setUserProfile] = useState<{ full_name: string } | null>(null);
+
+  useEffect(() => {
+    if (user) {
+      loadUserProfile();
+    }
+  }, [user]);
+
+  const loadUserProfile = async () => {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('full_name')
+        .eq('id', user.id)
+        .single();
+
+      if (error && error.code !== 'PGRST116') {
+        console.error('Error loading user profile:', error);
+        return;
+      }
+
+      setUserProfile(data);
+    } catch (error) {
+      console.error('Error loading user profile:', error);
+    }
+  };
 
   const isActive = (path: string) => currentPath === path;
 
@@ -52,6 +83,15 @@ export function AppSidebar() {
     return isActive(path) 
       ? 'bg-sidebar-accent text-sidebar-accent-foreground font-medium' 
       : 'hover:bg-sidebar-accent/50';
+  };
+
+  const getUserDisplayName = () => {
+    return userProfile?.full_name || user?.email?.split('@')[0] || 'User';
+  };
+
+  const getUserInitials = () => {
+    const name = getUserDisplayName();
+    return name.split(' ').map(word => word.charAt(0)).join('').toUpperCase().substring(0, 2);
   };
 
   return (
@@ -111,12 +151,12 @@ export function AppSidebar() {
       <SidebarFooter className="p-4 border-t border-sidebar-border">
         <div className="flex items-center gap-2">
           <div className="h-8 w-8 rounded-full bg-gradient-to-r from-green-500 to-teal-500 flex items-center justify-center">
-            <span className="text-xs font-semibold text-white">JD</span>
+            <span className="text-xs font-semibold text-white">{getUserInitials()}</span>
           </div>
           {!collapsed && (
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-sidebar-foreground truncate">John Doe</p>
-              <p className="text-xs text-sidebar-foreground/60 truncate">john@company.com</p>
+              <p className="text-sm font-medium text-sidebar-foreground truncate">{getUserDisplayName()}</p>
+              <p className="text-xs text-sidebar-foreground/60 truncate">{user?.email || ''}</p>
             </div>
           )}
         </div>
