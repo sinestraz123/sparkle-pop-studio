@@ -12,8 +12,6 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 import Dashboard from "./pages/Dashboard";
 import Builder from "./pages/Builder";
 import Checklist from "./pages/Checklist";
-import Survey from "./pages/Survey";
-import SurveyList from "./pages/SurveyList";
 import Settings from "./pages/Settings";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
@@ -40,11 +38,8 @@ const App = () => (
                         <Routes>
                           <Route path="/" element={<Dashboard />} />
                           <Route path="/builder" element={<Builder />} />
-                          <Route path="/builder/:id" element={<Survey />} />
                           <Route path="/checklist" element={<Checklist />} />
                           <Route path="/checklist/:id" element={<Checklist />} />
-                          <Route path="/survey" element={<SurveyList />} />
-                          <Route path="/survey/:id" element={<Survey />} />
                           <Route path="/settings" element={<Settings />} />
                           <Route path="*" element={<NotFound />} />
                         </Routes>
