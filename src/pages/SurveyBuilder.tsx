@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Save, Eye, Settings, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -21,7 +21,7 @@ const SurveyBuilder = () => {
   const [description, setDescription] = useState('');
 
   // Update local state when survey data loads
-  useState(() => {
+  useEffect(() => {
     if (survey) {
       setTitle(survey.title || '');
       setDescription(survey.description || '');
