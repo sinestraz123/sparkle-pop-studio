@@ -2,11 +2,11 @@
 import React, { useState } from 'react';
 import { Accordion } from '@/components/ui/accordion';
 import { SurveyPreview } from './SurveyPreview';
-import { BuilderHeader } from './survey-builder/SurveyBuilderHeader';
-import { SettingsSection } from './survey-builder/SurveySettingsSection';
-import { ContentSection } from './survey-builder/SurveyContentSection';
-import { QuestionsSection } from './survey-builder/SurveyQuestionsSection';
-import { TriggerSection } from './survey-builder/SurveyTriggerSection';
+import { SurveyBuilderHeader } from './survey-builder/SurveyBuilderHeader';
+import { SurveySettingsSection } from './survey-builder/SurveySettingsSection';
+import { SurveyContentSection } from './survey-builder/SurveyContentSection';
+import { SurveyQuestionsSection } from './survey-builder/SurveyQuestionsSection';
+import { SurveyTriggerSection } from './survey-builder/SurveyTriggerSection';
 import { SurveyWithQuestions } from '@/hooks/useSurveys';
 
 interface SurveyQuestion {
@@ -122,7 +122,7 @@ export const SurveyBuilder: React.FC<SurveyBuilderProps> = ({
     <div className="h-screen flex bg-gray-50">
       {/* Left Sidebar - Configuration */}
       <div className="w-[480px] bg-white border-r border-gray-200 flex flex-col">
-        <BuilderHeader
+        <SurveyBuilderHeader
           formData={formData}
           isLoading={isLoading}
           onBack={onBack}
@@ -133,24 +133,24 @@ export const SurveyBuilder: React.FC<SurveyBuilderProps> = ({
         <div className="flex-1 overflow-y-auto">
           <div className="p-6">
             <Accordion type="multiple" defaultValue={["content"]} className="space-y-4">
-              <SettingsSection
+              <SurveySettingsSection
                 formData={formData}
                 updateFormData={updateFormData}
               />
 
-              <ContentSection
+              <SurveyContentSection
                 formData={formData}
                 updateFormData={updateFormData}
               />
 
-              <QuestionsSection
+              <SurveyQuestionsSection
                 questions={formData.questions}
                 updateQuestion={updateQuestion}
                 addQuestion={addQuestion}
                 removeQuestion={removeQuestion}
               />
 
-              <TriggerSection
+              <SurveyTriggerSection
                 formData={formData}
                 updateFormData={updateFormData}
               />
