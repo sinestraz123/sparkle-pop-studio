@@ -26,23 +26,57 @@ export default function Settings() {
 
   useEffect(() => {
     if (user) {
-      setProfile({
-        full_name: user.user_metadata?.full_name || '',
-        email: user.email || '',
-      });
+      loadProfile();
+      setProfile(prev => ({ ...prev, email: user.email || '' }));
     }
   }, [user]);
 
+  const loadProfile = async () => {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('full_name')
+        .eq('id', user.id)
+        .single();
+
+      if (error && error.code !== 'PGRST116') {
+        console.error('Error loading profile:', error);
+        return;
+      }
+
+      if (data) {
+        setProfile(prev => ({ ...prev, full_name: data.full_name || '' }));
+      }
+    } catch (error) {
+      console.error('Error loading profile:', error);
+    }
+  };
+
   const handleProfileUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user) return;
+    
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.updateUser({
+      // Update the user metadata
+      const { error: authError } = await supabase.auth.updateUser({
         data: { full_name: profile.full_name }
       });
 
-      if (error) throw error;
+      if (authError) throw authError;
+
+      // Update the profiles table
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .upsert({
+          id: user.id,
+          full_name: profile.full_name,
+        });
+
+      if (profileError) throw profileError;
 
       toast({
         title: "Profile updated",
