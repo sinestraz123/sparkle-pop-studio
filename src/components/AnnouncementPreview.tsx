@@ -61,7 +61,7 @@ export const AnnouncementPreview: React.FC<AnnouncementPreviewProps> = ({ announ
       const isDirectVideo = !embedUrl.includes('youtube.com') && !embedUrl.includes('vimeo.com');
       
       return (
-        <div className="aspect-video bg-black relative overflow-hidden">
+        <div className="w-full h-48 bg-black relative overflow-hidden rounded-t-lg">
           {isDirectVideo ? (
             <video 
               src={embedUrl}
@@ -83,11 +83,11 @@ export const AnnouncementPreview: React.FC<AnnouncementPreviewProps> = ({ announ
     
     if (announcement.image_url) {
       return (
-        <div className="aspect-video bg-gradient-to-br from-green-400 via-blue-500 to-red-500 relative overflow-hidden">
+        <div className="w-full h-48 bg-gradient-to-br from-green-400 via-blue-500 to-red-500 relative overflow-hidden rounded-t-lg">
           <img 
             src={announcement.image_url} 
             alt="Announcement media"
-            className="w-full h-full object-contain"
+            className="w-full h-full object-cover"
           />
         </div>
       );

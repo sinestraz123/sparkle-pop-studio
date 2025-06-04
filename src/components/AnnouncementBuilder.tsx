@@ -39,8 +39,8 @@ export const AnnouncementBuilder: React.FC<AnnouncementBuilderProps> = ({
     button_color: announcement?.button_color || '#000000',
     button_text: announcement?.button_text || 'Get the Chrome extension →',
     button_url: announcement?.button_url || '',
-    image_url: announcement?.image_url || '/lovable-uploads/66772a1d-271b-4f67-a422-49ac799cccfe.png',
-    video_url: announcement?.video_url || '',
+    image_url: announcement?.image_url || '',
+    video_url: announcement?.video_url || 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
     show_close_button: announcement?.show_close_button ?? true,
     auto_show: announcement?.auto_show ?? true,
     delay: announcement?.delay || 2000,
@@ -50,7 +50,7 @@ export const AnnouncementBuilder: React.FC<AnnouncementBuilderProps> = ({
   const [showScript, setShowScript] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
   const [mediaType, setMediaType] = useState<'image' | 'video' | 'none'>(
-    formData.video_url ? 'video' : formData.image_url ? 'image' : 'none'
+    formData.video_url ? 'video' : formData.image_url ? 'image' : 'video'
   );
 
   const updateFormData = (field: string, value: any) => {
