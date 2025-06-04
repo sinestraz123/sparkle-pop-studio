@@ -1,293 +1,261 @@
 
-import React, { useState } from 'react';
-import { ArrowLeft, Eye, ChevronDown, ChevronRight } from 'lucide-react';
+import React from 'react';
+import { Plus, Eye, MousePointer, Calendar, MoreHorizontal } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Switch } from '@/components/ui/switch';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import PopupPreview from '@/components/PopupPreview';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 const Builder = () => {
-  const [popupConfig, setPopupConfig] = useState({
-    title: "New: Chrome Extension",
-    description: "Now you can create leads directly from LinkedIn – or anywhere you find your next prospect.",
-    buttonText: "Get the Chrome extension",
-    buttonUrl: "#",
-    imageUrl: "",
-    videoUrl: "",
-    type: "modal",
-    position: "center",
-    backgroundColor: "#ffffff",
-    textColor: "#1f2937",
-    buttonColor: "#000000",
-    showCloseButton: true,
-    autoShow: true,
-    delay: 2000
-  });
+  const announcements = [
+    {
+      id: 1,
+      title: "New Chrome Extension Launch",
+      description: "Now you can create leads directly from LinkedIn – or anywhere you find your next prospect.",
+      status: "Active",
+      type: "Modal",
+      views: 1248,
+      clicks: 89,
+      createdAt: "2 days ago",
+      position: "Center"
+    },
+    {
+      id: 2,
+      title: "Webinar: Advanced Features",
+      description: "Join us for an exclusive webinar showcasing our latest advanced features and capabilities.",
+      status: "Draft",
+      type: "Banner",
+      views: 0,
+      clicks: 0,
+      createdAt: "5 days ago",
+      position: "Top"
+    },
+    {
+      id: 3,
+      title: "Product Update v2.1",
+      description: "Exciting new updates and improvements to enhance your user experience.",
+      status: "Completed",
+      type: "Popover",
+      views: 2156,
+      clicks: 324,
+      createdAt: "1 week ago",
+      position: "Bottom Right"
+    },
+    {
+      id: 4,
+      title: "Holiday Sale Announcement",
+      description: "Don't miss our biggest sale of the year with up to 50% off all premium features.",
+      status: "Scheduled",
+      type: "Modal",
+      views: 0,
+      clicks: 0,
+      createdAt: "3 days ago",
+      position: "Center"
+    }
+  ];
 
-  const [openSections, setOpenSections] = useState({
-    settings: true,
-    content: false,
-    trigger: false,
-    action: false
-  });
-
-  const updateConfig = (key: string, value: any) => {
-    setPopupConfig(prev => ({ ...prev, [key]: value }));
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'Active':
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'Draft':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'Completed':
+        return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'Scheduled':
+        return 'bg-blue-100 text-blue-800 border-blue-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
+    }
   };
 
-  const toggleSection = (section: string) => {
-    setOpenSections(prev => ({ ...prev, [section]: !prev[section] }));
+  const getTypeColor = (type: string) => {
+    switch (type) {
+      case 'Modal':
+        return 'bg-purple-100 text-purple-800 border-purple-200';
+      case 'Banner':
+        return 'bg-orange-100 text-orange-800 border-orange-200';
+      case 'Popover':
+        return 'bg-teal-100 text-teal-800 border-teal-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
+    }
   };
-
-  const FormFactorOption = ({ type, label, isSelected, onClick }: any) => (
-    <div 
-      className={`border-2 rounded-lg p-4 cursor-pointer transition-all ${
-        isSelected ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
-      }`}
-      onClick={onClick}
-    >
-      <div className="w-16 h-12 bg-gray-100 rounded mb-2 flex items-center justify-center">
-        {type === 'modal' && <div className="w-8 h-6 bg-white border rounded shadow-sm flex items-center justify-center"><div className="w-2 h-2 bg-blue-500 rounded"></div></div>}
-        {type === 'popover' && <div className="w-6 h-4 bg-white border rounded shadow-sm"></div>}
-        {type === 'banner' && <div className="w-10 h-2 bg-white border rounded"></div>}
-      </div>
-      <p className="text-sm font-medium text-center">{label}</p>
-    </div>
-  );
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="p-6 space-y-6">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <Link to="/">
-              <Button variant="ghost" size="sm" className="p-2">
-                <ArrowLeft className="h-4 w-4" />
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground">Announcements</h1>
+          <p className="text-muted-foreground mt-1">Create and manage your announcement campaigns</p>
+        </div>
+        <Link to="/builder/new">
+          <Button className="bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700">
+            <Plus className="mr-2 h-4 w-4" />
+            Create Announcement
+          </Button>
+        </Link>
+      </div>
+
+      {/* Stats Overview */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Total Announcements</p>
+                <p className="text-2xl font-bold">{announcements.length}</p>
+              </div>
+              <div className="p-2 bg-blue-100 rounded-full">
+                <Calendar className="h-4 w-4 text-blue-600" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Active</p>
+                <p className="text-2xl font-bold">{announcements.filter(a => a.status === 'Active').length}</p>
+              </div>
+              <div className="p-2 bg-green-100 rounded-full">
+                <Eye className="h-4 w-4 text-green-600" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Total Views</p>
+                <p className="text-2xl font-bold">{announcements.reduce((sum, a) => sum + a.views, 0).toLocaleString()}</p>
+              </div>
+              <div className="p-2 bg-purple-100 rounded-full">
+                <Eye className="h-4 w-4 text-purple-600" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Total Clicks</p>
+                <p className="text-2xl font-bold">{announcements.reduce((sum, a) => sum + a.clicks, 0).toLocaleString()}</p>
+              </div>
+              <div className="p-2 bg-orange-100 rounded-full">
+                <MousePointer className="h-4 w-4 text-orange-600" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Announcements Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {announcements.map((announcement) => (
+          <Card key={announcement.id} className="hover:shadow-lg transition-shadow">
+            <CardHeader className="pb-3">
+              <div className="flex items-start justify-between">
+                <div className="space-y-1 flex-1">
+                  <CardTitle className="text-lg leading-tight">{announcement.title}</CardTitle>
+                  <CardDescription className="text-sm line-clamp-2">
+                    {announcement.description}
+                  </CardDescription>
+                </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                      <MoreHorizontal className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem asChild>
+                      <Link to={`/builder/${announcement.id}`}>Edit</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>Duplicate</DropdownMenuItem>
+                    <DropdownMenuItem>Preview</DropdownMenuItem>
+                    <DropdownMenuItem className="text-red-600">Delete</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            </CardHeader>
+            
+            <CardContent className="space-y-4">
+              {/* Status and Type Badges */}
+              <div className="flex flex-wrap gap-2">
+                <Badge variant="outline" className={getStatusColor(announcement.status)}>
+                  {announcement.status}
+                </Badge>
+                <Badge variant="outline" className={getTypeColor(announcement.type)}>
+                  {announcement.type}
+                </Badge>
+              </div>
+
+              {/* Stats */}
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <p className="text-muted-foreground">Views</p>
+                  <p className="font-semibold">{announcement.views.toLocaleString()}</p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground">Clicks</p>
+                  <p className="font-semibold">{announcement.clicks}</p>
+                </div>
+              </div>
+
+              {/* Additional Info */}
+              <div className="text-sm text-muted-foreground border-t pt-3">
+                <div className="flex justify-between items-center">
+                  <span>Position: {announcement.position}</span>
+                  <span>{announcement.createdAt}</span>
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex space-x-2 pt-2">
+                <Link to={`/builder/${announcement.id}`} className="flex-1">
+                  <Button variant="outline" size="sm" className="w-full">
+                    Edit
+                  </Button>
+                </Link>
+                <Button variant="outline" size="sm" className="flex-1">
+                  <Eye className="h-4 w-4 mr-1" />
+                  Preview
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Empty State */}
+      {announcements.length === 0 && (
+        <Card className="text-center py-12">
+          <CardContent>
+            <div className="mx-auto w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+              <Plus className="h-6 w-6 text-gray-400" />
+            </div>
+            <h3 className="text-lg font-semibold mb-2">No announcements yet</h3>
+            <p className="text-muted-foreground mb-4">
+              Create your first announcement to engage with your users
+            </p>
+            <Link to="/builder/new">
+              <Button>
+                <Plus className="mr-2 h-4 w-4" />
+                Create Announcement
               </Button>
             </Link>
-            <h1 className="text-xl font-semibold text-gray-900">Edit nudge</h1>
-          </div>
-          <div className="flex items-center space-x-3">
-            <div className="flex items-center space-x-2">
-              <Switch checked={true} />
-              <span className="text-sm text-gray-600">Draft</span>
-            </div>
-            <Button variant="outline" className="flex items-center space-x-2">
-              <Eye className="h-4 w-4" />
-              <span>Preview</span>
-            </Button>
-            <Button className="bg-blue-600 hover:bg-blue-700 text-white">
-              Save
-            </Button>
-          </div>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[calc(100vh-80px)]">
-        {/* Editor Panel */}
-        <div className="bg-white border-r border-gray-200 p-6 space-y-1">
-          {/* Settings Section */}
-          <Collapsible open={openSections.settings} onOpenChange={() => toggleSection('settings')}>
-            <CollapsibleTrigger className="w-full">
-              <div className="flex items-center justify-between py-4 px-4 hover:bg-gray-50 rounded-lg">
-                <div className="flex items-center space-x-3">
-                  <h3 className="text-lg font-semibold text-gray-900">Settings</h3>
-                  <p className="text-sm text-gray-500">How should the nudge be positioned?</p>
-                </div>
-                {openSections.settings ? <ChevronDown className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
-              </div>
-            </CollapsibleTrigger>
-            <CollapsibleContent className="px-4 pb-4">
-              <div className="space-y-6">
-                <div>
-                  <Label className="text-sm font-medium text-gray-700 mb-3 block">Form Factor</Label>
-                  <div className="grid grid-cols-3 gap-3">
-                    <FormFactorOption 
-                      type="modal" 
-                      label="Modal" 
-                      isSelected={popupConfig.type === 'modal'}
-                      onClick={() => updateConfig('type', 'modal')}
-                    />
-                    <FormFactorOption 
-                      type="popover" 
-                      label="Popover" 
-                      isSelected={popupConfig.type === 'popover'}
-                      onClick={() => updateConfig('type', 'popover')}
-                    />
-                    <FormFactorOption 
-                      type="banner" 
-                      label="Pin" 
-                      isSelected={popupConfig.type === 'banner'}
-                      onClick={() => updateConfig('type', 'banner')}
-                    />
-                  </div>
-                </div>
-                
-                <div>
-                  <Label className="text-sm font-medium text-gray-700 mb-2 block">Position:</Label>
-                  <Select value={popupConfig.position} onValueChange={(value) => updateConfig('position', value)}>
-                    <SelectTrigger className="w-full">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="center">Center</SelectItem>
-                      <SelectItem value="top">Top</SelectItem>
-                      <SelectItem value="bottom">Bottom</SelectItem>
-                      <SelectItem value="corner">Bottom Right</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="flex items-center space-x-3">
-                  <Switch 
-                    checked={false}
-                  />
-                  <Label className="text-sm text-gray-700">Use custom handler for this nudge.</Label>
-                  <button className="text-blue-600 text-sm hover:underline">Learn More</button>
-                </div>
-              </div>
-            </CollapsibleContent>
-          </Collapsible>
-
-          {/* Content Section */}
-          <Collapsible open={openSections.content} onOpenChange={() => toggleSection('content')}>
-            <CollapsibleTrigger className="w-full">
-              <div className="flex items-center justify-between py-4 px-4 hover:bg-gray-50 rounded-lg">
-                <div className="flex items-center space-x-3">
-                  <h3 className="text-lg font-semibold text-gray-900">Content</h3>
-                  <p className="text-sm text-gray-500 truncate">"New: Chrome Extension"...</p>
-                </div>
-                {openSections.content ? <ChevronDown className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
-              </div>
-            </CollapsibleTrigger>
-            <CollapsibleContent className="px-4 pb-4">
-              <div className="space-y-4">
-                <div>
-                  <Label className="text-sm font-medium text-gray-700 mb-2 block">Title</Label>
-                  <Input 
-                    value={popupConfig.title}
-                    onChange={(e) => updateConfig('title', e.target.value)}
-                    placeholder="Enter announcement title"
-                  />
-                </div>
-                <div>
-                  <Label className="text-sm font-medium text-gray-700 mb-2 block">Description</Label>
-                  <Textarea 
-                    value={popupConfig.description}
-                    onChange={(e) => updateConfig('description', e.target.value)}
-                    placeholder="Enter announcement description"
-                    rows={4}
-                  />
-                </div>
-                <div>
-                  <Label className="text-sm font-medium text-gray-700 mb-2 block">Image URL</Label>
-                  <Input 
-                    value={popupConfig.imageUrl}
-                    onChange={(e) => updateConfig('imageUrl', e.target.value)}
-                    placeholder="https://example.com/image.jpg"
-                  />
-                </div>
-                <div>
-                  <Label className="text-sm font-medium text-gray-700 mb-2 block">Button Text</Label>
-                  <Input 
-                    value={popupConfig.buttonText}
-                    onChange={(e) => updateConfig('buttonText', e.target.value)}
-                    placeholder="Call to action text"
-                  />
-                </div>
-              </div>
-            </CollapsibleContent>
-          </Collapsible>
-
-          {/* Trigger Section */}
-          <Collapsible open={openSections.trigger} onOpenChange={() => toggleSection('trigger')}>
-            <CollapsibleTrigger className="w-full">
-              <div className="flex items-center justify-between py-4 px-4 hover:bg-gray-50 rounded-lg">
-                <div className="flex items-center space-x-3">
-                  <h3 className="text-lg font-semibold text-gray-900">Trigger</h3>
-                  <p className="text-sm text-gray-500">When does it show?</p>
-                </div>
-                {openSections.trigger ? <ChevronDown className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
-              </div>
-            </CollapsibleTrigger>
-            <CollapsibleContent className="px-4 pb-4">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <Label className="text-sm font-medium text-gray-700">Auto Show</Label>
-                  <Switch 
-                    checked={popupConfig.autoShow} 
-                    onCheckedChange={(checked) => updateConfig('autoShow', checked)}
-                  />
-                </div>
-                {popupConfig.autoShow && (
-                  <div>
-                    <Label className="text-sm font-medium text-gray-700 mb-2 block">Delay (seconds)</Label>
-                    <Input 
-                      type="number" 
-                      value={popupConfig.delay / 1000}
-                      onChange={(e) => updateConfig('delay', parseInt(e.target.value) * 1000)}
-                    />
-                  </div>
-                )}
-              </div>
-            </CollapsibleContent>
-          </Collapsible>
-
-          {/* Action Section */}
-          <Collapsible open={openSections.action} onOpenChange={() => toggleSection('action')}>
-            <CollapsibleTrigger className="w-full">
-              <div className="flex items-center justify-between py-4 px-4 hover:bg-gray-50 rounded-lg">
-                <div className="flex items-center space-x-3">
-                  <h3 className="text-lg font-semibold text-gray-900">Action</h3>
-                  <p className="text-sm text-gray-500">No action</p>
-                </div>
-                {openSections.action ? <ChevronDown className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
-              </div>
-            </CollapsibleTrigger>
-            <CollapsibleContent className="px-4 pb-4">
-              <div className="space-y-4">
-                <div>
-                  <Label className="text-sm font-medium text-gray-700 mb-2 block">Button URL</Label>
-                  <Input 
-                    value={popupConfig.buttonUrl}
-                    onChange={(e) => updateConfig('buttonUrl', e.target.value)}
-                    placeholder="https://your-website.com"
-                  />
-                </div>
-                <div>
-                  <Label className="text-sm font-medium text-gray-700 mb-2 block">Button Color</Label>
-                  <div className="flex items-center space-x-2">
-                    <Input 
-                      type="color"
-                      value={popupConfig.buttonColor}
-                      onChange={(e) => updateConfig('buttonColor', e.target.value)}
-                      className="w-16 h-10 p-1 border rounded"
-                    />
-                    <Input 
-                      value={popupConfig.buttonColor}
-                      onChange={(e) => updateConfig('buttonColor', e.target.value)}
-                    />
-                  </div>
-                </div>
-              </div>
-            </CollapsibleContent>
-          </Collapsible>
-        </div>
-
-        {/* Preview Panel */}
-        <div className="bg-gray-100 p-6">
-          <div className="bg-white rounded-lg shadow-sm h-full">
-            <PopupPreview config={popupConfig} />
-          </div>
-        </div>
-      </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };
