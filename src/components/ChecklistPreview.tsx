@@ -55,12 +55,17 @@ export const ChecklistPreview: React.FC<ChecklistPreviewProps> = ({ config }) =>
 
   if (!isVisible) return null;
 
-  const handleItemAction = (item: ChecklistItem) => {
+  const handleLetsDoIt = (item: ChecklistItem) => {
     if (item.media_type === 'url' && item.media_url) {
       window.open(item.media_url, '_blank');
     }
     // Mark item as completed when action is taken
     toggleItem(item.id);
+  };
+
+  const handleSkip = (itemId: string) => {
+    // Mark item as completed when skipped
+    toggleItem(itemId);
   };
 
   return (
@@ -134,36 +139,34 @@ export const ChecklistPreview: React.FC<ChecklistPreviewProps> = ({ config }) =>
                       </div>
                     )}
                     
-                    {/* Action Buttons - only show for incomplete items */}
-                    {!isCompleted && (
-                      <div className="flex gap-2 mt-3">
-                        {item.media_type === 'url' && item.media_url ? (
-                          <Button
-                            size="sm"
-                            className="bg-black hover:bg-gray-800 text-white text-xs h-8 rounded-md"
-                            onClick={() => handleItemAction(item)}
-                          >
-                            {config.button_text || "Let's do it"}
-                          </Button>
-                        ) : (
-                          <Button
-                            size="sm"
-                            className="bg-black hover:bg-gray-800 text-white text-xs h-8 rounded-md"
-                            onClick={() => toggleItem(item.id)}
-                          >
-                            {config.button_text || "Let's do it"}
-                          </Button>
-                        )}
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="text-gray-500 hover:text-gray-700 text-xs h-8"
-                          onClick={() => {/* Skip logic could be added here */}}
-                        >
-                          Skip
-                        </Button>
-                      </div>
-                    )}
+                    {/* Action Buttons - show for all items, disabled when completed */}
+                    <div className="flex gap-2 mt-3">
+                      <Button
+                        size="sm"
+                        disabled={isCompleted}
+                        className={`text-xs h-8 rounded-md ${
+                          isCompleted 
+                            ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
+                            : 'bg-black hover:bg-gray-800 text-white'
+                        }`}
+                        onClick={() => handleLetsDoIt(item)}
+                      >
+                        Let's do it
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        disabled={isCompleted}
+                        className={`text-xs h-8 ${
+                          isCompleted 
+                            ? 'text-gray-400 cursor-not-allowed' 
+                            : 'text-gray-500 hover:text-gray-700'
+                        }`}
+                        onClick={() => handleSkip(item.id)}
+                      >
+                        Skip
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </div>
