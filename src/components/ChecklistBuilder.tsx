@@ -114,7 +114,7 @@ export const ChecklistBuilder: React.FC<ChecklistBuilderProps> = ({
   };
 
   return (
-    <div className="h-screen flex bg-gray-50">
+    <div className="h-screen flex bg-gray-50 fixed inset-0">
       {/* Left Sidebar - Configuration */}
       <div className="w-[480px] bg-white border-r border-gray-200 overflow-y-auto">
         <ChecklistBuilderHeader
