@@ -17,9 +17,21 @@ interface ChecklistItem {
   media_url?: string;
 }
 
+interface ChecklistFormData {
+  title: string;
+  description: string;
+  show_progress: boolean;
+  progress_bar_color: string;
+  button_text: string;
+  button_url: string;
+  auto_hide: boolean;
+  status: string;
+  items: ChecklistItem[];
+}
+
 interface ChecklistBuilderProps {
   checklist?: ChecklistWithItems;
-  onSave: (data: any) => void;
+  onSave: (data: ChecklistFormData) => void;
   onBack: () => void;
   isLoading?: boolean;
 }
@@ -30,7 +42,7 @@ export const ChecklistBuilder: React.FC<ChecklistBuilderProps> = ({
   onBack,
   isLoading = false,
 }) => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<ChecklistFormData>({
     title: checklist?.title || 'Getting Started',
     description: checklist?.description || 'Complete these steps to get started with our platform',
     show_progress: checklist?.show_progress ?? true,
