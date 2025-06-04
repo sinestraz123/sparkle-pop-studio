@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { 
@@ -11,7 +10,8 @@ import {
   HelpCircle,
   Zap,
   CheckSquare,
-  MessageSquare
+  MessageSquare,
+  Newspaper
 } from 'lucide-react';
 
 import {
@@ -35,6 +35,7 @@ const mainItems = [
   { title: 'Announcements', url: '/builder', icon: Plus },
   { title: 'Checklist', url: '/checklist', icon: CheckSquare },
   { title: 'Surveys', url: '/surveys', icon: MessageSquare },
+  { title: 'News', url: '/news', icon: Newspaper },
   { title: 'Analytics', url: '/analytics', icon: BarChart3 },
   { title: 'Audience', url: '/audience', icon: Users },
 ];
