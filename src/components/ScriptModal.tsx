@@ -17,32 +17,56 @@ export const ScriptModal: React.FC<ScriptModalProps> = ({ isOpen, onClose, annou
   const { toast } = useToast();
 
   const generateScript = () => {
-    const config = {
-      id: 'announcement-' + Date.now(),
-      title: announcement.title,
-      description: announcement.description,
-      type: announcement.type,
-      position: announcement.position,
-      backgroundColor: announcement.background_color,
-      textColor: announcement.text_color,
-      buttonColor: announcement.button_color,
-      buttonText: announcement.button_text,
-      buttonUrl: announcement.button_url,
-      imageUrl: announcement.image_url,
-      showCloseButton: announcement.show_close_button,
-      autoShow: announcement.auto_show,
-      delay: announcement.delay
-    };
-
-    return `<!-- Announcement Widget Script -->
+    // Use the actual announcement ID if editing existing, or generate a placeholder for new ones
+    const announcementId = announcement.id || 'YOUR_ANNOUNCEMENT_ID';
+    
+    return `<!-- Dynamic Announcement Widget Script -->
 <script>
 (function() {
-  const config = ${JSON.stringify(config, null, 2)};
-  
-  function createAnnouncement() {
+  const ANNOUNCEMENT_ID = '${announcementId}';
+  const API_BASE_URL = 'https://qpelvplxusbfyacgipgp.supabase.co/functions/v1';
+
+  let announcementData = null;
+  let widgetShown = false;
+
+  // Fetch announcement data from API
+  async function fetchAnnouncementData() {
+    try {
+      const response = await fetch(\`\${API_BASE_URL}/widget-data?id=\${ANNOUNCEMENT_ID}\`);
+      if (!response.ok) {
+        console.log('Announcement not found or not active');
+        return null;
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Failed to fetch announcement:', error);
+      return null;
+    }
+  }
+
+  // Track button clicks
+  async function trackClick() {
+    try {
+      await fetch(\`\${API_BASE_URL}/widget-click\`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ announcementId: ANNOUNCEMENT_ID })
+      });
+    } catch (error) {
+      console.error('Failed to track click:', error);
+    }
+  }
+
+  // Create and show announcement
+  function createAnnouncement(data) {
+    if (widgetShown) return; // Prevent multiple instances
+    widgetShown = true;
+
     // Create overlay
     const overlay = document.createElement('div');
-    overlay.id = 'announcement-overlay';
+    overlay.id = 'announcement-overlay-' + ANNOUNCEMENT_ID;
     overlay.style.cssText = \`
       position: fixed;
       top: 0;
@@ -59,50 +83,83 @@ export const ScriptModal: React.FC<ScriptModalProps> = ({ isOpen, onClose, annou
     // Create announcement container
     const container = document.createElement('div');
     container.style.cssText = \`
-      background: \${config.backgroundColor};
-      color: \${config.textColor};
+      background: \${data.background_color || '#ffffff'};
+      color: \${data.text_color || '#000000'};
       border-radius: 8px;
       box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
       max-width: 400px;
       width: 90%;
       position: relative;
       overflow: hidden;
+      animation: slideIn 0.3s ease-out;
     \`;
+
+    // Add CSS animation
+    if (!document.getElementById('announcement-styles')) {
+      const styles = document.createElement('style');
+      styles.id = 'announcement-styles';
+      styles.textContent = \`
+        @keyframes slideIn {
+          from { opacity: 0; transform: scale(0.9) translateY(-20px); }
+          to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+      \`;
+      document.head.appendChild(styles);
+    }
 
     // Add close button if enabled
     let closeButton = '';
-    if (config.showCloseButton) {
+    if (data.show_close_button !== false) {
       closeButton = \`
-        <button onclick="document.getElementById('announcement-overlay').remove()" 
-                style="position: absolute; top: 12px; right: 12px; background: none; border: none; font-size: 20px; cursor: pointer; color: \${config.textColor};">
+        <button onclick="document.getElementById('announcement-overlay-\${ANNOUNCEMENT_ID}').remove(); widgetShown = false;" 
+                style="position: absolute; top: 12px; right: 12px; background: none; border: none; font-size: 20px; cursor: pointer; color: \${data.text_color || '#000000'}; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 50%; hover:background: rgba(0,0,0,0.1);">
           ×
         </button>
       \`;
     }
 
-    // Add image if provided
-    let imageHtml = '';
-    if (config.imageUrl) {
-      imageHtml = \`<div style="aspect-ratio: 16/9; background: linear-gradient(135deg, #10b981, #3b82f6, #ef4444); display: flex; align-items: center; justify-content: center;"><img src="\${config.imageUrl}" style="max-width: 100%; max-height: 100%; object-fit: contain;" /></div>\`;
+    // Add media if provided
+    let mediaHtml = '';
+    if (data.video_url) {
+      // Extract video ID for YouTube
+      const videoId = data.video_url.match(/(?:youtube\\.com\\/watch\\?v=|youtu\\.be\\/)([^&\\n?#]+)/);
+      if (videoId) {
+        mediaHtml = \`
+          <div style="aspect-ratio: 16/9; background: #000;">
+            <iframe 
+              src="https://www.youtube.com/embed/\${videoId[1]}" 
+              style="width: 100%; height: 100%; border: none;"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen>
+            </iframe>
+          </div>
+        \`;
+      }
+    } else if (data.image_url) {
+      mediaHtml = \`
+        <div style="aspect-ratio: 16/9; background: linear-gradient(135deg, #10b981, #3b82f6, #ef4444); display: flex; align-items: center; justify-content: center;">
+          <img src="\${data.image_url}" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
+        </div>
+      \`;
     }
 
     // Add button if provided
     let buttonHtml = '';
-    if (config.buttonText) {
+    if (data.button_text) {
       buttonHtml = \`
-        <button onclick="window.open('\${config.buttonUrl}', '_blank')" 
-                style="width: 100%; padding: 12px 24px; background: \${config.buttonColor}; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; margin-top: 16px;">
-          \${config.buttonText}
+        <button onclick="trackClick(); if('\${data.button_url}') window.open('\${data.button_url}', '_blank');" 
+                style="width: 100%; padding: 12px 24px; background: \${data.button_color || '#000000'}; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; margin-top: 16px; transition: opacity 0.2s;">
+          \${data.button_text}
         </button>
       \`;
     }
 
     container.innerHTML = \`
       \${closeButton}
-      \${imageHtml}
+      \${mediaHtml}
       <div style="padding: 24px;">
-        <h2 style="font-size: 20px; font-weight: bold; margin-bottom: 12px; margin: 0 0 12px 0;">\${config.title}</h2>
-        <p style="font-size: 14px; line-height: 1.5; margin: 0 0 16px 0;">\${config.description}</p>
+        <h2 style="font-size: 20px; font-weight: bold; margin: 0 0 12px 0; line-height: 1.3;">\${data.title}</h2>
+        <p style="font-size: 14px; line-height: 1.5; margin: 0 0 16px 0; opacity: 0.8;">\${data.description}</p>
         \${buttonHtml}
       </div>
     \`;
@@ -114,17 +171,49 @@ export const ScriptModal: React.FC<ScriptModalProps> = ({ isOpen, onClose, annou
     overlay.addEventListener('click', function(e) {
       if (e.target === overlay) {
         overlay.remove();
+        widgetShown = false;
       }
     });
+
+    // Close on escape key
+    const handleEscape = (e) => {
+      if (e.key === 'Escape') {
+        overlay.remove();
+        widgetShown = false;
+        document.removeEventListener('keydown', handleEscape);
+      }
+    };
+    document.addEventListener('keydown', handleEscape);
   }
 
-  // Show announcement based on configuration
-  if (config.autoShow) {
-    setTimeout(createAnnouncement, config.delay || 0);
-  } else {
-    // Expose function globally for manual triggering
-    window.showAnnouncement = createAnnouncement;
+  // Initialize widget
+  async function initWidget() {
+    const data = await fetchAnnouncementData();
+    if (!data) return;
+
+    announcementData = data;
+
+    // Show announcement based on configuration
+    if (data.auto_show !== false) {
+      setTimeout(() => createAnnouncement(data), data.delay || 2000);
+    } else {
+      // Expose function globally for manual triggering
+      window.showAnnouncement = () => createAnnouncement(data);
+    }
   }
+
+  // Start when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initWidget);
+  } else {
+    initWidget();
+  }
+
+  // Expose refresh function to reload announcement data
+  window.refreshAnnouncement = async () => {
+    widgetShown = false;
+    await initWidget();
+  };
 })();
 </script>`;
   };
@@ -151,12 +240,13 @@ export const ScriptModal: React.FC<ScriptModalProps> = ({ isOpen, onClose, annou
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[80vh]">
         <DialogHeader>
-          <DialogTitle>Embed Script</DialogTitle>
+          <DialogTitle>Dynamic Widget Script</DialogTitle>
         </DialogHeader>
         
         <div className="space-y-4">
           <p className="text-sm text-gray-600">
-            Copy and paste this script into your website's HTML, preferably before the closing &lt;/body&gt; tag.
+            This dynamic script will automatically fetch the latest announcement data from our servers. 
+            Paste it into your website's HTML, preferably before the closing &lt;/body&gt; tag.
           </p>
           
           <div className="relative">
@@ -176,13 +266,23 @@ export const ScriptModal: React.FC<ScriptModalProps> = ({ isOpen, onClose, annou
           </div>
 
           <div className="bg-blue-50 p-3 rounded-lg">
-            <h4 className="font-medium text-blue-900 mb-1">Usage:</h4>
+            <h4 className="font-medium text-blue-900 mb-1">Key Features:</h4>
             <ul className="text-sm text-blue-800 space-y-1">
-              <li>• The script will automatically show the announcement based on your trigger settings</li>
-              <li>• For manual triggering, call <code className="bg-blue-100 px-1 rounded">showAnnouncement()</code> in your JavaScript</li>
-              <li>• The script is lightweight and doesn't require any external dependencies</li>
+              <li>• Automatically fetches live data from your announcement settings</li>
+              <li>• Tracks views and clicks for analytics</li>
+              <li>• Updates instantly when you modify the announcement</li>
+              <li>• Call <code className="bg-blue-100 px-1 rounded">showAnnouncement()</code> for manual triggering</li>
+              <li>• Call <code className="bg-blue-100 px-1 rounded">refreshAnnouncement()</code> to reload data</li>
             </ul>
           </div>
+
+          {!announcement.id && (
+            <div className="bg-amber-50 p-3 rounded-lg">
+              <p className="text-sm text-amber-800">
+                <strong>Note:</strong> Please save this announcement first to get the actual widget script with the correct ID.
+              </p>
+            </div>
+          )}
         </div>
       </DialogContent>
     </Dialog>
