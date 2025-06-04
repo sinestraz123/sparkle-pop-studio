@@ -16,6 +16,7 @@ import Builder from "./pages/Builder";
 import SurveyBuilder from "./pages/SurveyBuilder";
 import Surveys from "./pages/Surveys";
 import Checklist from "./pages/Checklist";
+import News from "./pages/News";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
@@ -55,6 +56,8 @@ const App = () => {
                       <Route path="/survey-builder/:id" element={<ProtectedRoute><SurveyBuilder /></ProtectedRoute>} />
                       <Route path="/checklist" element={<ProtectedRoute><Checklist /></ProtectedRoute>} />
                       <Route path="/checklist/:id" element={<ProtectedRoute><Checklist /></ProtectedRoute>} />
+                      <Route path="/news" element={<ProtectedRoute><News /></ProtectedRoute>} />
+                      <Route path="/news/:id" element={<ProtectedRoute><News /></ProtectedRoute>} />
                       <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
                       <Route path="/auth" element={<Auth />} />
                       <Route path="*" element={<NotFound />} />

@@ -1,4 +1,3 @@
-
 import {
   Sidebar,
   SidebarContent,
@@ -11,7 +10,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { Home, Settings, Megaphone, BarChart3, CheckSquare } from "lucide-react"
+import { Home, Settings, Megaphone, BarChart3, CheckSquare, Newspaper } from "lucide-react"
 import { Link, useLocation } from "react-router-dom"
 import { useAuth } from "@/hooks/useAuth"
 import { Button } from "@/components/ui/button"
@@ -36,6 +35,11 @@ const items = [
     title: "Checklists",
     url: "/checklist",
     icon: CheckSquare,
+  },
+  {
+    title: "News",
+    url: "/news",
+    icon: Newspaper,
   },
   {
     title: "Settings",
@@ -67,7 +71,8 @@ export function AppSidebar() {
                     isActive={location.pathname === item.url || 
                              (item.url === "/builder" && location.pathname.startsWith("/builder")) ||
                              (item.url === "/surveys" && (location.pathname.startsWith("/surveys") || location.pathname.startsWith("/survey-builder"))) ||
-                             (item.url === "/checklist" && location.pathname.startsWith("/checklist"))}
+                             (item.url === "/checklist" && location.pathname.startsWith("/checklist")) ||
+                             (item.url === "/news" && location.pathname.startsWith("/news"))}
                   >
                     <Link to={item.url}>
                       <item.icon />
