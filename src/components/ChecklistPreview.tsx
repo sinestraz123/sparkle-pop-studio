@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { X } from 'lucide-react';
+import { X, ExternalLink } from 'lucide-react';
 
 interface ChecklistItem {
   id: string;
@@ -70,23 +70,18 @@ export const ChecklistPreview: React.FC<ChecklistPreviewProps> = ({ config }) =>
         );
       case 'url':
         return (
-          <a 
-            href={item.media_url} 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="text-blue-600 hover:underline text-sm mt-1 block"
+          <Button
+            variant="outline"
+            size="sm"
+            className="mt-2 text-xs h-8"
+            onClick={() => window.open(item.media_url, '_blank')}
           >
-            {item.media_url}
-          </a>
+            <ExternalLink className="h-3 w-3 mr-1" />
+            Open Link
+          </Button>
         );
       default:
         return null;
-    }
-  };
-
-  const handleButtonClick = () => {
-    if (config.button_url) {
-      window.open(config.button_url, '_blank');
     }
   };
 
@@ -152,18 +147,6 @@ export const ChecklistPreview: React.FC<ChecklistPreviewProps> = ({ config }) =>
             </div>
           ))}
         </div>
-
-        {/* Action Button - only show if button text and URL are provided */}
-        {config.button_text && config.button_url && (
-          <div className="mb-4">
-            <Button 
-              className="w-full bg-black hover:bg-gray-800 text-white font-medium rounded-lg h-12 text-sm"
-              onClick={handleButtonClick}
-            >
-              {config.button_text}
-            </Button>
-          </div>
-        )}
 
         {/* Footer */}
         <div className="flex items-center justify-between pt-4 border-t border-gray-100">
