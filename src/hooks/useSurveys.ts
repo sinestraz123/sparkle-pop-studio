@@ -1,8 +1,10 @@
 
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/hooks/use-toast';
 import { Tables, TablesInsert, TablesUpdate } from '@/integrations/supabase/types';
 
 type Survey = Tables<'surveys'>;
@@ -17,6 +19,8 @@ export interface SurveyWithQuestions extends Survey {
 export const useSurveys = () => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
   const { data: surveys = [], isLoading, error } = useQuery({
     queryKey: ['surveys', user?.id],
@@ -50,8 +54,21 @@ export const useSurveys = () => {
       if (error) throw error;
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['surveys'] });
+      navigate(`/survey/${data.id}`);
+      toast({
+        title: 'Survey created',
+        description: 'Your new survey has been created successfully.',
+      });
+    },
+    onError: (error) => {
+      console.error('Error creating survey:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to create survey. Please try again.',
+        variant: 'destructive',
+      });
     },
   });
 
@@ -90,6 +107,18 @@ export const useSurveys = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['surveys'] });
+      toast({
+        title: 'Survey deleted',
+        description: 'The survey has been deleted successfully.',
+      });
+    },
+    onError: (error) => {
+      console.error('Error deleting survey:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to delete survey. Please try again.',
+        variant: 'destructive',
+      });
     },
   });
 

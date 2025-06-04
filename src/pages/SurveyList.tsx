@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Eye, Users, BarChart3, Edit, Trash2 } from 'lucide-react';
@@ -30,47 +29,21 @@ export default function SurveyList() {
         status: 'draft',
       };
 
-      createSurvey(newSurvey, {
-        onSuccess: (data) => {
-          navigate(`/survey/${data.id}`);
-          toast({
-            title: 'Survey created',
-            description: 'Your new survey has been created successfully.',
-          });
-        },
-        onError: (error) => {
-          console.error('Error creating survey:', error);
-          toast({
-            title: 'Error',
-            description: 'Failed to create survey. Please try again.',
-            variant: 'destructive',
-          });
-        },
-      });
+      createSurvey(newSurvey);
     } catch (error) {
       console.error('Error creating survey:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to create survey. Please try again.',
+        variant: 'destructive',
+      });
     }
   };
 
   const handleDeleteSurvey = async (id: string, title: string) => {
     if (window.confirm(`Are you sure you want to delete "${title}"?`)) {
       try {
-        deleteSurvey(id, {
-          onSuccess: () => {
-            toast({
-              title: 'Survey deleted',
-              description: 'The survey has been deleted successfully.',
-            });
-          },
-          onError: (error) => {
-            console.error('Error deleting survey:', error);
-            toast({
-              title: 'Error',
-              description: 'Failed to delete survey. Please try again.',
-              variant: 'destructive',
-            });
-          },
-        });
+        deleteSurvey(id);
       } catch (error) {
         console.error('Error deleting survey:', error);
       }
