@@ -5,7 +5,6 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Star } from 'lucide-react';
 
 interface SurveyQuestionRendererProps {
   question: any;
@@ -13,10 +12,10 @@ interface SurveyQuestionRendererProps {
 }
 
 export const SurveyQuestionRenderer = ({ question, index }: SurveyQuestionRendererProps) => {
-  const baseClasses = "mb-4";
+  const baseClasses = "mb-6 p-6 bg-white rounded-2xl shadow-sm border border-gray-100";
   
   const renderQuestionLabel = () => (
-    <Label className="text-sm font-medium mb-2 block">
+    <Label className="text-lg font-semibold mb-4 block text-gray-800">
       Q{index + 1}. {question.question_text}
       {question.required && <span className="text-red-500 ml-1">*</span>}
     </Label>
@@ -32,6 +31,7 @@ export const SurveyQuestionRenderer = ({ question, index }: SurveyQuestionRender
             type={question.question_type === 'email' ? 'email' : 'text'}
             placeholder="Your answer..."
             disabled
+            className="text-lg p-4 border-0 bg-gray-50 rounded-xl"
           />
         </div>
       );
@@ -40,7 +40,12 @@ export const SurveyQuestionRenderer = ({ question, index }: SurveyQuestionRender
       return (
         <div key={question.id} className={baseClasses}>
           {renderQuestionLabel()}
-          <Input type="number" placeholder="0" disabled />
+          <Input 
+            type="number" 
+            placeholder="0" 
+            disabled 
+            className="text-lg p-4 border-0 bg-gray-50 rounded-xl"
+          />
         </div>
       );
     
@@ -48,7 +53,12 @@ export const SurveyQuestionRenderer = ({ question, index }: SurveyQuestionRender
       return (
         <div key={question.id} className={baseClasses}>
           {renderQuestionLabel()}
-          <Textarea placeholder="Your answer..." disabled rows={3} />
+          <Textarea 
+            placeholder="Your answer..." 
+            disabled 
+            rows={4}
+            className="text-lg p-4 border-0 bg-gray-50 rounded-xl resize-none"
+          />
         </div>
       );
     
@@ -61,11 +71,13 @@ export const SurveyQuestionRenderer = ({ question, index }: SurveyQuestionRender
       return (
         <div key={question.id} className={baseClasses}>
           {renderQuestionLabel()}
-          <RadioGroup disabled className="space-y-2">
+          <RadioGroup disabled className="space-y-3">
             {radioOptions.map((option: any, optIndex: number) => (
-              <div key={optIndex} className="flex items-center space-x-2">
-                <RadioGroupItem value={option.value} id={`${question.id}-${optIndex}`} />
-                <Label htmlFor={`${question.id}-${optIndex}`}>{option.label}</Label>
+              <div key={optIndex} className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                <RadioGroupItem value={option.value} id={`${question.id}-${optIndex}`} className="text-teal-600" />
+                <Label htmlFor={`${question.id}-${optIndex}`} className="text-lg cursor-pointer flex-1">
+                  {option.label}
+                </Label>
               </div>
             ))}
           </RadioGroup>
@@ -81,11 +93,13 @@ export const SurveyQuestionRenderer = ({ question, index }: SurveyQuestionRender
       return (
         <div key={question.id} className={baseClasses}>
           {renderQuestionLabel()}
-          <div className="space-y-2">
+          <div className="space-y-3">
             {checkboxOptions.map((option: any, optIndex: number) => (
-              <div key={optIndex} className="flex items-center space-x-2">
-                <Checkbox id={`${question.id}-${optIndex}`} disabled />
-                <Label htmlFor={`${question.id}-${optIndex}`}>{option.label}</Label>
+              <div key={optIndex} className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                <Checkbox id={`${question.id}-${optIndex}`} disabled className="text-teal-600" />
+                <Label htmlFor={`${question.id}-${optIndex}`} className="text-lg cursor-pointer flex-1">
+                  {option.label}
+                </Label>
               </div>
             ))}
           </div>
@@ -94,7 +108,6 @@ export const SurveyQuestionRenderer = ({ question, index }: SurveyQuestionRender
     
     case 'select':
       const selectOptions = question.options || [
-        { label: 'Select an option...', value: '' },
         { label: 'Option 1', value: 'option1' },
         { label: 'Option 2', value: 'option2' },
         { label: 'Option 3', value: 'option3' }
@@ -103,12 +116,12 @@ export const SurveyQuestionRenderer = ({ question, index }: SurveyQuestionRender
         <div key={question.id} className={baseClasses}>
           {renderQuestionLabel()}
           <Select disabled>
-            <SelectTrigger>
-              <SelectValue placeholder="Select an option..." />
+            <SelectTrigger className="text-lg p-4 border-0 bg-gray-50 rounded-xl">
+              <SelectValue placeholder="Select one..." />
             </SelectTrigger>
             <SelectContent>
               {selectOptions.map((option: any, optIndex: number) => (
-                <SelectItem key={optIndex} value={option.value}>
+                <SelectItem key={optIndex} value={option.value} className="text-lg">
                   {option.label}
                 </SelectItem>
               ))}
@@ -121,11 +134,22 @@ export const SurveyQuestionRenderer = ({ question, index }: SurveyQuestionRender
       return (
         <div key={question.id} className={baseClasses}>
           {renderQuestionLabel()}
-          <div className="flex items-center gap-1">
-            {[1, 2, 3, 4, 5].map((star) => (
-              <Star key={star} className="h-6 w-6 text-gray-300 cursor-pointer hover:text-yellow-400" />
-            ))}
-            <span className="ml-2 text-sm text-gray-500">Click to rate</span>
+          <div className="space-y-4">
+            <div className="flex items-center justify-center gap-2 flex-wrap">
+              {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((rating) => (
+                <button
+                  key={rating}
+                  disabled
+                  className="w-12 h-12 rounded-lg border-2 text-lg font-semibold bg-white text-gray-700 border-gray-200"
+                >
+                  {rating}
+                </button>
+              ))}
+            </div>
+            <div className="flex justify-between text-sm text-gray-600 px-1">
+              <span>0 - Not likely</span>
+              <span>10 - Very likely</span>
+            </div>
           </div>
         </div>
       );
@@ -134,7 +158,11 @@ export const SurveyQuestionRenderer = ({ question, index }: SurveyQuestionRender
       return (
         <div key={question.id} className={baseClasses}>
           {renderQuestionLabel()}
-          <Input placeholder="Your answer..." disabled />
+          <Input 
+            placeholder="Your answer..." 
+            disabled 
+            className="text-lg p-4 border-0 bg-gray-50 rounded-xl"
+          />
         </div>
       );
   }
