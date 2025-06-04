@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Chrome } from 'lucide-react';
@@ -78,16 +77,19 @@ export function AuthForm() {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto">
-      <div className="mb-8 text-center">
-        <div className="mx-auto w-12 h-12 bg-emerald-500 rounded-lg flex items-center justify-center mb-6">
-          <span className="text-white font-bold text-xl">L</span>
+    <div className="w-full">
+      <div className="mb-6">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-10 h-10 bg-emerald-500 rounded-lg flex items-center justify-center">
+            <span className="text-white font-bold text-lg">L</span>
+          </div>
+          <span className="text-xl font-semibold text-gray-900">Likemetric</span>
         </div>
         <h1 className="text-2xl font-semibold text-gray-900 mb-2">
-          {isLogin ? 'Welcome back' : 'Get started'}
+          {isLogin ? 'Welcome back' : 'Create account'}
         </h1>
         <p className="text-gray-600 text-sm">
-          {isLogin ? 'Sign in to your account' : 'Create a new account'}
+          {isLogin ? 'Sign in to your account to continue' : 'Sign up to get started with Likemetric'}
         </p>
       </div>
 
@@ -108,7 +110,7 @@ export function AuthForm() {
           <span className="w-full border-t border-gray-200" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-white px-2 text-gray-500">or</span>
+          <span className="bg-gray-50 px-2 text-gray-500">or</span>
         </div>
       </div>
 
@@ -175,7 +177,7 @@ export function AuthForm() {
           className="w-full h-11 bg-emerald-500 hover:bg-emerald-600 text-white font-medium"
           disabled={loading}
         >
-          {loading ? 'Loading...' : (isLogin ? 'Sign In' : 'Sign Up')}
+          {loading ? 'Loading...' : (isLogin ? 'Sign In' : 'Create Account')}
         </Button>
       </form>
 
@@ -187,7 +189,7 @@ export function AuthForm() {
         >
           {isLogin ? "Don't have an account? " : "Already have an account? "}
           <span className="text-emerald-600 hover:text-emerald-700 font-medium">
-            {isLogin ? 'Sign Up Now' : 'Sign In'}
+            {isLogin ? 'Sign Up' : 'Sign In'}
           </span>
         </button>
       </div>
@@ -201,7 +203,6 @@ export function AuthForm() {
         <button className="text-emerald-600 hover:text-emerald-700 underline">
           Privacy Policy
         </button>
-        , and to receive periodic emails with updates.
       </div>
     </div>
   );
