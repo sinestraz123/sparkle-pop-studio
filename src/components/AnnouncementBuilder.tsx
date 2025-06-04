@@ -145,7 +145,7 @@ export const AnnouncementBuilder: React.FC<AnnouncementBuilderProps> = ({
 
         {!previewMode && (
           <div className="p-6">
-            <Accordion type="multiple" defaultValue={["settings", "content", "trigger", "script"]} className="space-y-4">
+            <Accordion type="multiple" defaultValue={["settings"]} className="space-y-4">
               {/* Settings Section */}
               <AccordionItem value="settings" className="border rounded-lg px-4">
                 <AccordionTrigger className="hover:no-underline">
