@@ -6,6 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { X, Star } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface SurveyQuestion {
   id: string;
@@ -38,9 +39,18 @@ export const SurveyPreview: React.FC<SurveyPreviewProps> = ({ config }) => {
   const [isVisible, setIsVisible] = useState(true);
   const [responses, setResponses] = useState<Record<string, any>>({});
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
   const updateResponse = (questionId: string, value: any) => {
     setResponses(prev => ({ ...prev, [questionId]: value }));
+  };
+
+  const handleNext = () => {
+    if (currentQuestionIndex < config.questions.length - 1) {
+      setCurrentQuestionIndex(prev => prev + 1);
+    } else {
+      handleSubmit();
+    }
   };
 
   const handleSubmit = () => {
@@ -55,82 +65,125 @@ export const SurveyPreview: React.FC<SurveyPreviewProps> = ({ config }) => {
 
   if (isSubmitted) {
     return (
-      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50">
-        <div 
-          className="relative rounded-xl shadow-2xl max-w-md mx-auto p-8 border border-gray-100 text-center"
-          style={{ backgroundColor: config.background_color, color: config.text_color }}
-        >
+      <div className="fixed inset-0 bg-black/30 flex items-end justify-center pb-20 z-50">
+        <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 p-8 text-center animate-fade-in">
           <div className="text-green-500 text-4xl mb-4">✓</div>
-          <h3 className="text-lg font-semibold mb-2">Thank you!</h3>
-          <p className="text-sm opacity-75">Your response has been submitted.</p>
+          <h3 className="text-xl font-semibold mb-2 text-gray-800">Thank you!</h3>
+          <p className="text-gray-600">Your feedback has been submitted.</p>
         </div>
       </div>
     );
   }
+
+  const currentQuestion = config.questions[currentQuestionIndex];
+  const isLastQuestion = currentQuestionIndex === config.questions.length - 1;
 
   const renderQuestion = (question: SurveyQuestion) => {
     switch (question.question_type) {
       case 'text':
         return (
           <Textarea
-            placeholder="Type your answer here..."
+            placeholder="Please share your thoughts..."
             value={responses[question.id] || ''}
             onChange={(e) => updateResponse(question.id, e.target.value)}
-            className="w-full"
+            className="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500/20 rounded-lg"
+            rows={4}
           />
         );
 
       case 'multiple_choice':
         if (!question.options) return null;
         return (
-          <RadioGroup
-            value={responses[question.id] || ''}
+          <Select 
+            value={responses[question.id] || ''} 
             onValueChange={(value) => updateResponse(question.id, value)}
           >
-            {question.options.map((option, index) => (
-              <div key={index} className="flex items-center space-x-2">
-                <RadioGroupItem value={option} id={`${question.id}-${index}`} />
-                <Label htmlFor={`${question.id}-${index}`}>{option}</Label>
-              </div>
-            ))}
-          </RadioGroup>
+            <SelectTrigger className="w-full bg-gray-50 border-gray-200 focus:border-blue-500">
+              <SelectValue placeholder="Select one..." />
+            </SelectTrigger>
+            <SelectContent>
+              {question.options.map((option, index) => (
+                <SelectItem key={index} value={option}>
+                  {option}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         );
 
       case 'rating':
         const rating = responses[question.id] || 0;
-        return (
-          <div className="flex gap-1">
-            {[1, 2, 3, 4, 5].map((star) => (
-              <button
-                key={star}
-                onClick={() => updateResponse(question.id, star)}
-                className="p-1"
-              >
-                <Star
-                  className={`h-6 w-6 ${
-                    star <= rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'
-                  }`}
-                />
-              </button>
-            ))}
-          </div>
-        );
+        // Check if it's an NPS-style question (0-10 scale)
+        const isNPS = question.question_text.toLowerCase().includes('recommend') || 
+                     question.question_text.toLowerCase().includes('likely');
+        const maxRating = isNPS ? 10 : 5;
+        const ratingArray = Array.from({ length: maxRating + 1 }, (_, i) => i);
+        
+        if (isNPS) {
+          return (
+            <div className="space-y-4">
+              <div className="grid grid-cols-11 gap-2">
+                {ratingArray.map((score) => (
+                  <button
+                    key={score}
+                    onClick={() => updateResponse(question.id, score)}
+                    className={`
+                      h-12 w-12 rounded-lg border-2 transition-all duration-200 font-medium
+                      ${score <= rating 
+                        ? 'bg-blue-500 border-blue-500 text-white' 
+                        : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300'
+                      }
+                    `}
+                  >
+                    {score}
+                  </button>
+                ))}
+              </div>
+              <div className="flex justify-between text-sm text-gray-500">
+                <span>0 - Not likely</span>
+                <span>10 - Very likely</span>
+              </div>
+            </div>
+          );
+        } else {
+          return (
+            <div className="flex gap-2 justify-center">
+              {ratingArray.slice(1).map((star) => (
+                <button
+                  key={star}
+                  onClick={() => updateResponse(question.id, star)}
+                  className="p-1"
+                >
+                  <Star
+                    className={`h-8 w-8 transition-colors ${
+                      star <= rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300 hover:text-yellow-300'
+                    }`}
+                  />
+                </button>
+              ))}
+            </div>
+          );
+        }
 
       case 'yes_no':
         return (
-          <RadioGroup
-            value={responses[question.id] || ''}
-            onValueChange={(value) => updateResponse(question.id, value)}
-          >
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="yes" id={`${question.id}-yes`} />
-              <Label htmlFor={`${question.id}-yes`}>Yes</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="no" id={`${question.id}-no`} />
-              <Label htmlFor={`${question.id}-no`}>No</Label>
-            </div>
-          </RadioGroup>
+          <div className="flex gap-4 justify-center">
+            {['Yes', 'No'].map((option) => (
+              <button
+                key={option}
+                onClick={() => updateResponse(question.id, option.toLowerCase())}
+                className={`
+                  px-8 py-3 rounded-lg border-2 transition-all duration-200 font-medium
+                  ${responses[question.id] === option.toLowerCase()
+                    ? 'bg-blue-500 border-blue-500 text-white'
+                    : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300'
+                  }
+                `}
+              >
+                {option}
+              </button>
+            ))}
+          </div>
         );
 
       default:
@@ -139,10 +192,10 @@ export const SurveyPreview: React.FC<SurveyPreviewProps> = ({ config }) => {
   };
 
   return (
-    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50">
+    <div className="fixed inset-0 bg-black/30 flex items-end justify-center pb-20 z-50">
       <div 
-        className="relative rounded-xl shadow-2xl max-w-md mx-auto p-6 border border-gray-100"
-        style={{ backgroundColor: config.background_color, color: config.text_color }}
+        className="relative rounded-2xl shadow-2xl max-w-md w-full mx-4 p-8 border border-gray-100 animate-fade-in"
+        style={{ backgroundColor: config.background_color }}
       >
         {/* Close button */}
         {config.show_close_button && (
@@ -150,43 +203,54 @@ export const SurveyPreview: React.FC<SurveyPreviewProps> = ({ config }) => {
             onClick={() => setIsVisible(false)}
             className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
           >
-            <X className="h-4 w-4" />
+            <X className="h-5 w-5" />
           </button>
         )}
 
-        {/* Header */}
-        <div className="mb-6 pr-8">
-          <h2 className="text-xl font-bold mb-2">{config.title}</h2>
-          <p className="text-sm opacity-75 mb-6">{config.description}</p>
-        </div>
-
-        {/* Questions */}
-        <div className="space-y-6 mb-6">
-          {config.questions.map((question) => (
-            <div key={question.id} className="space-y-3">
-              <label className="block text-sm font-medium">
-                {question.question_text}
-                {question.required && <span className="text-red-500 ml-1">*</span>}
-              </label>
-              {renderQuestion(question)}
+        {/* Progress indicator */}
+        {config.questions.length > 1 && (
+          <div className="mb-6">
+            <div className="flex justify-between text-sm text-gray-500 mb-2">
+              <span>Question {currentQuestionIndex + 1} of {config.questions.length}</span>
             </div>
-          ))}
-        </div>
+            <div className="w-full bg-gray-200 rounded-full h-2">
+              <div 
+                className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                style={{ width: `${((currentQuestionIndex + 1) / config.questions.length) * 100}%` }}
+              />
+            </div>
+          </div>
+        )}
 
-        {/* Submit Button */}
-        <div className="flex justify-end">
-          <Button 
-            onClick={handleSubmit}
-            style={{ backgroundColor: config.button_color }}
-            className="text-white hover:opacity-90"
-          >
-            {config.submit_button_text}
-          </Button>
+        {/* Question */}
+        <div className="space-y-6">
+          <div>
+            <h2 
+              className="text-lg font-semibold mb-6 leading-relaxed"
+              style={{ color: config.text_color }}
+            >
+              {currentQuestion.question_text}
+              {currentQuestion.required && <span className="text-red-500 ml-1">*</span>}
+            </h2>
+            {renderQuestion(currentQuestion)}
+          </div>
+
+          {/* Action button */}
+          <div className="flex justify-end pt-4">
+            <Button 
+              onClick={handleNext}
+              style={{ backgroundColor: config.button_color }}
+              className="text-white hover:opacity-90 px-8 py-2 rounded-lg font-medium"
+              disabled={currentQuestion.required && !responses[currentQuestion.id]}
+            >
+              {isLastQuestion ? config.submit_button_text : 'Next'}
+            </Button>
+          </div>
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-center pt-4 border-t border-gray-100 mt-6">
-          <div className="flex items-center text-xs text-gray-500">
+        <div className="flex items-center justify-center pt-6 mt-6 border-t border-gray-100">
+          <div className="flex items-center text-xs text-gray-400">
             <span className="mr-1">⚡</span>
             <span>Powered by Likemetric</span>
           </div>
