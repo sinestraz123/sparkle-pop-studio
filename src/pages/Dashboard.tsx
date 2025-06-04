@@ -4,38 +4,41 @@ import { Plus, BarChart3, TrendingUp, Eye, MousePointer, CheckSquare } from 'luc
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useAnnouncements } from '@/hooks/useAnnouncements';
 
 const Dashboard = () => {
-  const recentActivity = [
-    {
-      id: 1,
+  const { announcements, isLoading } = useAnnouncements();
+
+  // Calculate stats from real data
+  const totalViews = announcements.reduce((sum, a) => sum + (a.views || 0), 0);
+  const totalClicks = announcements.reduce((sum, a) => sum + (a.clicks || 0), 0);
+  const activeCampaigns = announcements.filter(a => a.status === 'active').length;
+  const conversionRate = totalViews > 0 ? ((totalClicks / totalViews) * 100).toFixed(1) : '0.0';
+
+  const recentActivity = announcements
+    .slice(0, 3)
+    .map(announcement => ({
+      id: announcement.id,
       type: "announcement",
-      title: "New Chrome Extension Launch",
-      action: "was activated",
-      time: "2 hours ago"
-    },
-    {
-      id: 2,
-      type: "checklist",
-      title: "Onboarding Checklist",
-      action: "was completed by 5 users",
-      time: "4 hours ago"
-    },
-    {
-      id: 3,
-      type: "announcement",
-      title: "Product Update v2.1",
-      action: "reached 1000 views",
-      time: "1 day ago"
-    }
-  ];
+      title: announcement.title,
+      action: announcement.status === 'active' ? 'was activated' : `is ${announcement.status}`,
+      time: new Date(announcement.created_at).toLocaleDateString()
+    }));
 
   const stats = [
-    { title: "Total Views", value: "3,404", icon: Eye, change: "+12%", changeType: "positive" },
-    { title: "Total Clicks", value: "413", icon: MousePointer, change: "+8%", changeType: "positive" },
-    { title: "Active Campaigns", value: "3", icon: BarChart3, change: "+1", changeType: "positive" },
-    { title: "Conversion Rate", value: "12.1%", icon: TrendingUp, change: "+2.4%", changeType: "positive" }
+    { title: "Total Views", value: totalViews.toLocaleString(), icon: Eye, change: "+12%", changeType: "positive" },
+    { title: "Total Clicks", value: totalClicks.toLocaleString(), icon: MousePointer, change: "+8%", changeType: "positive" },
+    { title: "Active Campaigns", value: activeCampaigns.toString(), icon: BarChart3, change: "+1", changeType: "positive" },
+    { title: "Conversion Rate", value: `${conversionRate}%`, icon: TrendingUp, change: "+2.4%", changeType: "positive" }
   ];
+
+  if (isLoading) {
+    return (
+      <div className="p-6 flex items-center justify-center">
+        <div className="text-lg">Loading dashboard...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 space-y-6">
@@ -122,7 +125,7 @@ const Dashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {recentActivity.map((activity) => (
+              {recentActivity.length > 0 ? recentActivity.map((activity) => (
                 <div key={activity.id} className="flex items-start space-x-3">
                   <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
                   <div className="flex-1 min-w-0">
@@ -133,7 +136,9 @@ const Dashboard = () => {
                     <p className="text-xs text-muted-foreground">{activity.time}</p>
                   </div>
                 </div>
-              ))}
+              )) : (
+                <p className="text-sm text-muted-foreground">No recent activity</p>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -159,15 +164,15 @@ const Dashboard = () => {
             <div className="space-y-3">
               <div className="flex justify-between items-center">
                 <span className="text-sm text-muted-foreground">Active</span>
-                <span className="font-semibold">1</span>
+                <span className="font-semibold">{announcements.filter(a => a.status === 'active').length}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm text-muted-foreground">Draft</span>
-                <span className="font-semibold">1</span>
+                <span className="font-semibold">{announcements.filter(a => a.status === 'draft').length}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm text-muted-foreground">Completed</span>
-                <span className="font-semibold">1</span>
+                <span className="font-semibold">{announcements.filter(a => a.status === 'completed').length}</span>
               </div>
             </div>
           </CardContent>
@@ -191,15 +196,15 @@ const Dashboard = () => {
             <div className="space-y-3">
               <div className="flex justify-between items-center">
                 <span className="text-sm text-muted-foreground">Published</span>
-                <span className="font-semibold">2</span>
+                <span className="font-semibold">0</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm text-muted-foreground">Draft</span>
-                <span className="font-semibold">1</span>
+                <span className="font-semibold">0</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm text-muted-foreground">Completion Rate</span>
-                <span className="font-semibold">73%</span>
+                <span className="font-semibold">0%</span>
               </div>
             </div>
           </CardContent>

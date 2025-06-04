@@ -9,6 +9,78 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      announcements: {
+        Row: {
+          auto_show: boolean | null
+          background_color: string | null
+          button_color: string | null
+          button_text: string | null
+          button_url: string | null
+          clicks: number | null
+          created_at: string
+          delay: number | null
+          description: string | null
+          id: string
+          image_url: string | null
+          position: string
+          show_close_button: boolean | null
+          status: string
+          text_color: string | null
+          title: string
+          type: string
+          updated_at: string
+          user_id: string
+          video_url: string | null
+          views: number | null
+        }
+        Insert: {
+          auto_show?: boolean | null
+          background_color?: string | null
+          button_color?: string | null
+          button_text?: string | null
+          button_url?: string | null
+          clicks?: number | null
+          created_at?: string
+          delay?: number | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          position?: string
+          show_close_button?: boolean | null
+          status?: string
+          text_color?: string | null
+          title: string
+          type?: string
+          updated_at?: string
+          user_id: string
+          video_url?: string | null
+          views?: number | null
+        }
+        Update: {
+          auto_show?: boolean | null
+          background_color?: string | null
+          button_color?: string | null
+          button_text?: string | null
+          button_url?: string | null
+          clicks?: number | null
+          created_at?: string
+          delay?: number | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          position?: string
+          show_close_button?: boolean | null
+          status?: string
+          text_color?: string | null
+          title?: string
+          type?: string
+          updated_at?: string
+          user_id?: string
+          video_url?: string | null
+          views?: number | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
