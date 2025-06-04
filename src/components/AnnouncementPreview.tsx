@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -38,14 +37,14 @@ export const AnnouncementPreview: React.FC<AnnouncementPreviewProps> = ({ announ
     if (!url) return '';
     
     // YouTube - handle both youtube.com and youtu.be formats
-    const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+    const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
     const youtubeMatch = url.match(youtubeRegex);
     if (youtubeMatch) {
       return `https://www.youtube.com/embed/${youtubeMatch[1]}`;
     }
     
     // Vimeo
-    const vimeoRegex = /vimeo\.com\/(?:.*#|.*/videos/)?([0-9]+)/;
+    const vimeoRegex = /vimeo\.com\/(?:.*#|.*\/videos\/)?([0-9]+)/;
     const vimeoMatch = url.match(vimeoRegex);
     if (vimeoMatch) {
       return `https://player.vimeo.com/video/${vimeoMatch[1]}`;
