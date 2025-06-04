@@ -74,6 +74,13 @@ export const useSurveys = () => {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
+      // First delete all survey questions
+      await supabase
+        .from('survey_questions')
+        .delete()
+        .eq('survey_id', id);
+
+      // Then delete the survey
       const { error } = await supabase
         .from('surveys')
         .delete()
