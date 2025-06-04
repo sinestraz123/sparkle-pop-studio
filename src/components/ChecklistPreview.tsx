@@ -56,8 +56,18 @@ export const ChecklistPreview: React.FC<ChecklistPreviewProps> = ({ config }) =>
   if (!isVisible) return null;
 
   const handleLetsDoIt = (item: ChecklistItem) => {
+    console.log('Let\'s do it clicked for item:', item);
+    console.log('Media type:', item.media_type);
+    console.log('Media URL:', item.media_url);
+    
     if (item.media_type === 'url' && item.media_url) {
-      window.open(item.media_url, '_blank');
+      // Ensure the URL has a protocol
+      let url = item.media_url;
+      if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        url = 'https://' + url;
+      }
+      console.log('Opening URL:', url);
+      window.open(url, '_blank', 'noopener,noreferrer');
     }
     // Mark item as completed when action is taken
     toggleItem(item.id);
@@ -152,6 +162,9 @@ export const ChecklistPreview: React.FC<ChecklistPreviewProps> = ({ config }) =>
                         onClick={() => handleLetsDoIt(item)}
                       >
                         Let's do it
+                        {item.media_type === 'url' && item.media_url && !isCompleted && (
+                          <ExternalLink className="h-3 w-3 ml-1" />
+                        )}
                       </Button>
                       <Button
                         variant="ghost"
