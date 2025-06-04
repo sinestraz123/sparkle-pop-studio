@@ -45,18 +45,26 @@ export const useSurveys = () => {
     mutationFn: async (survey: Omit<SurveyInsert, 'user_id'>) => {
       if (!user) throw new Error('User not authenticated');
 
+      console.log('Creating survey with data:', survey);
+
       const { data, error } = await supabase
         .from('surveys')
         .insert({ ...survey, user_id: user.id })
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
+      
+      console.log('Survey created successfully:', data);
       return data;
     },
     onSuccess: (data) => {
+      console.log('Survey creation success, navigating to:', `/builder/${data.id}`);
       queryClient.invalidateQueries({ queryKey: ['surveys'] });
-      navigate(`/survey/${data.id}`);
+      navigate(`/builder/${data.id}`);
       toast({
         title: 'Survey created',
         description: 'Your new survey has been created successfully.',

@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Eye, Users, BarChart3, Edit, Trash2 } from 'lucide-react';
@@ -13,31 +14,23 @@ export default function SurveyList() {
   const { toast } = useToast();
 
   const handleCreateSurvey = async () => {
-    try {
-      const newSurvey = {
-        title: 'New Survey',
-        description: 'Help us improve by sharing your thoughts',
-        type: 'modal',
-        position: 'center',
-        background_color: '#ffffff',
-        text_color: '#000000',
-        button_color: '#3b82f6',
-        submit_button_text: 'Submit',
-        show_close_button: true,
-        auto_show: false,
-        delay: 0,
-        status: 'draft',
-      };
+    console.log('Creating new survey...');
+    const newSurvey = {
+      title: 'New Survey',
+      description: 'Help us improve by sharing your thoughts',
+      type: 'modal',
+      position: 'center',
+      background_color: '#ffffff',
+      text_color: '#000000',
+      button_color: '#3b82f6',
+      submit_button_text: 'Submit',
+      show_close_button: true,
+      auto_show: false,
+      delay: 0,
+      status: 'draft',
+    };
 
-      createSurvey(newSurvey);
-    } catch (error) {
-      console.error('Error creating survey:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to create survey. Please try again.',
-        variant: 'destructive',
-      });
-    }
+    createSurvey(newSurvey);
   };
 
   const handleDeleteSurvey = async (id: string, title: string) => {
@@ -135,7 +128,7 @@ export default function SurveyList() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => navigate(`/survey/${survey.id}`)}
+                      onClick={() => navigate(`/builder/${survey.id}`)}
                       className="flex-1"
                     >
                       <Edit className="h-4 w-4 mr-1" />
