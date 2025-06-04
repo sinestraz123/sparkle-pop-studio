@@ -37,15 +37,15 @@ export const AnnouncementPreview: React.FC<AnnouncementPreviewProps> = ({ announ
   const getVideoEmbedUrl = (url: string) => {
     if (!url) return '';
     
-    // YouTube
-    const youtubeRegex = /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/;
+    // YouTube - handle both youtube.com and youtu.be formats
+    const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
     const youtubeMatch = url.match(youtubeRegex);
     if (youtubeMatch) {
       return `https://www.youtube.com/embed/${youtubeMatch[1]}`;
     }
     
     // Vimeo
-    const vimeoRegex = /vimeo\.com\/(\d+)/;
+    const vimeoRegex = /vimeo\.com\/(?:.*#|.*/videos/)?([0-9]+)/;
     const vimeoMatch = url.match(vimeoRegex);
     if (vimeoMatch) {
       return `https://player.vimeo.com/video/${vimeoMatch[1]}`;
@@ -71,10 +71,11 @@ export const AnnouncementPreview: React.FC<AnnouncementPreviewProps> = ({ announ
           ) : (
             <iframe
               src={embedUrl}
-              className="w-full h-full"
+              className="w-full h-full border-0"
               frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               allowFullScreen
+              title="Video player"
             />
           )}
         </div>
