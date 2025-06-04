@@ -5,18 +5,20 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { NewsCard } from '@/components/news/NewsCard';
-import { NewsForm } from '@/components/news/NewsForm';
+import { NewsBuilder } from '@/components/news/NewsBuilder';
 import { useNews, NewsItem } from '@/hooks/useNews';
 import { useAuth } from '@/hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 
 export default function News() {
-  const [showForm, setShowForm] = useState(false);
+  const [showBuilder, setShowBuilder] = useState(false);
   const [editingNews, setEditingNews] = useState<NewsItem | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [categoryFilter, setCategoryFilter] = useState('all');
 
   const { user } = useAuth();
+  const navigate = useNavigate();
   const {
     newsItems,
     isLoading,
@@ -36,19 +38,19 @@ export default function News() {
     return matchesSearch && matchesStatus && matchesCategory;
   });
 
-  const handleSubmit = (data: Partial<NewsItem>) => {
+  const handleSave = (data: Partial<NewsItem>) => {
     if (editingNews) {
       updateNews({ ...data, id: editingNews.id });
     } else {
       createNews(data);
     }
-    setShowForm(false);
+    setShowBuilder(false);
     setEditingNews(null);
   };
 
   const handleEdit = (newsItem: NewsItem) => {
     setEditingNews(newsItem);
-    setShowForm(true);
+    setShowBuilder(true);
   };
 
   const handleDelete = (id: string) => {
@@ -58,20 +60,23 @@ export default function News() {
   };
 
   const handleCancel = () => {
-    setShowForm(false);
+    setShowBuilder(false);
     setEditingNews(null);
   };
 
-  if (showForm) {
+  const handleCreateNew = () => {
+    setEditingNews(null);
+    setShowBuilder(true);
+  };
+
+  if (showBuilder) {
     return (
-      <div className="container mx-auto p-6">
-        <NewsForm
-          newsItem={editingNews || undefined}
-          onSubmit={handleSubmit}
-          onCancel={handleCancel}
-          isSubmitting={isCreating || isUpdating}
-        />
-      </div>
+      <NewsBuilder
+        newsItem={editingNews || undefined}
+        onSave={handleSave}
+        onBack={handleCancel}
+        isLoading={isCreating || isUpdating}
+      />
     );
   }
 
@@ -82,7 +87,7 @@ export default function News() {
           <h1 className="text-3xl font-bold">News & Changelog</h1>
           <p className="text-gray-600">Share updates and announcements with your users</p>
         </div>
-        <Button onClick={() => setShowForm(true)}>
+        <Button onClick={handleCreateNew}>
           <Plus className="h-4 w-4 mr-2" />
           Create News
         </Button>

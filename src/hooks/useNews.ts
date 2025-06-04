@@ -46,7 +46,15 @@ export const useNews = () => {
 
       const { data, error } = await supabase
         .from('news_items')
-        .insert([{ ...newsData, user_id: user.id }])
+        .insert({
+          title: newsData.title || '',
+          description: newsData.description,
+          content: newsData.content,
+          image_url: newsData.image_url,
+          status: newsData.status || 'draft',
+          category: newsData.category,
+          user_id: user.id
+        })
         .select()
         .single();
 
