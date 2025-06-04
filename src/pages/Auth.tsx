@@ -46,7 +46,7 @@ export default function Auth() {
   return (
     <div className="min-h-screen flex">
       {/* Left side - Branded area */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-emerald-600 to-emerald-800 relative overflow-hidden">
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-green-600 to-teal-700 relative overflow-hidden">
         <div className="absolute inset-0 bg-black/10"></div>
         <div className="relative z-10 flex flex-col justify-center items-center text-white p-12">
           <div className="mb-8">
@@ -54,7 +54,7 @@ export default function Auth() {
               <span className="text-white font-bold text-2xl">L</span>
             </div>
             <h1 className="text-4xl font-bold mb-4">Welcome to Likemetric</h1>
-            <p className="text-xl text-emerald-100 max-w-md text-center leading-relaxed">
+            <p className="text-xl text-green-100 max-w-md text-center leading-relaxed">
               The modern platform for building engaging announcements and measuring user interactions.
             </p>
           </div>
@@ -62,15 +62,15 @@ export default function Auth() {
           <div className="grid grid-cols-1 gap-6 max-w-sm">
             <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
               <h3 className="font-semibold mb-2">📊 Analytics Dashboard</h3>
-              <p className="text-sm text-emerald-100">Track engagement and user interactions in real-time</p>
+              <p className="text-sm text-green-100">Track engagement and user interactions in real-time</p>
             </div>
             <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
               <h3 className="font-semibold mb-2">🎯 Smart Targeting</h3>
-              <p className="text-sm text-emerald-100">Deliver personalized content to the right audience</p>
+              <p className="text-sm text-green-100">Deliver personalized content to the right audience</p>
             </div>
             <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
               <h3 className="font-semibold mb-2">🚀 Easy Integration</h3>
-              <p className="text-sm text-emerald-100">Simple setup with powerful customization options</p>
+              <p className="text-sm text-green-100">Simple setup with powerful customization options</p>
             </div>
           </div>
         </div>

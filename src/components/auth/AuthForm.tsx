@@ -80,7 +80,7 @@ export function AuthForm() {
     <div className="w-full">
       <div className="mb-6">
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 bg-emerald-500 rounded-lg flex items-center justify-center">
+          <div className="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center">
             <span className="text-white font-bold text-lg">L</span>
           </div>
           <span className="text-xl font-semibold text-gray-900">Likemetric</span>
@@ -126,7 +126,7 @@ export function AuthForm() {
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               required={!isLogin}
-              className="h-11 border-gray-300 focus:border-emerald-500 focus:ring-emerald-500"
+              className="h-11 border-gray-300 focus:border-green-500 focus:ring-green-500"
               placeholder="Enter your full name"
             />
           </div>
@@ -142,7 +142,7 @@ export function AuthForm() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="h-11 border-gray-300 focus:border-emerald-500 focus:ring-emerald-500"
+            className="h-11 border-gray-300 focus:border-green-500 focus:ring-green-500"
             placeholder="you@example.com"
           />
         </div>
@@ -155,7 +155,7 @@ export function AuthForm() {
             {isLogin && (
               <button
                 type="button"
-                className="text-sm text-emerald-600 hover:text-emerald-700 font-medium"
+                className="text-sm text-green-600 hover:text-green-700 font-medium"
               >
                 Forgot Password?
               </button>
@@ -167,14 +167,14 @@ export function AuthForm() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            className="h-11 border-gray-300 focus:border-emerald-500 focus:ring-emerald-500"
+            className="h-11 border-gray-300 focus:border-green-500 focus:ring-green-500"
             placeholder="Enter your password"
           />
         </div>
 
         <Button
           type="submit"
-          className="w-full h-11 bg-emerald-500 hover:bg-emerald-600 text-white font-medium"
+          className="w-full h-11 bg-green-600 hover:bg-green-700 text-white font-medium"
           disabled={loading}
         >
           {loading ? 'Loading...' : (isLogin ? 'Sign In' : 'Create Account')}
@@ -188,7 +188,7 @@ export function AuthForm() {
           className="text-sm text-gray-600 hover:text-gray-800"
         >
           {isLogin ? "Don't have an account? " : "Already have an account? "}
-          <span className="text-emerald-600 hover:text-emerald-700 font-medium">
+          <span className="text-green-600 hover:text-green-700 font-medium">
             {isLogin ? 'Sign Up' : 'Sign In'}
           </span>
         </button>
@@ -196,11 +196,11 @@ export function AuthForm() {
 
       <div className="mt-8 text-center text-xs text-gray-500">
         By continuing, you agree to Likemetric's{' '}
-        <button className="text-emerald-600 hover:text-emerald-700 underline">
+        <button className="text-green-600 hover:text-green-700 underline">
           Terms of Service
         </button>{' '}
         and{' '}
-        <button className="text-emerald-600 hover:text-emerald-700 underline">
+        <button className="text-green-600 hover:text-green-700 underline">
           Privacy Policy
         </button>
       </div>
