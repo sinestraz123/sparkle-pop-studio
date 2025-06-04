@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { X, ExternalLink } from 'lucide-react';
+import { X, ExternalLink, Check } from 'lucide-react';
 
 interface ChecklistItem {
   id: string;
@@ -55,34 +55,12 @@ export const ChecklistPreview: React.FC<ChecklistPreviewProps> = ({ config }) =>
 
   if (!isVisible) return null;
 
-  const renderMedia = (item: ChecklistItem) => {
-    if (item.media_type === 'none' || !item.media_url) return null;
-
-    switch (item.media_type) {
-      case 'image':
-      case 'gif':
-        return (
-          <img 
-            src={item.media_url} 
-            alt={item.title}
-            className="w-full h-32 object-cover rounded-md mt-2"
-          />
-        );
-      case 'url':
-        return (
-          <Button
-            variant="outline"
-            size="sm"
-            className="mt-2 text-xs h-8"
-            onClick={() => window.open(item.media_url, '_blank')}
-          >
-            <ExternalLink className="h-3 w-3 mr-1" />
-            Open Link
-          </Button>
-        );
-      default:
-        return null;
+  const handleItemAction = (item: ChecklistItem) => {
+    if (item.media_type === 'url' && item.media_url) {
+      window.open(item.media_url, '_blank');
     }
+    // Mark item as completed when action is taken
+    toggleItem(item.id);
   };
 
   return (
@@ -121,31 +99,76 @@ export const ChecklistPreview: React.FC<ChecklistPreviewProps> = ({ config }) =>
         </div>
 
         {/* Checklist Items */}
-        <div className="space-y-3 mb-6">
-          {config.items.map((item) => (
-            <div key={item.id} className="flex items-start space-x-3 p-2 rounded-lg hover:bg-gray-50 transition-colors">
-              <Checkbox 
-                checked={completedItems.has(item.id)}
-                onCheckedChange={() => toggleItem(item.id)}
-                className="mt-0.5 data-[state=checked]:bg-black data-[state=checked]:border-black"
-              />
-              <div className="flex-1 min-w-0">
-                <div className={`font-medium text-sm transition-all duration-200 ${
-                  completedItems.has(item.id) 
-                    ? 'line-through text-gray-500' 
-                    : 'text-gray-900'
-                }`}>
-                  {item.title}
-                </div>
-                {item.description && (
-                  <div className="text-xs text-gray-600 mt-1">
-                    {item.description}
+        <div className="space-y-4 mb-6">
+          {config.items.map((item) => {
+            const isCompleted = completedItems.has(item.id);
+            
+            return (
+              <div key={item.id} className="border-b border-gray-100 pb-4 last:border-b-0">
+                <div className="flex items-start space-x-3">
+                  {/* Custom Checkbox */}
+                  <div 
+                    className={`w-6 h-6 rounded-full border-2 flex items-center justify-center cursor-pointer transition-all ${
+                      isCompleted 
+                        ? 'bg-black border-black' 
+                        : 'border-gray-300 hover:border-gray-400'
+                    }`}
+                    onClick={() => toggleItem(item.id)}
+                  >
+                    {isCompleted && <Check className="h-3 w-3 text-white" />}
                   </div>
-                )}
-                {renderMedia(item)}
+                  
+                  <div className="flex-1 min-w-0">
+                    <div className={`font-medium text-sm transition-all duration-200 ${
+                      isCompleted 
+                        ? 'line-through text-gray-500' 
+                        : 'text-gray-900'
+                    }`}>
+                      {item.title}
+                    </div>
+                    {item.description && (
+                      <div className={`text-xs mt-1 ${
+                        isCompleted ? 'text-gray-400' : 'text-gray-600'
+                      }`}>
+                        {item.description}
+                      </div>
+                    )}
+                    
+                    {/* Action Buttons - only show for incomplete items */}
+                    {!isCompleted && (
+                      <div className="flex gap-2 mt-3">
+                        {item.media_type === 'url' && item.media_url ? (
+                          <Button
+                            size="sm"
+                            className="bg-black hover:bg-gray-800 text-white text-xs h-8 rounded-md"
+                            onClick={() => handleItemAction(item)}
+                          >
+                            {config.button_text || "Let's do it"}
+                          </Button>
+                        ) : (
+                          <Button
+                            size="sm"
+                            className="bg-black hover:bg-gray-800 text-white text-xs h-8 rounded-md"
+                            onClick={() => toggleItem(item.id)}
+                          >
+                            {config.button_text || "Let's do it"}
+                          </Button>
+                        )}
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-gray-500 hover:text-gray-700 text-xs h-8"
+                          onClick={() => {/* Skip logic could be added here */}}
+                        >
+                          Skip
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Footer */}
