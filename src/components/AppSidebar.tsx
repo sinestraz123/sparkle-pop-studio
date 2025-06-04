@@ -8,7 +8,8 @@ import {
   Users, 
   Bell,
   HelpCircle,
-  Zap
+  Zap,
+  CheckSquare
 } from 'lucide-react';
 
 import {
@@ -28,6 +29,7 @@ import {
 const mainItems = [
   { title: 'Dashboard', url: '/', icon: LayoutDashboard },
   { title: 'Create Announcement', url: '/builder', icon: Plus },
+  { title: 'Checklist', url: '/checklist', icon: CheckSquare },
   { title: 'Analytics', url: '/analytics', icon: BarChart3 },
   { title: 'Audience', url: '/audience', icon: Users },
 ];

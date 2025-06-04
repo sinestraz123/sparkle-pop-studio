@@ -9,6 +9,7 @@ import { AppSidebar } from "@/components/AppSidebar";
 import { Header } from "@/components/Header";
 import Dashboard from "./pages/Dashboard";
 import Builder from "./pages/Builder";
+import Checklist from "./pages/Checklist";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -29,6 +30,8 @@ const App = () => (
                   <Route path="/" element={<Dashboard />} />
                   <Route path="/builder" element={<Builder />} />
                   <Route path="/builder/:id" element={<Builder />} />
+                  <Route path="/checklist" element={<Checklist />} />
+                  <Route path="/checklist/:id" element={<Checklist />} />
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>
