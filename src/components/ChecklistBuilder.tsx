@@ -116,7 +116,7 @@ export const ChecklistBuilder: React.FC<ChecklistBuilderProps> = ({
   return (
     <div className="h-screen flex bg-gray-50">
       {/* Left Sidebar - Configuration */}
-      <div className="w-[480px] bg-white border-r border-gray-200 overflow-y-auto">
+      <div className="w-[480px] bg-white border-r border-gray-200 flex flex-col">
         <ChecklistBuilderHeader
           formData={formData}
           isLoading={isLoading}
@@ -125,36 +125,38 @@ export const ChecklistBuilder: React.FC<ChecklistBuilderProps> = ({
           onStatusChange={(status) => updateFormData('status', status)}
         />
 
-        <div className="p-6">
-          <Accordion type="multiple" defaultValue={["content"]} className="space-y-4">
-            <ChecklistSettingsSection
-              formData={formData}
-              updateFormData={updateFormData}
-            />
+        <div className="flex-1 overflow-y-auto">
+          <div className="p-6">
+            <Accordion type="multiple" defaultValue={["content"]} className="space-y-4">
+              <ChecklistSettingsSection
+                formData={formData}
+                updateFormData={updateFormData}
+              />
 
-            <ChecklistContentSection
-              formData={formData}
-              updateFormData={updateFormData}
-            />
+              <ChecklistContentSection
+                formData={formData}
+                updateFormData={updateFormData}
+              />
 
-            <ChecklistItemsSection
-              items={formData.items}
-              updateItem={updateItem}
-              addItem={addItem}
-              removeItem={removeItem}
-            />
+              <ChecklistItemsSection
+                items={formData.items}
+                updateItem={updateItem}
+                addItem={addItem}
+                removeItem={removeItem}
+              />
 
-            <ChecklistTriggerSection
-              formData={formData}
-              updateFormData={updateFormData}
-            />
-          </Accordion>
+              <ChecklistTriggerSection
+                formData={formData}
+                updateFormData={updateFormData}
+              />
+            </Accordion>
+          </div>
         </div>
       </div>
 
       {/* Right Side - Preview */}
       <div className="flex-1 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 relative">
-        <div className="absolute top-4 left-4 bg-white rounded-lg px-3 py-1 text-sm text-gray-600">
+        <div className="absolute top-4 left-4 bg-white rounded-lg px-3 py-1 text-sm text-gray-600 shadow-sm">
           yourwebsite.com
         </div>
         
