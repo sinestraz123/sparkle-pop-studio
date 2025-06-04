@@ -113,12 +113,15 @@ export const useChecklists = () => {
 
 export const useChecklist = (id?: string) => {
   const [checklist, setChecklist] = useState<ChecklistWithItems | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!!id); // Only loading if we have an ID
   const [error, setError] = useState<string | null>(null);
   const { user } = useAuth();
 
   const fetchChecklist = async () => {
-    if (!id || !user) return;
+    if (!id || !user) {
+      setLoading(false);
+      return;
+    }
 
     try {
       setLoading(true);
@@ -188,4 +191,31 @@ export const useChecklist = (id?: string) => {
     updateChecklistItems,
     refetch: fetchChecklist,
   };
+};
+
+// Export the updateChecklistItems function for use in other files
+export const updateChecklistItems = async (checklistId: string, items: ChecklistItemInsert[]) => {
+  try {
+    // Delete existing items
+    await supabase
+      .from('checklist_items')
+      .delete()
+      .eq('checklist_id', checklistId);
+
+    // Insert new items
+    if (items.length > 0) {
+      const { error } = await supabase
+        .from('checklist_items')
+        .insert(items.map((item, index) => ({
+          ...item,
+          checklist_id: checklistId,
+          order_index: index,
+        })));
+
+      if (error) throw error;
+    }
+  } catch (err) {
+    console.error('Error updating checklist items:', err);
+    throw new Error('Failed to update checklist items');
+  }
 };

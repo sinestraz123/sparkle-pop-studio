@@ -58,8 +58,8 @@ export const useChecklistPage = () => {
       }
 
       // Update checklist items if we have a checklist ID
-      if (checklistId && checklist) {
-        const { updateChecklistItems } = require('@/hooks/useChecklists');
+      if (checklistId && formData.items) {
+        const { updateChecklistItems } = await import('@/hooks/useChecklists');
         await updateChecklistItems(checklistId, formData.items.map((item: any) => ({
           title: item.title,
           description: item.description,
