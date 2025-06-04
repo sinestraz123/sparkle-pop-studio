@@ -1,15 +1,15 @@
 
 import React, { useState } from 'react';
-import { ArrowLeft, Eye, Settings, Palette, Type, Image, Video, MousePointer } from 'lucide-react';
+import { ArrowLeft, Eye, ChevronDown, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import PopupPreview from '@/components/PopupPreview';
 
 const Builder = () => {
@@ -20,226 +20,249 @@ const Builder = () => {
     buttonUrl: "#",
     imageUrl: "",
     videoUrl: "",
-    type: "modal", // modal, popover, banner
-    position: "center", // center, top, bottom, corner
+    type: "modal",
+    position: "center",
     backgroundColor: "#ffffff",
     textColor: "#1f2937",
-    buttonColor: "#3b82f6",
+    buttonColor: "#000000",
     showCloseButton: true,
     autoShow: true,
     delay: 2000
+  });
+
+  const [openSections, setOpenSections] = useState({
+    settings: true,
+    content: false,
+    trigger: false,
+    action: false
   });
 
   const updateConfig = (key: string, value: any) => {
     setPopupConfig(prev => ({ ...prev, [key]: value }));
   };
 
+  const toggleSection = (section: string) => {
+    setOpenSections(prev => ({ ...prev, [section]: !prev[section] }));
+  };
+
+  const FormFactorOption = ({ type, label, isSelected, onClick }: any) => (
+    <div 
+      className={`border-2 rounded-lg p-4 cursor-pointer transition-all ${
+        isSelected ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+      }`}
+      onClick={onClick}
+    >
+      <div className="w-16 h-12 bg-gray-100 rounded mb-2 flex items-center justify-center">
+        {type === 'modal' && <div className="w-8 h-6 bg-white border rounded shadow-sm flex items-center justify-center"><div className="w-2 h-2 bg-blue-500 rounded"></div></div>}
+        {type === 'popover' && <div className="w-6 h-4 bg-white border rounded shadow-sm"></div>}
+        {type === 'banner' && <div className="w-10 h-2 bg-white border rounded"></div>}
+      </div>
+      <p className="text-sm font-medium text-center">{label}</p>
+    </div>
+  );
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50">
-      <div className="container mx-auto px-6 py-8">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-white border-b border-gray-200 px-6 py-4">
+        <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <Link to="/">
               <Button variant="ghost" size="sm" className="p-2">
                 <ArrowLeft className="h-4 w-4" />
               </Button>
             </Link>
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Edit Announcement</h1>
-              <p className="text-gray-600">Customize your popup announcement</p>
-            </div>
+            <h1 className="text-xl font-semibold text-gray-900">Edit nudge</h1>
           </div>
           <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-2">
+              <Switch checked={true} />
+              <span className="text-sm text-gray-600">Draft</span>
+            </div>
             <Button variant="outline" className="flex items-center space-x-2">
               <Eye className="h-4 w-4" />
               <span>Preview</span>
             </Button>
-            <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white">
+            <Button className="bg-blue-600 hover:bg-blue-700 text-white">
               Save
             </Button>
           </div>
         </div>
+      </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Editor Panel */}
-          <div className="space-y-6">
-            <Card className="bg-white/70 backdrop-blur-sm border border-white/20 shadow-lg">
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Settings className="h-5 w-5" />
-                  <span>Settings</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[calc(100vh-80px)]">
+        {/* Editor Panel */}
+        <div className="bg-white border-r border-gray-200 p-6 space-y-1">
+          {/* Settings Section */}
+          <Collapsible open={openSections.settings} onOpenChange={() => toggleSection('settings')}>
+            <CollapsibleTrigger className="w-full">
+              <div className="flex items-center justify-between py-4 px-4 hover:bg-gray-50 rounded-lg">
+                <div className="flex items-center space-x-3">
+                  <h3 className="text-lg font-semibold text-gray-900">Settings</h3>
+                  <p className="text-sm text-gray-500">How should the nudge be positioned?</p>
+                </div>
+                {openSections.settings ? <ChevronDown className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
+              </div>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="px-4 pb-4">
+              <div className="space-y-6">
+                <div>
+                  <Label className="text-sm font-medium text-gray-700 mb-3 block">Form Factor</Label>
+                  <div className="grid grid-cols-3 gap-3">
+                    <FormFactorOption 
+                      type="modal" 
+                      label="Modal" 
+                      isSelected={popupConfig.type === 'modal'}
+                      onClick={() => updateConfig('type', 'modal')}
+                    />
+                    <FormFactorOption 
+                      type="popover" 
+                      label="Popover" 
+                      isSelected={popupConfig.type === 'popover'}
+                      onClick={() => updateConfig('type', 'popover')}
+                    />
+                    <FormFactorOption 
+                      type="banner" 
+                      label="Pin" 
+                      isSelected={popupConfig.type === 'banner'}
+                      onClick={() => updateConfig('type', 'banner')}
+                    />
+                  </div>
+                </div>
+                
+                <div>
+                  <Label className="text-sm font-medium text-gray-700 mb-2 block">Position:</Label>
+                  <Select value={popupConfig.position} onValueChange={(value) => updateConfig('position', value)}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="center">Center</SelectItem>
+                      <SelectItem value="top">Top</SelectItem>
+                      <SelectItem value="bottom">Bottom</SelectItem>
+                      <SelectItem value="corner">Bottom Right</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="flex items-center space-x-3">
+                  <Switch 
+                    checked={false}
+                  />
+                  <Label className="text-sm text-gray-700">Use custom handler for this nudge.</Label>
+                  <button className="text-blue-600 text-sm hover:underline">Learn More</button>
+                </div>
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
+
+          {/* Content Section */}
+          <Collapsible open={openSections.content} onOpenChange={() => toggleSection('content')}>
+            <CollapsibleTrigger className="w-full">
+              <div className="flex items-center justify-between py-4 px-4 hover:bg-gray-50 rounded-lg">
+                <div className="flex items-center space-x-3">
+                  <h3 className="text-lg font-semibold text-gray-900">Content</h3>
+                  <p className="text-sm text-gray-500 truncate">"New: Chrome Extension"...</p>
+                </div>
+                {openSections.content ? <ChevronDown className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
+              </div>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="px-4 pb-4">
+              <div className="space-y-4">
+                <div>
+                  <Label className="text-sm font-medium text-gray-700 mb-2 block">Title</Label>
+                  <Input 
+                    value={popupConfig.title}
+                    onChange={(e) => updateConfig('title', e.target.value)}
+                    placeholder="Enter announcement title"
+                  />
+                </div>
+                <div>
+                  <Label className="text-sm font-medium text-gray-700 mb-2 block">Description</Label>
+                  <Textarea 
+                    value={popupConfig.description}
+                    onChange={(e) => updateConfig('description', e.target.value)}
+                    placeholder="Enter announcement description"
+                    rows={4}
+                  />
+                </div>
+                <div>
+                  <Label className="text-sm font-medium text-gray-700 mb-2 block">Image URL</Label>
+                  <Input 
+                    value={popupConfig.imageUrl}
+                    onChange={(e) => updateConfig('imageUrl', e.target.value)}
+                    placeholder="https://example.com/image.jpg"
+                  />
+                </div>
+                <div>
+                  <Label className="text-sm font-medium text-gray-700 mb-2 block">Button Text</Label>
+                  <Input 
+                    value={popupConfig.buttonText}
+                    onChange={(e) => updateConfig('buttonText', e.target.value)}
+                    placeholder="Call to action text"
+                  />
+                </div>
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
+
+          {/* Trigger Section */}
+          <Collapsible open={openSections.trigger} onOpenChange={() => toggleSection('trigger')}>
+            <CollapsibleTrigger className="w-full">
+              <div className="flex items-center justify-between py-4 px-4 hover:bg-gray-50 rounded-lg">
+                <div className="flex items-center space-x-3">
+                  <h3 className="text-lg font-semibold text-gray-900">Trigger</h3>
+                  <p className="text-sm text-gray-500">When does it show?</p>
+                </div>
+                {openSections.trigger ? <ChevronDown className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
+              </div>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="px-4 pb-4">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <Label className="text-sm font-medium text-gray-700">Auto Show</Label>
+                  <Switch 
+                    checked={popupConfig.autoShow} 
+                    onCheckedChange={(checked) => updateConfig('autoShow', checked)}
+                  />
+                </div>
+                {popupConfig.autoShow && (
                   <div>
-                    <Label htmlFor="type">Popup Type</Label>
-                    <Select value={popupConfig.type} onValueChange={(value) => updateConfig('type', value)}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="modal">Modal</SelectItem>
-                        <SelectItem value="popover">Popover</SelectItem>
-                        <SelectItem value="banner">Banner</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="position">Position</Label>
-                    <Select value={popupConfig.position} onValueChange={(value) => updateConfig('position', value)}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="center">Center</SelectItem>
-                        <SelectItem value="top">Top</SelectItem>
-                        <SelectItem value="bottom">Bottom</SelectItem>
-                        <SelectItem value="corner">Bottom Right</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="autoShow">Auto Show</Label>
-                    <Switch 
-                      checked={popupConfig.autoShow} 
-                      onCheckedChange={(checked) => updateConfig('autoShow', checked)}
+                    <Label className="text-sm font-medium text-gray-700 mb-2 block">Delay (seconds)</Label>
+                    <Input 
+                      type="number" 
+                      value={popupConfig.delay / 1000}
+                      onChange={(e) => updateConfig('delay', parseInt(e.target.value) * 1000)}
                     />
                   </div>
+                )}
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
 
-                  {popupConfig.autoShow && (
-                    <div>
-                      <Label htmlFor="delay">Delay (seconds)</Label>
-                      <Input 
-                        type="number" 
-                        value={popupConfig.delay / 1000}
-                        onChange={(e) => updateConfig('delay', parseInt(e.target.value) * 1000)}
-                      />
-                    </div>
-                  )}
+          {/* Action Section */}
+          <Collapsible open={openSections.action} onOpenChange={() => toggleSection('action')}>
+            <CollapsibleTrigger className="w-full">
+              <div className="flex items-center justify-between py-4 px-4 hover:bg-gray-50 rounded-lg">
+                <div className="flex items-center space-x-3">
+                  <h3 className="text-lg font-semibold text-gray-900">Action</h3>
+                  <p className="text-sm text-gray-500">No action</p>
                 </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-white/70 backdrop-blur-sm border border-white/20 shadow-lg">
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Type className="h-5 w-5" />
-                  <span>Content</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Tabs defaultValue="text" className="w-full">
-                  <TabsList className="grid w-full grid-cols-3">
-                    <TabsTrigger value="text">Text</TabsTrigger>
-                    <TabsTrigger value="media">Media</TabsTrigger>
-                    <TabsTrigger value="button">Button</TabsTrigger>
-                  </TabsList>
-                  
-                  <TabsContent value="text" className="space-y-4">
-                    <div>
-                      <Label htmlFor="title">Title</Label>
-                      <Input 
-                        value={popupConfig.title}
-                        onChange={(e) => updateConfig('title', e.target.value)}
-                        placeholder="Enter announcement title"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="description">Description</Label>
-                      <Textarea 
-                        value={popupConfig.description}
-                        onChange={(e) => updateConfig('description', e.target.value)}
-                        placeholder="Enter announcement description"
-                        rows={4}
-                      />
-                    </div>
-                  </TabsContent>
-                  
-                  <TabsContent value="media" className="space-y-4">
-                    <div>
-                      <Label htmlFor="imageUrl">Image URL</Label>
-                      <Input 
-                        value={popupConfig.imageUrl}
-                        onChange={(e) => updateConfig('imageUrl', e.target.value)}
-                        placeholder="https://example.com/image.jpg"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="videoUrl">Video URL (YouTube/Vimeo)</Label>
-                      <Input 
-                        value={popupConfig.videoUrl}
-                        onChange={(e) => updateConfig('videoUrl', e.target.value)}
-                        placeholder="https://youtube.com/watch?v=..."
-                      />
-                    </div>
-                  </TabsContent>
-                  
-                  <TabsContent value="button" className="space-y-4">
-                    <div>
-                      <Label htmlFor="buttonText">Button Text</Label>
-                      <Input 
-                        value={popupConfig.buttonText}
-                        onChange={(e) => updateConfig('buttonText', e.target.value)}
-                        placeholder="Call to action text"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="buttonUrl">Button URL</Label>
-                      <Input 
-                        value={popupConfig.buttonUrl}
-                        onChange={(e) => updateConfig('buttonUrl', e.target.value)}
-                        placeholder="https://your-website.com"
-                      />
-                    </div>
-                  </TabsContent>
-                </Tabs>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-white/70 backdrop-blur-sm border border-white/20 shadow-lg">
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Palette className="h-5 w-5" />
-                  <span>Styling</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
+                {openSections.action ? <ChevronDown className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
+              </div>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="px-4 pb-4">
+              <div className="space-y-4">
                 <div>
-                  <Label htmlFor="backgroundColor">Background Color</Label>
-                  <div className="flex items-center space-x-2">
-                    <Input 
-                      type="color"
-                      value={popupConfig.backgroundColor}
-                      onChange={(e) => updateConfig('backgroundColor', e.target.value)}
-                      className="w-16 h-10 p-1 border rounded"
-                    />
-                    <Input 
-                      value={popupConfig.backgroundColor}
-                      onChange={(e) => updateConfig('backgroundColor', e.target.value)}
-                    />
-                  </div>
+                  <Label className="text-sm font-medium text-gray-700 mb-2 block">Button URL</Label>
+                  <Input 
+                    value={popupConfig.buttonUrl}
+                    onChange={(e) => updateConfig('buttonUrl', e.target.value)}
+                    placeholder="https://your-website.com"
+                  />
                 </div>
                 <div>
-                  <Label htmlFor="textColor">Text Color</Label>
-                  <div className="flex items-center space-x-2">
-                    <Input 
-                      type="color"
-                      value={popupConfig.textColor}
-                      onChange={(e) => updateConfig('textColor', e.target.value)}
-                      className="w-16 h-10 p-1 border rounded"
-                    />
-                    <Input 
-                      value={popupConfig.textColor}
-                      onChange={(e) => updateConfig('textColor', e.target.value)}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <Label htmlFor="buttonColor">Button Color</Label>
+                  <Label className="text-sm font-medium text-gray-700 mb-2 block">Button Color</Label>
                   <div className="flex items-center space-x-2">
                     <Input 
                       type="color"
@@ -253,23 +276,15 @@ const Builder = () => {
                     />
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-          </div>
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
+        </div>
 
-          {/* Preview Panel */}
-          <div className="lg:sticky lg:top-8">
-            <Card className="bg-white/70 backdrop-blur-sm border border-white/20 shadow-lg">
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Eye className="h-5 w-5" />
-                  <span>Live Preview</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-0">
-                <PopupPreview config={popupConfig} />
-              </CardContent>
-            </Card>
+        {/* Preview Panel */}
+        <div className="bg-gray-100 p-6">
+          <div className="bg-white rounded-lg shadow-sm h-full">
+            <PopupPreview config={popupConfig} />
           </div>
         </div>
       </div>
