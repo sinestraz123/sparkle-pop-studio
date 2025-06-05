@@ -18,48 +18,44 @@ const plans = [
   {
     name: "Free",
     price: "$0",
-    period: "per member / month",
+    period: "per month",
     description: "Perfect for getting started",
     features: [
       "1 announcement",
-      "1 checklist",
-      "Basic forms",
-      "Basic sites",
-      "Basic automations"
+      "1 checklist"
     ],
     buttonText: "Current Plan",
     buttonVariant: "outline" as const,
-    popular: false
+    popular: false,
+    isDefault: true
   },
   {
     name: "Standard",
     price: "$5",
-    period: "per member / month",
+    period: "per month",
     description: "Unlimited announcements and checklists",
     features: [
       "Unlimited announcements",
-      "Unlimited checklists", 
-      "Unlimited blocks",
-      "Unlimited charts",
-      "Custom forms",
-      "Custom sites"
+      "Unlimited checklists"
     ],
-    buttonText: "Upgrade",
+    buttonText: "Buy Now",
     buttonVariant: "default" as const,
-    popular: true
+    popular: true,
+    available: true
   },
   {
     name: "Pro",
     price: "$20",
-    period: "per member / month",
-    description: "Everything in Standard plus advanced features",
+    period: "per month",
+    description: "Everything plus advanced features",
     features: [
-      "Everything in Standard",
-      "Banners & tooltips",
-      "Survey capabilities",
+      "Unlimited announcements",
+      "Unlimited checklists",
+      "Banners",
+      "Tooltips", 
+      "Survey",
       "News items",
-      "Premium integrations",
-      "Priority support"
+      "And more"
     ],
     buttonText: "Coming Soon",
     buttonVariant: "secondary" as const,
@@ -71,7 +67,7 @@ const plans = [
 export function PricingModal({ open, onOpenChange }: PricingModalProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-center mb-8">
             Choose Your Plan
@@ -114,7 +110,7 @@ export function PricingModal({ open, onOpenChange }: PricingModalProps) {
                 <Button 
                   variant={plan.buttonVariant}
                   className="w-full mt-6"
-                  disabled={plan.comingSoon || plan.buttonText === "Current Plan"}
+                  disabled={plan.comingSoon || plan.isDefault}
                 >
                   {plan.buttonText}
                 </Button>
@@ -125,7 +121,7 @@ export function PricingModal({ open, onOpenChange }: PricingModalProps) {
         
         <div className="text-center mt-8 pt-4 border-t">
           <p className="text-sm text-muted-foreground">
-            All plans include 24/7 support and regular updates
+            All plans include support and regular updates
           </p>
         </div>
       </DialogContent>
