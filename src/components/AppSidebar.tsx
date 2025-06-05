@@ -8,7 +8,8 @@ import {
   Bell,
   HelpCircle,
   Zap,
-  CheckSquare
+  CheckSquare,
+  LogOut
 } from 'lucide-react';
 
 import {
@@ -41,7 +42,7 @@ const settingsItems = [
 
 export function AppSidebar() {
   const { state } = useSidebar();
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const location = useLocation();
   const currentPath = location.pathname;
   const collapsed = state === 'collapsed';
@@ -71,6 +72,14 @@ export function AppSidebar() {
       setUserProfile(data);
     } catch (error) {
       console.error('Error loading user profile:', error);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+    } catch (error) {
+      console.error('Error signing out:', error);
     }
   };
 
@@ -140,6 +149,12 @@ export function AppSidebar() {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+              <SidebarMenuItem>
+                <SidebarMenuButton onClick={handleLogout} className="hover:bg-sidebar-accent/50">
+                  <LogOut className="h-4 w-4" />
+                  {!collapsed && <span>Logout</span>}
+                </SidebarMenuButton>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
