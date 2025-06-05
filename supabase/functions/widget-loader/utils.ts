@@ -75,33 +75,34 @@ export function generateWidgetScript(data: any, announcementId: string, isTest: 
     }
   }
 
-  function createWidget() {
-    if (widgetShown) return;
-    widgetShown = true;
-    
-    console.log('${isTest ? '[TEST] ' : ''}Creating widget');
-
-    ensureBodyExists(() => {
-      const overlay = document.createElement('div');
-      overlay.id = 'aw-' + widgetId;
-      overlay.style.cssText = \`
+  function injectStyles() {
+    // Inject aggressive CSS reset styles for the widget
+    const style = document.createElement('style');
+    style.textContent = \`
+      #aw-\${widgetId} {
+        all: initial !important;
         position: fixed !important;
         top: 0 !important;
         left: 0 !important;
-        width: 100% !important;
-        height: 100% !important;
+        width: 100vw !important;
+        height: 100vh !important;
         background: rgba(0,0,0,0.5) !important;
-        z-index: 999999 !important;
+        z-index: 2147483647 !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
         opacity: 0 !important;
         transition: opacity 0.2s ease !important;
         pointer-events: auto !important;
-      \`;
-
-      const container = document.createElement('div');
-      container.style.cssText = \`
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+        box-sizing: border-box !important;
+      }
+      #aw-\${widgetId} * {
+        box-sizing: border-box !important;
+        pointer-events: auto !important;
+      }
+      #aw-\${widgetId} .aw-container {
+        all: initial !important;
         background: ${data.background_color} !important;
         color: ${data.text_color} !important;
         border-radius: 12px !important;
@@ -113,17 +114,120 @@ export function generateWidgetScript(data: any, announcementId: string, isTest: 
         transform: scale(0.9) !important;
         transition: transform 0.2s ease !important;
         pointer-events: auto !important;
-      \`;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+        box-sizing: border-box !important;
+      }
+      #aw-\${widgetId} .aw-close {
+        all: initial !important;
+        position: absolute !important;
+        top: 12px !important;
+        right: 12px !important;
+        background: none !important;
+        border: none !important;
+        font-size: 24px !important;
+        cursor: pointer !important;
+        color: ${data.text_color} !important;
+        width: 32px !important;
+        height: 32px !important;
+        pointer-events: auto !important;
+        z-index: 2147483647 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+      }
+      #aw-\${widgetId} .aw-button {
+        all: initial !important;
+        width: 100% !important;
+        padding: 14px 24px !important;
+        background: ${data.button_color} !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 8px !important;
+        font-weight: 600 !important;
+        cursor: pointer !important;
+        margin-top: 16px !important;
+        font-size: 16px !important;
+        pointer-events: auto !important;
+        display: block !important;
+        text-align: center !important;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+        box-sizing: border-box !important;
+      }
+      #aw-\${widgetId} .aw-content {
+        all: initial !important;
+        padding: 24px !important;
+        pointer-events: auto !important;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+        box-sizing: border-box !important;
+      }
+      #aw-\${widgetId} .aw-title {
+        all: initial !important;
+        font-size: 20px !important;
+        font-weight: bold !important;
+        margin: 0 0 8px 0 !important;
+        line-height: 1.3 !important;
+        color: ${data.text_color} !important;
+        display: block !important;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+      }
+      #aw-\${widgetId} .aw-description {
+        all: initial !important;
+        font-size: 14px !important;
+        line-height: 1.4 !important;
+        margin: 0 !important;
+        opacity: 0.9 !important;
+        color: ${data.text_color} !important;
+        display: block !important;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+      }
+      #aw-\${widgetId} .aw-media {
+        all: initial !important;
+        aspect-ratio: 16/9 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        background: #f0f0f0 !important;
+        pointer-events: auto !important;
+        box-sizing: border-box !important;
+      }
+      #aw-\${widgetId} .aw-media img {
+        all: initial !important;
+        max-width: 100% !important;
+        max-height: 100% !important;
+        object-fit: contain !important;
+        pointer-events: auto !important;
+      }
+      #aw-\${widgetId} .aw-media iframe {
+        all: initial !important;
+        width: 100% !important;
+        height: 100% !important;
+        border: none !important;
+        pointer-events: auto !important;
+      }
+    \`;
+    document.head.appendChild(style);
+  }
+
+  function createWidget() {
+    if (widgetShown) return;
+    widgetShown = true;
+    
+    console.log('${isTest ? '[TEST] ' : ''}Creating widget');
+
+    ensureBodyExists(() => {
+      // Inject styles first
+      injectStyles();
+
+      const overlay = document.createElement('div');
+      overlay.id = 'aw-' + widgetId;
+
+      const container = document.createElement('div');
+      container.className = 'aw-container';
 
       let closeBtn = '';
       if (${data.show_close_button}) {
-        closeBtn = \`
-          <button onclick="window.awClose\${widgetId}()" 
-                  style="position: absolute !important; top: 12px !important; right: 12px !important; 
-                         background: none !important; border: none !important; font-size: 24px !important; 
-                         cursor: pointer !important; color: ${data.text_color} !important; 
-                         width: 32px !important; height: 32px !important; pointer-events: auto !important;">×</button>
-        \`;
+        closeBtn = '<button class="aw-close">×</button>';
       }
 
       let media = '';
@@ -131,66 +235,56 @@ export function generateWidgetScript(data: any, announcementId: string, isTest: 
         const videoId = '${data.video_url}'.match(/(?:youtube\\.com\\/watch\\?v=|youtu\\.be\\/)([^&\\n?#]+)/);
         if (videoId) {
           media = \`
-            <div style="aspect-ratio: 16/9 !important; background: #000 !important;">
-              <iframe src="https://www.youtube.com/embed/\${videoId[1]}?rel=0" 
-                      style="width: 100% !important; height: 100% !important; border: none !important; pointer-events: auto !important;" 
-                      allowfullscreen></iframe>
+            <div class="aw-media" style="background: #000 !important;">
+              <iframe src="https://www.youtube.com/embed/\${videoId[1]}?rel=0" allowfullscreen></iframe>
             </div>
           \`;
         }
       } else if (${JSON.stringify(data.image_url)}) {
         media = \`
-          <div style="aspect-ratio: 16/9 !important; display: flex !important; align-items: center !important; justify-content: center !important; background: #f0f0f0 !important;">
-            <img src="${data.image_url}" 
-                 style="max-width: 100% !important; max-height: 100% !important; object-fit: contain !important;" 
-                 alt="Announcement" />
+          <div class="aw-media">
+            <img src="${data.image_url}" alt="Announcement" />
           </div>
         \`;
       }
 
       let button = '';
       if (${JSON.stringify(data.button_text)}) {
-        button = \`
-          <button onclick="window.awButton\${widgetId}()" 
-                  style="width: 100% !important; padding: 14px 24px !important; 
-                         background: ${data.button_color} !important; color: white !important; 
-                         border: none !important; border-radius: 8px !important; 
-                         font-weight: 600 !important; cursor: pointer !important; 
-                         margin-top: 16px !important; font-size: 16px !important;
-                         pointer-events: auto !important;">
-            ${data.button_text}
-          </button>
-        \`;
+        button = '<button class="aw-button">${data.button_text}</button>';
       }
 
       container.innerHTML = \`
         \${closeBtn}
         \${media}
-        <div style="padding: 24px !important; pointer-events: auto !important;">
-          <h2 style="font-size: 20px !important; font-weight: bold !important; 
-                     margin: 0 0 8px 0 !important; line-height: 1.3 !important;">${data.title}</h2>
-          <p style="font-size: 14px !important; line-height: 1.4 !important; 
-                    margin: 0 !important; opacity: 0.9 !important;">${data.description}</p>
+        <div class="aw-content">
+          <h2 class="aw-title">${data.title}</h2>
+          <p class="aw-description">${data.description}</p>
           \${button}
         </div>
       \`;
 
       overlay.appendChild(container);
 
-      window['awClose' + widgetId] = closeWidget;
-      window['awButton' + widgetId] = function() {
-        trackClick();
-        if ('${data.button_action}' === 'close') {
+      // Add event listeners with proper delegation
+      container.addEventListener('click', function(e) {
+        e.stopPropagation();
+        
+        if (e.target.classList.contains('aw-close')) {
           closeWidget();
-        } else if ('${data.button_action}' === 'url' && '${data.button_url}') {
-          window.open('${data.button_url}', '_blank');
-          closeWidget();
+        } else if (e.target.classList.contains('aw-button')) {
+          trackClick();
+          if ('${data.button_action}' === 'close') {
+            closeWidget();
+          } else if ('${data.button_action}' === 'url' && '${data.button_url}') {
+            window.open('${data.button_url}', '_blank');
+            closeWidget();
+          }
         }
-      };
+      });
 
-      overlay.onclick = function(e) {
+      overlay.addEventListener('click', function(e) {
         if (e.target === overlay) closeWidget();
-      };
+      });
 
       document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') closeWidget();

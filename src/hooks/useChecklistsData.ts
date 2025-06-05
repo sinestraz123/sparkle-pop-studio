@@ -5,8 +5,13 @@ import { useAuth } from './useAuth';
 import { Tables, TablesInsert, TablesUpdate } from '@/integrations/supabase/types';
 
 type Checklist = Tables<'checklists'>;
+type ChecklistItem = Tables<'checklist_items'>;
 type ChecklistInsert = TablesInsert<'checklists'>;
 type ChecklistUpdate = TablesUpdate<'checklists'>;
+
+export interface ChecklistWithItems extends Checklist {
+  checklist_items: ChecklistItem[];
+}
 
 export const useChecklistsData = () => {
   const [checklists, setChecklists] = useState<Checklist[]>([]);

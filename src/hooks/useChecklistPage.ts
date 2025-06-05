@@ -62,3 +62,6 @@ export const useChecklist = (id?: string) => {
     refetch: fetchChecklist,
   };
 };
+
+// Export for backward compatibility
+export const useChecklistPage = useChecklist;
