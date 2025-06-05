@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { 
@@ -10,7 +9,8 @@ import {
   HelpCircle,
   Zap,
   CheckSquare,
-  LogOut
+  LogOut,
+  CreditCard
 } from 'lucide-react';
 
 import {
@@ -28,6 +28,7 @@ import {
 } from '@/components/ui/sidebar';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
+import { PricingModal } from '@/components/PricingModal';
 
 const mainItems = [
   { title: 'Dashboard', url: '/', icon: LayoutDashboard },
@@ -38,6 +39,7 @@ const mainItems = [
 
 const settingsItems = [
   { title: 'Settings', url: '/settings', icon: Settings },
+  { title: 'Pricing', url: null, icon: CreditCard, action: 'pricing' },
   { title: 'Help', url: '/help', icon: HelpCircle },
 ];
 
@@ -48,6 +50,7 @@ export function AppSidebar() {
   const currentPath = location.pathname;
   const collapsed = state === 'collapsed';
   const [userProfile, setUserProfile] = useState<{ full_name: string } | null>(null);
+  const [isPricingOpen, setIsPricingOpen] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -84,6 +87,12 @@ export function AppSidebar() {
     }
   };
 
+  const handleItemClick = (item: any) => {
+    if (item.action === 'pricing') {
+      setIsPricingOpen(true);
+    }
+  };
+
   const isActive = (path: string) => currentPath === path;
 
   const getNavClassName = (path: string) => {
@@ -102,82 +111,97 @@ export function AppSidebar() {
   };
 
   return (
-    <Sidebar className={collapsed ? 'w-14' : 'w-64'} collapsible="offcanvas">
-      <SidebarHeader className="p-4 border-b border-sidebar-border">
-        <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-black">
-            <img 
-              src="/lovable-uploads/1d9f0f79-340d-4623-89ab-1badcf771fe1.png" 
-              alt="Likemetric Logo" 
-              className="h-6 w-6 object-contain"
-            />
-          </div>
-          {!collapsed && (
-            <div>
-              <h2 className="text-lg font-bold text-sidebar-foreground">Likemetric</h2>
-              <p className="text-xs text-sidebar-foreground/60">User Engagement</p>
+    <>
+      <Sidebar className={collapsed ? 'w-14' : 'w-64'} collapsible="offcanvas">
+        <SidebarHeader className="p-4 border-b border-sidebar-border">
+          <div className="flex items-center gap-2">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-black">
+              <img 
+                src="/lovable-uploads/1d9f0f79-340d-4623-89ab-1badcf771fe1.png" 
+                alt="Likemetric Logo" 
+                className="h-6 w-6 object-contain"
+              />
             </div>
-          )}
-        </div>
-      </SidebarHeader>
+            {!collapsed && (
+              <div>
+                <h2 className="text-lg font-bold text-sidebar-foreground">Likemetric</h2>
+                <p className="text-xs text-sidebar-foreground/60">User Engagement</p>
+              </div>
+            )}
+          </div>
+        </SidebarHeader>
 
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Main</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {mainItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <NavLink to={item.url} className={getNavClassName(item.url)}>
-                      <item.icon className="h-4 w-4" />
-                      {!collapsed && <span>{item.title}</span>}
-                    </NavLink>
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarGroupLabel>Main</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {mainItems.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild>
+                      <NavLink to={item.url} className={getNavClassName(item.url)}>
+                        <item.icon className="h-4 w-4" />
+                        {!collapsed && <span>{item.title}</span>}
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+
+          <SidebarGroup className="mt-auto">
+            <SidebarGroupLabel>Account</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {settingsItems.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton 
+                      asChild={!!item.url}
+                      onClick={!item.url ? () => handleItemClick(item) : undefined}
+                      className="hover:bg-sidebar-accent/50"
+                    >
+                      {item.url ? (
+                        <NavLink to={item.url} className={getNavClassName(item.url)}>
+                          <item.icon className="h-4 w-4" />
+                          {!collapsed && <span>{item.title}</span>}
+                        </NavLink>
+                      ) : (
+                        <div className="flex items-center">
+                          <item.icon className="h-4 w-4" />
+                          {!collapsed && <span>{item.title}</span>}
+                        </div>
+                      )}
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+                <SidebarMenuItem>
+                  <SidebarMenuButton onClick={handleLogout} className="hover:bg-sidebar-accent/50">
+                    <LogOut className="h-4 w-4" />
+                    {!collapsed && <span>Logout</span>}
                   </SidebarMenuButton>
                 </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
 
-        <SidebarGroup className="mt-auto">
-          <SidebarGroupLabel>Account</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {settingsItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <NavLink to={item.url} className={getNavClassName(item.url)}>
-                      <item.icon className="h-4 w-4" />
-                      {!collapsed && <span>{item.title}</span>}
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-              <SidebarMenuItem>
-                <SidebarMenuButton onClick={handleLogout} className="hover:bg-sidebar-accent/50">
-                  <LogOut className="h-4 w-4" />
-                  {!collapsed && <span>Logout</span>}
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-
-      <SidebarFooter className="p-4 border-t border-sidebar-border">
-        <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-full bg-gradient-to-r from-green-500 to-teal-500 flex items-center justify-center">
-            <span className="text-xs font-semibold text-white">{getUserInitials()}</span>
-          </div>
-          {!collapsed && (
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-sidebar-foreground truncate">{getUserDisplayName()}</p>
-              <p className="text-xs text-sidebar-foreground/60 truncate">{user?.email || ''}</p>
+        <SidebarFooter className="p-4 border-t border-sidebar-border">
+          <div className="flex items-center gap-2">
+            <div className="h-8 w-8 rounded-full bg-gradient-to-r from-green-500 to-teal-500 flex items-center justify-center">
+              <span className="text-xs font-semibold text-white">{getUserInitials()}</span>
             </div>
-          )}
-        </div>
-      </SidebarFooter>
-    </Sidebar>
+            {!collapsed && (
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-sidebar-foreground truncate">{getUserDisplayName()}</p>
+                <p className="text-xs text-sidebar-foreground/60 truncate">{user?.email || ''}</p>
+              </div>
+            )}
+          </div>
+        </SidebarFooter>
+      </Sidebar>
+
+      <PricingModal open={isPricingOpen} onOpenChange={setIsPricingOpen} />
+    </>
   );
 }
