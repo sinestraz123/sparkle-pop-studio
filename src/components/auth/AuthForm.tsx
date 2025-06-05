@@ -3,21 +3,33 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Chrome, Mail, Lock, User, Eye, EyeOff } from 'lucide-react';
+import { Chrome, Github, Mail, Lock, User, Eye, EyeOff } from 'lucide-react';
 
 export function AuthForm() {
-  const [isLogin, setIsLogin] = useState(true);
+  const [isLogin, setIsLogin] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [agreeToTerms, setAgreeToTerms] = useState(false);
   const { toast } = useToast();
 
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!isLogin && !agreeToTerms) {
+      toast({
+        title: "Terms Required",
+        description: "Please accept the terms and privacy policy to continue.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -77,51 +89,74 @@ export function AuthForm() {
     }
   };
 
+  const handleGithubAuth = async () => {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'github',
+        options: {
+          redirectTo: `${window.location.origin}/`
+        }
+      });
+      if (error) throw error;
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
-    <div className="w-full space-y-8">
+    <div className="w-full space-y-6">
       {/* Header */}
-      <div className="text-center space-y-4">
-        <div className="flex justify-center">
-          <div className="w-16 h-16 bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl flex items-center justify-center shadow-lg">
-            <span className="text-white font-bold text-xl">L</span>
-          </div>
-        </div>
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            {isLogin ? 'Welcome back' : 'Create account'}
-          </h1>
-          <p className="text-gray-600">
-            {isLogin ? 'Sign in to continue to Likemetric' : 'Join Likemetric to get started'}
-          </p>
-        </div>
+      <div className="text-center space-y-2">
+        <h1 className="text-2xl font-bold text-gray-900">
+          {isLogin ? 'Welcome back' : 'Create your account'}
+        </h1>
+        <p className="text-gray-600">
+          {isLogin ? 'Sign in to your account' : 'Get started with your free account'}
+        </p>
       </div>
 
-      {/* Google Sign In */}
-      <Button
-        onClick={handleGoogleAuth}
-        variant="outline"
-        className="w-full h-12 border-2 border-gray-200 hover:border-gray-300 bg-white hover:bg-gray-50 text-gray-700 font-medium rounded-xl transition-all duration-200 group"
-        type="button"
-      >
-        <Chrome className="w-5 h-5 mr-3 text-gray-600 group-hover:text-gray-700" />
-        Continue with Google
-      </Button>
+      {/* OAuth Buttons */}
+      <div className="space-y-3">
+        <Button
+          onClick={handleGoogleAuth}
+          variant="outline"
+          className="w-full h-12 border-2 border-gray-300 hover:border-gray-400 bg-white hover:bg-gray-50 text-gray-700 font-medium transition-all duration-200"
+          type="button"
+        >
+          <Chrome className="w-5 h-5 mr-3 text-gray-600" />
+          Continue with Google
+        </Button>
+
+        <Button
+          onClick={handleGithubAuth}
+          variant="outline"
+          className="w-full h-12 border-2 border-gray-300 hover:border-gray-400 bg-white hover:bg-gray-50 text-gray-700 font-medium transition-all duration-200"
+          type="button"
+        >
+          <Github className="w-5 h-5 mr-3 text-gray-600" />
+          Continue with GitHub
+        </Button>
+      </div>
 
       {/* Divider */}
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
-          <span className="w-full border-t border-gray-200" />
+          <span className="w-full border-t border-gray-300" />
         </div>
         <div className="relative flex justify-center text-sm">
-          <span className="bg-white px-4 text-gray-500 font-medium">or continue with email</span>
+          <span className="bg-white px-4 text-gray-500 font-medium">OR</span>
         </div>
       </div>
 
       {/* Email Form */}
-      <form onSubmit={handleEmailAuth} className="space-y-6">
+      <form onSubmit={handleEmailAuth} className="space-y-4">
         {!isLogin && (
           <div className="space-y-2">
-            <Label htmlFor="fullName" className="text-sm font-semibold text-gray-700">
+            <Label htmlFor="fullName" className="text-sm font-medium text-gray-700">
               Full name
             </Label>
             <div className="relative">
@@ -131,7 +166,7 @@ export function AuthForm() {
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 required={!isLogin}
-                className="h-12 pl-12 border-2 border-gray-200 focus:border-gray-900 focus:ring-0 rounded-xl bg-gray-50 focus:bg-white transition-all duration-200"
+                className="h-12 pl-12 border-2 border-gray-300 focus:border-gray-900 focus:ring-0 bg-white"
                 placeholder="Enter your full name"
               />
               <User className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
@@ -140,7 +175,7 @@ export function AuthForm() {
         )}
         
         <div className="space-y-2">
-          <Label htmlFor="email" className="text-sm font-semibold text-gray-700">
+          <Label htmlFor="email" className="text-sm font-medium text-gray-700">
             Email
           </Label>
           <div className="relative">
@@ -150,7 +185,7 @@ export function AuthForm() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="h-12 pl-12 border-2 border-gray-200 focus:border-gray-900 focus:ring-0 rounded-xl bg-gray-50 focus:bg-white transition-all duration-200"
+              className="h-12 pl-12 border-2 border-gray-300 focus:border-gray-900 focus:ring-0 bg-white"
               placeholder="you@example.com"
             />
             <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
@@ -158,19 +193,9 @@ export function AuthForm() {
         </div>
         
         <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <Label htmlFor="password" className="text-sm font-semibold text-gray-700">
-              Password
-            </Label>
-            {isLogin && (
-              <button
-                type="button"
-                className="text-sm text-gray-600 hover:text-gray-900 font-medium transition-colors duration-200"
-              >
-                Forgot password?
-              </button>
-            )}
-          </div>
+          <Label htmlFor="password" className="text-sm font-medium text-gray-700">
+            Password
+          </Label>
           <div className="relative">
             <Input
               id="password"
@@ -178,23 +203,43 @@ export function AuthForm() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="h-12 pl-12 pr-12 border-2 border-gray-200 focus:border-gray-900 focus:ring-0 rounded-xl bg-gray-50 focus:bg-white transition-all duration-200"
+              className="h-12 pl-12 pr-12 border-2 border-gray-300 focus:border-gray-900 focus:ring-0 bg-white"
               placeholder="Enter your password"
             />
             <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors duration-200"
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
             >
               {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
             </button>
           </div>
         </div>
 
+        {!isLogin && (
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="terms"
+              checked={agreeToTerms}
+              onCheckedChange={(checked) => setAgreeToTerms(checked as boolean)}
+            />
+            <Label htmlFor="terms" className="text-sm text-gray-600">
+              I agree to the{' '}
+              <button type="button" className="text-gray-900 hover:underline">
+                Terms
+              </button>{' '}
+              and{' '}
+              <button type="button" className="text-gray-900 hover:underline">
+                Privacy Policy
+              </button>
+            </Label>
+          </div>
+        )}
+
         <Button
           type="submit"
-          className="w-full h-12 bg-gray-900 hover:bg-gray-800 text-white font-semibold rounded-xl transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]"
+          className="w-full h-12 bg-gray-900 hover:bg-gray-800 text-white font-semibold transition-all duration-200"
           disabled={loading}
         >
           {loading ? (
@@ -203,17 +248,17 @@ export function AuthForm() {
               <span>Loading...</span>
             </div>
           ) : (
-            isLogin ? 'Sign In' : 'Create Account'
+            isLogin ? 'Sign In' : 'Sign up'
           )}
         </Button>
       </form>
 
-      {/* Switch between login/signup */}
-      <div className="text-center pt-4">
+      {/* Toggle between login/signup */}
+      <div className="text-center">
         <button
           type="button"
           onClick={() => setIsLogin(!isLogin)}
-          className="text-gray-600 hover:text-gray-900 transition-colors duration-200"
+          className="text-gray-600 hover:text-gray-900"
         >
           {isLogin ? "Don't have an account? " : "Already have an account? "}
           <span className="font-semibold text-gray-900 hover:underline">
@@ -222,15 +267,13 @@ export function AuthForm() {
         </button>
       </div>
 
-      {/* Terms */}
-      <div className="text-center text-xs text-gray-500 leading-relaxed">
-        By continuing, you agree to our{' '}
-        <button className="text-gray-700 hover:text-gray-900 underline transition-colors duration-200">
-          Terms of Service
-        </button>{' '}
-        and{' '}
-        <button className="text-gray-700 hover:text-gray-900 underline transition-colors duration-200">
-          Privacy Policy
+      {/* SSO Link */}
+      <div className="text-center pt-2">
+        <button
+          type="button"
+          className="text-sm text-gray-600 hover:text-gray-900 hover:underline"
+        >
+          Sign in with SSO
         </button>
       </div>
     </div>
