@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { 
@@ -104,13 +105,17 @@ export function AppSidebar() {
     <Sidebar className={collapsed ? 'w-14' : 'w-64'} collapsible="offcanvas">
       <SidebarHeader className="p-4 border-b border-sidebar-border">
         <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-r from-green-600 to-teal-600">
-            <Zap className="h-4 w-4 text-white" />
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-black">
+            <img 
+              src="/lovable-uploads/1d9f0f79-340d-4623-89ab-1badcf771fe1.png" 
+              alt="Likemetric Logo" 
+              className="h-6 w-6 object-contain"
+            />
           </div>
           {!collapsed && (
             <div>
-              <h2 className="text-lg font-semibold text-sidebar-foreground">EngageHub</h2>
-              <p className="text-xs text-sidebar-foreground/60">SaaS Engagement</p>
+              <h2 className="text-lg font-bold text-sidebar-foreground">Likemetric</h2>
+              <p className="text-xs text-sidebar-foreground/60">User Engagement</p>
             </div>
           )}
         </div>
