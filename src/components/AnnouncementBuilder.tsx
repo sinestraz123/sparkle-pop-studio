@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Accordion } from '@/components/ui/accordion';
 import { AnnouncementPreview } from './AnnouncementPreview';
 import { ScriptModal } from './ScriptModal';
@@ -26,28 +26,61 @@ export const AnnouncementBuilder: React.FC<AnnouncementBuilderProps> = ({
   isLoading = false,
 }) => {
   const [formData, setFormData] = useState({
-    title: announcement?.title || 'New: Chrome Extension',
-    description: announcement?.description || 'Now you can create leads directly from LinkedIn – or anywhere you find your next prospect.',
-    type: announcement?.type || 'modal',
-    position: announcement?.position || 'center',
-    background_color: announcement?.background_color || '#ffffff',
-    text_color: announcement?.text_color || '#000000',
-    button_color: announcement?.button_color || '#000000',
-    button_text: announcement?.button_text || 'Get the Chrome extension →',
-    button_url: announcement?.button_url || '',
-    image_url: announcement?.image_url || '',
-    video_url: announcement?.video_url || 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-    show_close_button: announcement?.show_close_button ?? true,
-    auto_show: announcement?.auto_show ?? true,
-    delay: announcement?.delay || 2000,
-    status: announcement?.status || 'draft',
+    title: 'New: Chrome Extension',
+    description: 'Now you can create leads directly from LinkedIn – or anywhere you find your next prospect.',
+    type: 'modal',
+    position: 'center',
+    background_color: '#ffffff',
+    text_color: '#000000',
+    button_color: '#000000',
+    button_text: 'Get the Chrome extension →',
+    button_url: '',
+    image_url: '',
+    video_url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    show_close_button: true,
+    auto_show: true,
+    delay: 2000,
+    status: 'draft',
   });
 
   const [showScript, setShowScript] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
-  const [mediaType, setMediaType] = useState<'image' | 'video' | 'none'>(
-    formData.video_url ? 'video' : formData.image_url ? 'image' : 'video'
-  );
+  const [mediaType, setMediaType] = useState<'image' | 'video' | 'none'>('video');
+
+  // Initialize form data from announcement prop when component mounts or announcement changes
+  useEffect(() => {
+    if (announcement) {
+      console.log('Loading announcement data:', announcement);
+      const loadedData = {
+        title: announcement.title || 'New: Chrome Extension',
+        description: announcement.description || 'Now you can create leads directly from LinkedIn – or anywhere you find your next prospect.',
+        type: announcement.type || 'modal',
+        position: announcement.position || 'center',
+        background_color: announcement.background_color || '#ffffff',
+        text_color: announcement.text_color || '#000000',
+        button_color: announcement.button_color || '#000000',
+        button_text: announcement.button_text || 'Get the Chrome extension →',
+        button_url: announcement.button_url || '',
+        image_url: announcement.image_url || '',
+        video_url: announcement.video_url || '',
+        show_close_button: announcement.show_close_button ?? true,
+        auto_show: announcement.auto_show ?? true,
+        delay: announcement.delay || 2000,
+        status: announcement.status || 'draft',
+      };
+      
+      setFormData(loadedData);
+      
+      // Set correct media type based on loaded data
+      if (loadedData.image_url && loadedData.image_url.trim() !== '') {
+        setMediaType('image');
+      } else if (loadedData.video_url && loadedData.video_url.trim() !== '') {
+        setMediaType('video');
+      } else {
+        setMediaType('none');
+      }
+    }
+  }, [announcement]);
 
   const updateFormData = (field: string, value: any) => {
     console.log(`Updating ${field}:`, value);
