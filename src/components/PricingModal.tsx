@@ -88,13 +88,13 @@ export function PricingModal({ open, onOpenChange }: PricingModalProps) {
                 </div>
               )}
               
-              <CardHeader className="text-center pb-4">
-                <CardTitle className="text-xl font-bold">{plan.name}</CardTitle>
-                <div className="mt-4">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-xl font-bold text-left">{plan.name}</CardTitle>
+                <div className="mt-4 text-left">
                   <span className="text-3xl font-bold">{plan.price}</span>
                   <span className="text-sm text-muted-foreground ml-1">{plan.period}</span>
                 </div>
-                <p className="text-sm text-muted-foreground mt-2">{plan.description}</p>
+                <p className="text-sm text-muted-foreground mt-2 text-left">{plan.description}</p>
               </CardHeader>
               
               <CardContent className="space-y-4">
@@ -102,7 +102,7 @@ export function PricingModal({ open, onOpenChange }: PricingModalProps) {
                   {plan.features.map((feature, index) => (
                     <div key={index} className="flex items-start gap-2">
                       <Check className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                      <span className="text-sm">{feature}</span>
+                      <span className="text-sm text-left">{feature}</span>
                     </div>
                   ))}
                 </div>
