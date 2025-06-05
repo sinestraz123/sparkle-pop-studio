@@ -1,94 +1,64 @@
 
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useAuth } from '@/hooks/useAuth';
-import { useToast } from '@/hooks/use-toast';
-import { useChecklist, useChecklists } from '@/hooks/useChecklists';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from './useAuth';
+import { Tables } from '@/integrations/supabase/types';
 
-export const useChecklistPage = () => {
-  const { id } = useParams();
-  const navigate = useNavigate();
+type ChecklistItem = Tables<'checklist_items'>;
+type Checklist = Tables<'checklists'>;
+
+export interface ChecklistWithItems extends Checklist {
+  checklist_items: ChecklistItem[];
+}
+
+export const useChecklist = (id?: string) => {
+  const [checklist, setChecklist] = useState<ChecklistWithItems | null>(null);
+  const [loading, setLoading] = useState(!!id);
+  const [error, setError] = useState<string | null>(null);
   const { user } = useAuth();
-  const { toast } = useToast();
-  const { checklist, loading } = useChecklist(id);
-  const { createChecklist, updateChecklist } = useChecklists();
-  const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    if (!user) {
-      navigate('/auth');
+  const fetchChecklist = async () => {
+    if (!id || !user) {
+      setLoading(false);
       return;
     }
-  }, [user, navigate]);
 
-  const handleSave = async (formData: any) => {
-    if (!user) return;
-
-    setIsLoading(true);
     try {
-      const checklistData = {
-        title: formData.title,
-        description: formData.description,
-        show_progress: formData.show_progress,
-        progress_bar_color: formData.progress_bar_color,
-        button_text: formData.button_text,
-        button_url: formData.button_url,
-        auto_hide: formData.auto_hide,
-        status: formData.status,
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('checklists')
+        .select(`
+          *,
+          checklist_items (*)
+        `)
+        .eq('id', id)
+        .eq('user_id', user.id)
+        .single();
+
+      if (error) throw error;
+      
+      const sortedData = {
+        ...data,
+        checklist_items: data.checklist_items?.sort((a, b) => a.order_index - b.order_index) || []
       };
-
-      let checklistId = id;
-
-      if (id) {
-        // Update existing checklist
-        await updateChecklist(id, checklistData);
-        toast({
-          title: "Success",
-          description: "Checklist updated successfully",
-        });
-      } else {
-        // Create new checklist
-        const newChecklist = await createChecklist(checklistData);
-        checklistId = newChecklist.id;
-        toast({
-          title: "Success",
-          description: "Checklist created successfully",
-        });
-        navigate(`/checklist/${newChecklist.id}`);
-      }
-
-      // Update checklist items if we have a checklist ID
-      if (checklistId && formData.items) {
-        const { updateChecklistItems } = await import('@/hooks/useChecklists');
-        await updateChecklistItems(checklistId, formData.items.map((item: any) => ({
-          title: item.title,
-          description: item.description,
-          media_type: item.media_type,
-          media_url: item.media_url,
-        })));
-      }
-
-    } catch (error) {
-      console.error('Error saving checklist:', error);
-      toast({
-        title: "Error",
-        description: "Failed to save checklist",
-        variant: "destructive",
-      });
+      
+      setChecklist(sortedData);
+    } catch (err) {
+      console.error('Error fetching checklist:', err);
+      setError('Failed to load checklist');
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
-  const handleBack = () => {
-    navigate('/');
-  };
+  useEffect(() => {
+    fetchChecklist();
+  }, [id, user]);
 
   return {
     checklist,
     loading,
-    isLoading,
-    handleSave,
-    handleBack,
+    error,
+    refetch: fetchChecklist,
   };
 };
