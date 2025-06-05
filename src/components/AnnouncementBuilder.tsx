@@ -50,6 +50,7 @@ export const AnnouncementBuilder: React.FC<AnnouncementBuilderProps> = ({
   );
 
   const updateFormData = (field: string, value: any) => {
+    console.log(`Updating ${field}:`, value);
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -72,6 +73,7 @@ export const AnnouncementBuilder: React.FC<AnnouncementBuilderProps> = ({
   };
 
   const handleSave = () => {
+    console.log('Saving announcement with data:', formData);
     onSave(formData);
   };
 
