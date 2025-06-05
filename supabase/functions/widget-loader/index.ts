@@ -70,6 +70,28 @@ serve(async (req) => {
     }).catch(e => console.log('Track failed:', e));
   }
 
+  function handleButtonClick() {
+    trackClick();
+    const buttonAction = data.button_action || 'url';
+    
+    if (buttonAction === 'close') {
+      // Just close the announcement
+      const overlay = document.getElementById('aw-${announcementId}');
+      if (overlay) {
+        overlay.remove();
+        widgetShown = false;
+      }
+    } else if (buttonAction === 'url' && data.button_url) {
+      // Navigate to URL and close
+      window.open(data.button_url, '_blank');
+      const overlay = document.getElementById('aw-${announcementId}');
+      if (overlay) {
+        overlay.remove();
+        widgetShown = false;
+      }
+    }
+  }
+
   // Smart trigger functions
   function trackScrollPercentage() {
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
@@ -128,13 +150,17 @@ serve(async (req) => {
 
     let button = '';
     if (data.button_text) {
-      button = \`<button onclick="trackClick();if('\${data.button_url}')window.open('\${data.button_url}','_blank');" style="width:100%;padding:12px 24px;background:\${data.button_color||'#000'};color:white;border:none;border-radius:6px;font-weight:600;cursor:pointer;margin-top:16px;">\${data.button_text}</button>\`;
+      const buttonAction = data.button_action || 'url';
+      button = \`<button onclick="handleButtonClick();" style="width:100%;padding:12px 24px;background:\${data.button_color||'#000'};color:white;border:none;border-radius:6px;font-weight:600;cursor:pointer;margin-top:16px;">\${data.button_text}</button>\`;
     }
 
     container.innerHTML = \`\${closeBtn}\${media}<div style="padding:24px;"><h2 style="font-size:20px;font-weight:bold;margin:0 0 12px 0;line-height:1.3;">\${data.title}</h2><p style="font-size:14px;line-height:1.5;margin:0 0 16px 0;opacity:0.8;">\${data.description}</p>\${button}</div>\`;
 
     overlay.appendChild(container);
     document.body.appendChild(overlay);
+
+    // Make handleButtonClick available globally for the button
+    window.handleButtonClick = handleButtonClick;
 
     overlay.onclick = (e) => { if (e.target === overlay) { overlay.remove(); widgetShown = false; } };
     

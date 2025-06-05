@@ -4,6 +4,8 @@ import { Type, Upload, Loader2 } from 'lucide-react';
 import { AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
 import { useImageUpload } from '@/hooks/useImageUpload';
 
 interface ContentSectionProps {
@@ -35,6 +37,14 @@ export const ContentSection: React.FC<ContentSectionProps> = ({
         updateFormData('video_url', '');
         onMediaTypeChange('image');
       }
+    }
+  };
+
+  const handleButtonActionChange = (value: string) => {
+    updateFormData('button_action', value);
+    // Clear button URL if action is 'close'
+    if (value === 'close') {
+      updateFormData('button_url', '');
     }
   };
 
@@ -159,13 +169,39 @@ export const ContentSection: React.FC<ContentSectionProps> = ({
         </div>
 
         <div>
-          <label className="text-sm font-medium mb-2 block">Button URL</label>
-          <Input
-            value={formData.button_url}
-            onChange={(e) => updateFormData('button_url', e.target.value)}
-            placeholder="https://example.com"
-          />
+          <label className="text-sm font-medium mb-3 block">Button Action</label>
+          <RadioGroup
+            value={formData.button_action || 'url'}
+            onValueChange={handleButtonActionChange}
+            className="space-y-2"
+          >
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="url" id="action-url" />
+              <Label htmlFor="action-url" className="text-sm">Navigate to URL</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="close" id="action-close" />
+              <Label htmlFor="action-close" className="text-sm">Just close popup</Label>
+            </div>
+          </RadioGroup>
+          <p className="text-xs text-gray-500 mt-2">
+            {formData.button_action === 'close' 
+              ? 'Button will close the announcement when clicked'
+              : 'Button will navigate to the URL below when clicked'
+            }
+          </p>
         </div>
+
+        {(formData.button_action === 'url' || !formData.button_action) && (
+          <div>
+            <label className="text-sm font-medium mb-2 block">Button URL</label>
+            <Input
+              value={formData.button_url}
+              onChange={(e) => updateFormData('button_url', e.target.value)}
+              placeholder="https://example.com"
+            />
+          </div>
+        )}
 
         <div className="grid grid-cols-2 gap-3">
           <div>

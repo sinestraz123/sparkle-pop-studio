@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Accordion } from '@/components/ui/accordion';
 import { AnnouncementPreview } from './AnnouncementPreview';
@@ -34,6 +35,7 @@ export const AnnouncementBuilder: React.FC<AnnouncementBuilderProps> = ({
     button_color: '#000000',
     button_text: 'Get the Chrome extension →',
     button_url: '',
+    button_action: 'url',
     image_url: '',
     video_url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
     show_close_button: true,
@@ -61,6 +63,7 @@ export const AnnouncementBuilder: React.FC<AnnouncementBuilderProps> = ({
         button_color: announcement.button_color || '#000000',
         button_text: announcement.button_text || 'Get the Chrome extension →',
         button_url: announcement.button_url || '',
+        button_action: announcement.button_action || 'url',
         image_url: announcement.image_url || '',
         video_url: announcement.video_url || '',
         show_close_button: announcement.show_close_button ?? true,

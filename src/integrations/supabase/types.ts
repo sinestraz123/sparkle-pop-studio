@@ -13,6 +13,7 @@ export type Database = {
         Row: {
           auto_show: boolean | null
           background_color: string | null
+          button_action: string
           button_color: string | null
           button_text: string | null
           button_url: string | null
@@ -37,6 +38,7 @@ export type Database = {
         Insert: {
           auto_show?: boolean | null
           background_color?: string | null
+          button_action?: string
           button_color?: string | null
           button_text?: string | null
           button_url?: string | null
@@ -61,6 +63,7 @@ export type Database = {
         Update: {
           auto_show?: boolean | null
           background_color?: string | null
+          button_action?: string
           button_color?: string | null
           button_text?: string | null
           button_url?: string | null
