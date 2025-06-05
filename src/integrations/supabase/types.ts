@@ -176,6 +176,45 @@ export type Database = {
         }
         Relationships: []
       }
+      news_items: {
+        Row: {
+          category: string | null
+          content: string | null
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          status: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category?: string | null
+          content?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category?: string | null
+          content?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -200,6 +239,155 @@ export type Database = {
           full_name?: string | null
           id?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      survey_questions: {
+        Row: {
+          created_at: string
+          id: string
+          options: Json | null
+          order_index: number
+          question_text: string
+          question_type: string
+          required: boolean | null
+          survey_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          options?: Json | null
+          order_index?: number
+          question_text: string
+          question_type?: string
+          required?: boolean | null
+          survey_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          options?: Json | null
+          order_index?: number
+          question_text?: string
+          question_type?: string
+          required?: boolean | null
+          survey_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "survey_questions_survey_id_fkey"
+            columns: ["survey_id"]
+            isOneToOne: false
+            referencedRelation: "surveys"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      survey_responses: {
+        Row: {
+          id: string
+          question_id: string
+          response_text: string | null
+          response_value: number | null
+          submitted_at: string
+          survey_id: string
+        }
+        Insert: {
+          id?: string
+          question_id: string
+          response_text?: string | null
+          response_value?: number | null
+          submitted_at?: string
+          survey_id: string
+        }
+        Update: {
+          id?: string
+          question_id?: string
+          response_text?: string | null
+          response_value?: number | null
+          submitted_at?: string
+          survey_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "survey_responses_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "survey_questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "survey_responses_survey_id_fkey"
+            columns: ["survey_id"]
+            isOneToOne: false
+            referencedRelation: "surveys"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      surveys: {
+        Row: {
+          auto_show: boolean | null
+          background_color: string | null
+          button_color: string | null
+          created_at: string
+          delay: number | null
+          description: string | null
+          id: string
+          position: string
+          responses: number | null
+          show_close_button: boolean | null
+          status: string
+          submit_button_text: string | null
+          text_color: string | null
+          title: string
+          type: string
+          updated_at: string
+          user_id: string
+          views: number | null
+        }
+        Insert: {
+          auto_show?: boolean | null
+          background_color?: string | null
+          button_color?: string | null
+          created_at?: string
+          delay?: number | null
+          description?: string | null
+          id?: string
+          position?: string
+          responses?: number | null
+          show_close_button?: boolean | null
+          status?: string
+          submit_button_text?: string | null
+          text_color?: string | null
+          title: string
+          type?: string
+          updated_at?: string
+          user_id: string
+          views?: number | null
+        }
+        Update: {
+          auto_show?: boolean | null
+          background_color?: string | null
+          button_color?: string | null
+          created_at?: string
+          delay?: number | null
+          description?: string | null
+          id?: string
+          position?: string
+          responses?: number | null
+          show_close_button?: boolean | null
+          status?: string
+          submit_button_text?: string | null
+          text_color?: string | null
+          title?: string
+          type?: string
+          updated_at?: string
+          user_id?: string
+          views?: number | null
         }
         Relationships: []
       }

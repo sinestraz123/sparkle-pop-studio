@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { 
@@ -6,7 +5,6 @@ import {
   Plus, 
   Settings, 
   BarChart3, 
-  Users, 
   Bell,
   HelpCircle,
   Zap,
@@ -34,7 +32,6 @@ const mainItems = [
   { title: 'Announcements', url: '/builder', icon: Plus },
   { title: 'Checklist', url: '/checklist', icon: CheckSquare },
   { title: 'Analytics', url: '/analytics', icon: BarChart3 },
-  { title: 'Audience', url: '/audience', icon: Users },
 ];
 
 const settingsItems = [

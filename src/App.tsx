@@ -12,6 +12,7 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 import Dashboard from "./pages/Dashboard";
 import Builder from "./pages/Builder";
 import Checklist from "./pages/Checklist";
+import Analytics from "./pages/Analytics";
 import Settings from "./pages/Settings";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
@@ -41,6 +42,7 @@ const App = () => (
                           <Route path="/builder/:id" element={<Builder />} />
                           <Route path="/checklist" element={<Checklist />} />
                           <Route path="/checklist/:id" element={<Checklist />} />
+                          <Route path="/analytics" element={<Analytics />} />
                           <Route path="/settings" element={<Settings />} />
                           <Route path="*" element={<NotFound />} />
                         </Routes>
