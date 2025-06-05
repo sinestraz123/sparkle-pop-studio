@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Chrome, Github, Mail, Lock, User, Eye, EyeOff } from 'lucide-react';
+import { Chrome, Mail, Lock, User, Eye, EyeOff } from 'lucide-react';
 
 export function AuthForm() {
   const [isLogin, setIsLogin] = useState(false);
@@ -89,24 +89,6 @@ export function AuthForm() {
     }
   };
 
-  const handleGithubAuth = async () => {
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'github',
-        options: {
-          redirectTo: `${window.location.origin}/`
-        }
-      });
-      if (error) throw error;
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
-    }
-  };
-
   return (
     <div className="w-full space-y-6">
       {/* Header */}
@@ -129,16 +111,6 @@ export function AuthForm() {
         >
           <Chrome className="w-5 h-5 mr-3 text-gray-600" />
           Continue with Google
-        </Button>
-
-        <Button
-          onClick={handleGithubAuth}
-          variant="outline"
-          className="w-full h-12 border-2 border-gray-300 hover:border-gray-400 bg-white hover:bg-gray-50 text-gray-700 font-medium transition-all duration-200"
-          type="button"
-        >
-          <Github className="w-5 h-5 mr-3 text-gray-600" />
-          Continue with GitHub
         </Button>
       </div>
 
@@ -264,16 +236,6 @@ export function AuthForm() {
           <span className="font-semibold text-gray-900 hover:underline">
             {isLogin ? 'Sign up' : 'Sign in'}
           </span>
-        </button>
-      </div>
-
-      {/* SSO Link */}
-      <div className="text-center pt-2">
-        <button
-          type="button"
-          className="text-sm text-gray-600 hover:text-gray-900 hover:underline"
-        >
-          Sign in with SSO
         </button>
       </div>
     </div>
