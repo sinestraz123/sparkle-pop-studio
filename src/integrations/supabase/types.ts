@@ -27,6 +27,7 @@ export type Database = {
           status: string
           text_color: string | null
           title: string
+          trigger_type: string
           type: string
           updated_at: string
           user_id: string
@@ -50,6 +51,7 @@ export type Database = {
           status?: string
           text_color?: string | null
           title: string
+          trigger_type?: string
           type?: string
           updated_at?: string
           user_id: string
@@ -73,6 +75,7 @@ export type Database = {
           status?: string
           text_color?: string | null
           title?: string
+          trigger_type?: string
           type?: string
           updated_at?: string
           user_id?: string

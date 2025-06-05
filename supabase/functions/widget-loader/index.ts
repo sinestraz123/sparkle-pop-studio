@@ -50,7 +50,7 @@ serve(async (req) => {
       .update({ views: (announcement.views || 0) + 1 })
       .eq('id', announcementId);
 
-    // Generate the widget JavaScript
+    // Generate the enhanced widget JavaScript with smart triggers
     const widgetScript = `
 (function() {
   if (window.AnnouncementWidget_${announcementId}) return;
@@ -59,6 +59,8 @@ serve(async (req) => {
   const data = ${JSON.stringify(announcement)};
   const API_BASE_URL = 'https://qpelvplxusbfyacgipgp.supabase.co/functions/v1';
   let widgetShown = false;
+  let pageStartTime = Date.now();
+  let maxScroll = 0;
 
   function trackClick() {
     fetch(API_BASE_URL + '/widget-click', {
@@ -66,6 +68,29 @@ serve(async (req) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ announcementId: '${announcementId}' })
     }).catch(e => console.log('Track failed:', e));
+  }
+
+  // Smart trigger functions
+  function trackScrollPercentage() {
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const scrollPercent = Math.round((scrollTop / docHeight) * 100);
+    maxScroll = Math.max(maxScroll, scrollPercent);
+    return scrollPercent;
+  }
+
+  function trackTimeOnPage() {
+    return Math.round((Date.now() - pageStartTime) / 1000);
+  }
+
+  function setupExitIntent() {
+    let exitIntentShown = false;
+    document.addEventListener('mouseleave', function(e) {
+      if (e.clientY <= 0 && !exitIntentShown && !widgetShown) {
+        exitIntentShown = true;
+        createAnnouncement();
+      }
+    });
   }
 
   function createAnnouncement() {
@@ -123,10 +148,41 @@ serve(async (req) => {
     document.addEventListener('keydown', handleEscape);
   }
 
-  // Auto-show or expose global function
-  if (data.auto_show !== false) {
-    setTimeout(createAnnouncement, data.delay || 2000);
-  } else {
+  // Initialize smart triggers based on trigger_type
+  const triggerType = data.trigger_type || 'auto_show';
+  
+  switch (triggerType) {
+    case 'auto_show':
+      if (data.auto_show !== false) {
+        setTimeout(createAnnouncement, data.delay || 2000);
+      }
+      break;
+      
+    case 'time_on_page':
+      const targetTime = (data.delay || 30000) / 1000; // Convert to seconds
+      setInterval(() => {
+        if (!widgetShown && trackTimeOnPage() >= targetTime) {
+          createAnnouncement();
+        }
+      }, 1000);
+      break;
+      
+    case 'scroll_percent':
+      const targetScroll = data.delay || 50; // Percentage
+      window.addEventListener('scroll', () => {
+        if (!widgetShown && trackScrollPercentage() >= targetScroll) {
+          createAnnouncement();
+        }
+      });
+      break;
+      
+    case 'exit_intent':
+      setupExitIntent();
+      break;
+  }
+
+  // Expose manual trigger function for non-auto triggers
+  if (triggerType !== 'auto_show') {
     window.showAnnouncement = createAnnouncement;
   }
 

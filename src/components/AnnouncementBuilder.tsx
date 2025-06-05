@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Accordion } from '@/components/ui/accordion';
 import { AnnouncementPreview } from './AnnouncementPreview';
@@ -41,6 +40,7 @@ export const AnnouncementBuilder: React.FC<AnnouncementBuilderProps> = ({
     auto_show: true,
     delay: 2000,
     status: 'draft',
+    trigger_type: 'auto_show',
   });
 
   const [showScript, setShowScript] = useState(false);
@@ -67,6 +67,7 @@ export const AnnouncementBuilder: React.FC<AnnouncementBuilderProps> = ({
         auto_show: announcement.auto_show ?? true,
         delay: announcement.delay || 2000,
         status: announcement.status || 'draft',
+        trigger_type: announcement.trigger_type || 'auto_show',
       };
       
       setFormData(loadedData);
