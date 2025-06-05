@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Copy, Check, Shield, Zap, Globe } from 'lucide-react';
+import { Copy, Check, Shield, Zap, Globe, AlertTriangle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface ScriptModalProps {
@@ -28,19 +28,53 @@ export const ScriptModal: React.FC<ScriptModalProps> = ({ isOpen, onClose, annou
   js.async=1;
   js.crossOrigin='anonymous';
   js.src='https://qpelvplxusbfyacgipgp.supabase.co/functions/v1/widget-loader?id='+id;
-  js.onerror=function(){console.warn('Announcement widget failed to load')};
+  js.onerror=function(){console.error('Likemetric widget failed to load')};
   d.head.appendChild(js);
 })(window,document,'script','${announcementId}');
 </script>`;
   };
 
-  const handleCopy = async () => {
+  const generateTestScript = () => {
+    const announcementId = announcement.id || 'YOUR_ANNOUNCEMENT_ID';
+    
+    return `<!-- Debug Version - Use this for testing -->
+<script>
+console.log('Loading Likemetric widget with ID: ${announcementId}');
+(function(w,d,s,id){
+  if(w['aw_'+id]) {
+    console.log('Widget already loaded');
+    return;
+  }
+  w['aw_'+id]=1;
+  var js=d.createElement(s);
+  js.async=1;
+  js.crossOrigin='anonymous';
+  js.src='https://qpelvplxusbfyacgipgp.supabase.co/functions/v1/widget-loader?id='+id;
+  js.onload=function(){console.log('Widget script loaded successfully')};
+  js.onerror=function(){console.error('Widget script failed to load')};
+  d.head.appendChild(js);
+  console.log('Widget script added to page');
+})(window,document,'script','${announcementId}');
+
+// Manual trigger for testing
+setTimeout(function() {
+  if (window.showAnnouncement) {
+    console.log('Manual trigger available - call showAnnouncement() in console');
+  } else {
+    console.warn('Manual trigger not available - check for errors above');
+  }
+}, 3000);
+</script>`;
+  };
+
+  const handleCopy = async (scriptType = 'production') => {
     try {
-      await navigator.clipboard.writeText(generateScript());
+      const script = scriptType === 'debug' ? generateTestScript() : generateScript();
+      await navigator.clipboard.writeText(script);
       setCopied(true);
       toast({
         title: "Copied!",
-        description: "Production-ready script copied to clipboard",
+        description: `${scriptType === 'debug' ? 'Debug' : 'Production'} script copied to clipboard`,
       });
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
@@ -63,29 +97,88 @@ export const ScriptModal: React.FC<ScriptModalProps> = ({ isOpen, onClose, annou
         </DialogHeader>
         
         <div className="space-y-6">
-          <div className="bg-blue-50 p-4 rounded-lg">
-            <p className="text-sm text-blue-800 font-medium mb-2">
-              🚀 This script is now production-ready with enterprise-grade features
-            </p>
-            <p className="text-xs text-blue-700">
-              Paste this lightweight script before the closing &lt;/body&gt; tag on your website.
-            </p>
+          {!announcement.id && (
+            <div className="bg-red-50 p-4 rounded-lg border border-red-200">
+              <div className="flex items-start gap-3">
+                <AlertTriangle className="h-5 w-5 text-red-600 mt-0.5" />
+                <div>
+                  <p className="text-sm text-red-800 font-medium mb-2">
+                    ⚠️ Important: Save this announcement first!
+                  </p>
+                  <p className="text-xs text-red-700">
+                    You need to save this announcement to get the actual widget script with the correct ID.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Troubleshooting Section */}
+          <div className="bg-amber-50 p-4 rounded-lg border border-amber-200">
+            <h4 className="font-medium text-amber-900 mb-3 flex items-center gap-2">
+              <AlertTriangle className="h-4 w-4" />
+              🔧 Widget Not Showing? Try These Steps:
+            </h4>
+            <div className="space-y-2 text-sm text-amber-800">
+              <p><strong>1. Use the Debug Version:</strong> Copy the debug script below to see detailed console logs</p>
+              <p><strong>2. Check Browser Console:</strong> Open DevTools (F12) → Console tab for error messages</p>
+              <p><strong>3. Manual Test:</strong> After 3 seconds, type <code className="bg-amber-100 px-1 rounded">showAnnouncement()</code> in console</p>
+              <p><strong>4. Check Announcement Status:</strong> Ensure your announcement is set to "Active" status</p>
+              <p><strong>5. Domain Issues:</strong> Try on a different domain or localhost first</p>
+            </div>
           </div>
-          
-          <div className="relative">
+
+          {/* Debug Script */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <h4 className="font-medium text-gray-900">🐛 Debug Version (Use for Testing)</h4>
+              <Button
+                onClick={() => handleCopy('debug')}
+                size="sm"
+                variant="outline"
+                className="bg-amber-50 border-amber-200 hover:bg-amber-100"
+              >
+                {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                Copy Debug Script
+              </Button>
+            </div>
+            <Textarea
+              value={generateTestScript()}
+              readOnly
+              className="font-mono text-xs min-h-[120px] resize-none bg-amber-50 border-amber-200"
+            />
+          </div>
+
+          {/* Production Script */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <h4 className="font-medium text-gray-900">🚀 Production Version</h4>
+              <Button
+                onClick={() => handleCopy('production')}
+                size="sm"
+                variant="outline"
+              >
+                {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                Copy Production Script
+              </Button>
+            </div>
             <Textarea
               value={generateScript()}
               readOnly
-              className="font-mono text-xs min-h-[120px] resize-none bg-gray-50"
+              className="font-mono text-xs min-h-[100px] resize-none bg-gray-50"
             />
-            <Button
-              onClick={handleCopy}
-              size="sm"
-              className="absolute top-2 right-2"
-              variant="outline"
-            >
-              {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-            </Button>
+          </div>
+
+          <div className="bg-blue-50 p-4 rounded-lg">
+            <p className="text-sm text-blue-800 font-medium mb-2">
+              📍 Installation Instructions
+            </p>
+            <ol className="text-xs text-blue-700 space-y-1 ml-4">
+              <li>1. Copy the script above</li>
+              <li>2. Paste it before the closing &lt;/body&gt; tag on your website</li>
+              <li>3. Save and reload your page</li>
+              <li>4. Check browser console for any errors</li>
+            </ol>
           </div>
 
           {/* Production Features Grid */}
@@ -130,64 +223,23 @@ export const ScriptModal: React.FC<ScriptModalProps> = ({ isOpen, onClose, annou
             </div>
           </div>
 
-          {/* Advanced Features */}
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <h4 className="font-medium text-gray-900 mb-3">🛠️ Advanced Features</h4>
-            <div className="grid md:grid-cols-2 gap-4 text-sm">
-              <div>
-                <h5 className="font-medium text-gray-800 mb-1">Error Handling</h5>
-                <ul className="text-xs text-gray-600 space-y-1">
-                  <li>• Automatic retry logic for failed requests</li>
-                  <li>• Graceful degradation on errors</li>
-                  <li>• Silent analytics failures</li>
-                  <li>• Console warnings for debugging</li>
-                </ul>
-              </div>
-              <div>
-                <h5 className="font-medium text-gray-800 mb-1">Smart Triggers</h5>
-                <ul className="text-xs text-gray-600 space-y-1">
-                  <li>• Exit intent detection</li>
-                  <li>• Time-based triggers</li>
-                  <li>• Scroll percentage tracking</li>
-                  <li>• Manual trigger functions</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-
           {/* Manual Control */}
-          <div className="bg-amber-50 p-4 rounded-lg">
-            <h4 className="font-medium text-amber-900 mb-2">🎛️ Manual Control</h4>
-            <div className="grid md:grid-cols-2 gap-4 text-xs text-amber-800">
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <h4 className="font-medium text-gray-900 mb-2">🎛️ Testing & Manual Control</h4>
+            <div className="grid md:grid-cols-2 gap-4 text-xs text-gray-700">
               <div>
                 <strong>Trigger manually:</strong>
-                <code className="block bg-amber-100 p-1 rounded mt-1">showAnnouncement()</code>
+                <code className="block bg-gray-100 p-1 rounded mt-1">showAnnouncement()</code>
               </div>
               <div>
                 <strong>Refresh with latest data:</strong>
-                <code className="block bg-amber-100 p-1 rounded mt-1">refreshAnnouncement()</code>
+                <code className="block bg-gray-100 p-1 rounded mt-1">refreshAnnouncement()</code>
               </div>
             </div>
+            <p className="text-xs text-gray-600 mt-2">
+              Open browser console and run these commands to test the widget manually.
+            </p>
           </div>
-
-          {/* Analytics */}
-          <div className="bg-indigo-50 p-4 rounded-lg">
-            <h4 className="font-medium text-indigo-900 mb-2">📊 Analytics & Tracking</h4>
-            <ul className="text-xs text-indigo-800 space-y-1">
-              <li>• <strong>Views</strong> - Automatically tracked when widget loads</li>
-              <li>• <strong>Clicks</strong> - Tracked with retry logic for reliability</li>
-              <li>• <strong>Engagement</strong> - Scroll and time tracking</li>
-              <li>• <strong>Errors</strong> - Comprehensive error reporting</li>
-            </ul>
-          </div>
-
-          {!announcement.id && (
-            <div className="bg-red-50 p-3 rounded-lg">
-              <p className="text-sm text-red-800">
-                <strong>⚠️ Important:</strong> Save this announcement first to get the actual widget script with the correct ID.
-              </p>
-            </div>
-          )}
         </div>
       </DialogContent>
     </Dialog>

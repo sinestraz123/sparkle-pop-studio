@@ -5,6 +5,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
 }
 
 // Security: HTML sanitization function
@@ -38,8 +39,11 @@ serve(async (req) => {
     const url = new URL(req.url);
     const announcementId = url.searchParams.get('id');
 
+    console.log('Widget loader called with ID:', announcementId);
+
     if (!announcementId) {
-      return new Response('// Missing announcement ID', { 
+      console.log('Missing announcement ID');
+      return new Response('console.error("Likemetric Widget: Missing announcement ID");', { 
         status: 400, 
         headers: { ...corsHeaders, 'Content-Type': 'text/javascript' } 
       });
@@ -48,7 +52,8 @@ serve(async (req) => {
     // Security: Validate announcement ID format (UUID)
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
     if (!uuidRegex.test(announcementId)) {
-      return new Response('// Invalid announcement ID format', { 
+      console.log('Invalid announcement ID format:', announcementId);
+      return new Response('console.error("Likemetric Widget: Invalid announcement ID format");', { 
         status: 400, 
         headers: { ...corsHeaders, 'Content-Type': 'text/javascript' } 
       });
@@ -69,26 +74,38 @@ serve(async (req) => {
       .single();
 
     if (error || !announcement) {
-      return new Response('// Announcement not found or not active', { 
+      console.log('Announcement not found or not active:', error);
+      return new Response('console.warn("Likemetric Widget: Announcement not found or not active");', { 
         headers: { ...corsHeaders, 'Content-Type': 'text/javascript' } 
       });
     }
 
-    // Increment view count in background
+    console.log('Found announcement:', announcement.title);
+
+    // Increment view count in background (don't await to avoid blocking)
     supabase
       .from('announcements')
       .update({ views: (announcement.views || 0) + 1 })
       .eq('id', announcementId)
-      .then(() => {}).catch(() => {}); // Silent fail for analytics
+      .then(() => {
+        console.log('View count updated');
+      }).catch((err) => {
+        console.log('Failed to update view count:', err);
+      });
 
-    // Generate the production-ready widget JavaScript
+    // Generate the production-ready widget JavaScript with enhanced debugging
     const widgetScript = `
 (function() {
   'use strict';
   
+  console.log('Likemetric Widget: Loading...');
+  
   // Security: Prevent multiple instances
   const widgetKey = 'aw_${announcementId}';
-  if (window[widgetKey]) return;
+  if (window[widgetKey]) {
+    console.log('Likemetric Widget: Already loaded, skipping');
+    return;
+  }
   window[widgetKey] = true;
 
   // Configuration with fallbacks
@@ -99,6 +116,8 @@ serve(async (req) => {
     THROTTLE_MS: 100,
     ANIMATION_DURATION: 300
   };
+
+  console.log('Likemetric Widget: Config loaded', CONFIG);
 
   // Sanitized announcement data
   const data = {
@@ -116,6 +135,8 @@ serve(async (req) => {
     trigger_type: ${JSON.stringify(announcement.trigger_type || 'auto_show')},
     delay: ${Math.max(0, Math.min(60000, announcement.delay || 2000))} // Clamp between 0-60s
   };
+
+  console.log('Likemetric Widget: Data loaded', data);
 
   // State management
   let widgetShown = false;
@@ -145,18 +166,21 @@ serve(async (req) => {
 
   // Error handling utility
   function handleError(error, context) {
-    console.warn('Announcement Widget Error:', context, error);
-    // Could send to analytics endpoint here
+    console.warn('Likemetric Widget Error:', context, error);
   }
 
   // Analytics with retry logic
   function trackClick() {
     if (retryCount >= CONFIG.MAX_RETRIES) return;
     
+    console.log('Likemetric Widget: Tracking click');
+    
     fetch(CONFIG.API_BASE_URL + '/widget-click', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ announcementId: CONFIG.WIDGET_ID })
+    }).then(response => {
+      console.log('Likemetric Widget: Click tracked successfully');
     }).catch(error => {
       retryCount++;
       handleError(error, 'click tracking');
@@ -170,6 +194,8 @@ serve(async (req) => {
   function handleButtonClick(event) {
     event.preventDefault();
     event.stopPropagation();
+    
+    console.log('Likemetric Widget: Button clicked');
     
     try {
       trackClick();
@@ -187,6 +213,7 @@ serve(async (req) => {
 
   // Enhanced close function
   function closeWidget() {
+    console.log('Likemetric Widget: Closing widget');
     const overlay = document.getElementById('aw-' + CONFIG.WIDGET_ID);
     if (overlay) {
       overlay.style.opacity = '0';
@@ -242,7 +269,12 @@ serve(async (req) => {
 
   // Enhanced announcement creation with accessibility
   function createAnnouncement() {
-    if (widgetShown) return;
+    if (widgetShown) {
+      console.log('Likemetric Widget: Widget already shown, skipping');
+      return;
+    }
+    
+    console.log('Likemetric Widget: Creating announcement');
     
     try {
       widgetShown = true;
@@ -436,6 +468,8 @@ serve(async (req) => {
         if (firstFocusable) firstFocusable.focus();
       });
 
+      console.log('Likemetric Widget: Announcement created and displayed');
+
     } catch (error) {
       handleError(error, 'widget creation');
       widgetShown = false;
@@ -446,13 +480,20 @@ serve(async (req) => {
   try {
     const triggerType = data.trigger_type;
     
+    console.log('Likemetric Widget: Setting up trigger type:', triggerType);
+    
     switch (triggerType) {
       case 'auto_show':
-        setTimeout(createAnnouncement, data.delay);
+        console.log('Likemetric Widget: Auto-show trigger with delay:', data.delay);
+        setTimeout(() => {
+          console.log('Likemetric Widget: Auto-show delay completed, creating announcement');
+          createAnnouncement();
+        }, data.delay);
         break;
         
       case 'time_on_page':
         const targetTime = Math.max(1, data.delay / 1000);
+        console.log('Likemetric Widget: Time on page trigger with target:', targetTime, 'seconds');
         const timeInterval = setInterval(() => {
           if (!widgetShown && trackTimeOnPage() >= targetTime) {
             createAnnouncement();
@@ -464,6 +505,7 @@ serve(async (req) => {
         
       case 'scroll_percent':
         const targetScroll = Math.max(0, Math.min(100, data.delay || 50));
+        console.log('Likemetric Widget: Scroll percent trigger with target:', targetScroll, '%');
         const handleScroll = () => {
           if (!widgetShown && trackScrollPercentage() >= targetScroll) {
             createAnnouncement();
@@ -474,18 +516,26 @@ serve(async (req) => {
         break;
         
       case 'exit_intent':
+        console.log('Likemetric Widget: Exit intent trigger');
         setupExitIntent();
+        break;
+        
+      default:
+        console.log('Likemetric Widget: Unknown trigger type, defaulting to auto-show');
+        setTimeout(createAnnouncement, data.delay);
         break;
     }
 
-    // Expose manual trigger for non-auto triggers
-    if (triggerType !== 'auto_show') {
-      window.showAnnouncement = createAnnouncement;
-      cleanupFunctions.push(() => delete window.showAnnouncement);
-    }
+    // Expose manual trigger for testing
+    window.showAnnouncement = () => {
+      console.log('Likemetric Widget: Manual trigger called');
+      createAnnouncement();
+    };
+    cleanupFunctions.push(() => delete window.showAnnouncement);
 
     // Expose refresh function
     window.refreshAnnouncement = () => {
+      console.log('Likemetric Widget: Refresh called');
       cleanup();
       widgetShown = false;
       const script = document.createElement('script');
@@ -498,6 +548,8 @@ serve(async (req) => {
     window.addEventListener('beforeunload', cleanup);
     cleanupFunctions.push(() => window.removeEventListener('beforeunload', cleanup));
 
+    console.log('Likemetric Widget: Initialization complete');
+
   } catch (error) {
     handleError(error, 'initialization');
   }
@@ -507,14 +559,14 @@ serve(async (req) => {
       headers: { 
         ...corsHeaders, 
         'Content-Type': 'text/javascript',
-        'Cache-Control': 'public, max-age=300, s-maxage=600', // Enhanced caching
+        'Cache-Control': 'public, max-age=60, s-maxage=60', // Reduced cache time for debugging
         'Content-Security-Policy': "default-src 'self' 'unsafe-inline' 'unsafe-eval' https:; img-src * data: blob:; media-src * data: blob:;"
       } 
     });
 
   } catch (error) {
     console.error('Widget loader error:', error);
-    return new Response('// Widget loading failed - please try again later', { 
+    return new Response('console.error("Likemetric Widget: Loading failed - " + ' + JSON.stringify(error.message) + ');', { 
       status: 500, 
       headers: { ...corsHeaders, 'Content-Type': 'text/javascript' } 
     });
