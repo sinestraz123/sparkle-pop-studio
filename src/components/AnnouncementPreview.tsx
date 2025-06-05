@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -7,6 +8,11 @@ interface AnnouncementPreviewProps {
 }
 
 export const AnnouncementPreview: React.FC<AnnouncementPreviewProps> = ({ announcement }) => {
+  console.log('AnnouncementPreview rendering with:', { 
+    image_url: announcement.image_url,
+    video_url: announcement.video_url 
+  });
+
   const getPositionClasses = () => {
     switch (announcement.position) {
       case 'top':
@@ -55,7 +61,9 @@ export const AnnouncementPreview: React.FC<AnnouncementPreviewProps> = ({ announ
   };
 
   const renderMedia = () => {
-    if (announcement.video_url) {
+    console.log('Rendering media:', { video_url: announcement.video_url, image_url: announcement.image_url });
+    
+    if (announcement.video_url && announcement.video_url.trim() !== '') {
       const embedUrl = getVideoEmbedUrl(announcement.video_url);
       const isDirectVideo = !embedUrl.includes('youtube.com') && !embedUrl.includes('vimeo.com');
       
@@ -81,18 +89,27 @@ export const AnnouncementPreview: React.FC<AnnouncementPreviewProps> = ({ announ
       );
     }
     
-    if (announcement.image_url) {
+    if (announcement.image_url && announcement.image_url.trim() !== '') {
+      console.log('Rendering image with URL:', announcement.image_url);
       return (
-        <div className="w-full h-48 bg-gradient-to-br from-green-400 via-blue-500 to-red-500 relative overflow-hidden rounded-t-lg">
+        <div className="w-full h-48 relative overflow-hidden rounded-t-lg">
           <img 
             src={announcement.image_url} 
             alt="Announcement media"
             className="w-full h-full object-cover"
+            onError={(e) => {
+              console.error('Image failed to load:', announcement.image_url);
+              console.error('Error details:', e);
+            }}
+            onLoad={() => {
+              console.log('Image loaded successfully:', announcement.image_url);
+            }}
           />
         </div>
       );
     }
     
+    console.log('No media to render');
     return null;
   };
 

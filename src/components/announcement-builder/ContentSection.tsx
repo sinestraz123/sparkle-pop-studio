@@ -27,8 +27,10 @@ export const ContentSection: React.FC<ContentSectionProps> = ({
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      console.log('Starting image upload...', file.name);
       const imageUrl = await uploadImage(file);
       if (imageUrl) {
+        console.log('Image uploaded successfully:', imageUrl);
         updateFormData('image_url', imageUrl);
         updateFormData('video_url', '');
         onMediaTypeChange('image');
