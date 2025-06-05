@@ -44,45 +44,27 @@ export default function Auth() {
   }
 
   return (
-    <div className="min-h-screen flex">
-      {/* Left side - Branded area */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-green-600 to-teal-700 relative overflow-hidden">
-        <div className="absolute inset-0 bg-black/10"></div>
-        <div className="relative z-10 flex flex-col justify-center items-center text-white p-12">
-          <div className="mb-8">
-            <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mb-6 backdrop-blur-sm">
-              <span className="text-white font-bold text-2xl">L</span>
-            </div>
-            <h1 className="text-4xl font-bold mb-4">Welcome to Likemetric</h1>
-            <p className="text-xl text-green-100 max-w-md text-center leading-relaxed">
-              The modern platform for building engaging announcements and measuring user interactions.
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 gap-6 max-w-sm">
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
-              <h3 className="font-semibold mb-2">📊 Analytics Dashboard</h3>
-              <p className="text-sm text-green-100">Track engagement and user interactions in real-time</p>
-            </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
-              <h3 className="font-semibold mb-2">🎯 Smart Targeting</h3>
-              <p className="text-sm text-green-100">Deliver personalized content to the right audience</p>
-            </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
-              <h3 className="font-semibold mb-2">🚀 Easy Integration</h3>
-              <p className="text-sm text-green-100">Simple setup with powerful customization options</p>
-            </div>
-          </div>
-        </div>
-        
-        {/* Decorative elements */}
-        <div className="absolute top-20 left-20 w-32 h-32 bg-white/10 rounded-full blur-xl"></div>
-        <div className="absolute bottom-20 right-20 w-40 h-40 bg-white/5 rounded-full blur-xl"></div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Background decorative elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-100/40 to-purple-100/40 rounded-full blur-3xl"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-green-100/40 to-blue-100/40 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-purple-100/20 to-pink-100/20 rounded-full blur-3xl"></div>
       </div>
 
-      {/* Right side - Auth form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-gray-50">
-        <div className="w-full max-w-md">
+      {/* Floating dots pattern */}
+      <div className="absolute inset-0 opacity-30">
+        <div className="absolute top-20 left-20 w-2 h-2 bg-gray-300 rounded-full"></div>
+        <div className="absolute top-40 right-32 w-1 h-1 bg-gray-400 rounded-full"></div>
+        <div className="absolute bottom-32 left-40 w-1.5 h-1.5 bg-gray-300 rounded-full"></div>
+        <div className="absolute bottom-20 right-20 w-2 h-2 bg-gray-400 rounded-full"></div>
+        <div className="absolute top-1/3 left-1/4 w-1 h-1 bg-gray-300 rounded-full"></div>
+        <div className="absolute top-2/3 right-1/4 w-1.5 h-1.5 bg-gray-400 rounded-full"></div>
+      </div>
+
+      {/* Main auth card */}
+      <div className="relative z-10 w-full max-w-md">
+        <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 animate-fade-in">
           <AuthForm />
         </div>
       </div>

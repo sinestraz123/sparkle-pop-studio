@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Chrome } from 'lucide-react';
+import { Chrome, Mail, Lock, User, Eye, EyeOff } from 'lucide-react';
 
 export function AuthForm() {
   const [isLogin, setIsLogin] = useState(true);
@@ -13,6 +13,7 @@ export function AuthForm() {
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const { toast } = useToast();
 
   const handleEmailAuth = async (e: React.FormEvent) => {
@@ -77,130 +78,158 @@ export function AuthForm() {
   };
 
   return (
-    <div className="w-full">
-      <div className="mb-6">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-lg">L</span>
+    <div className="w-full space-y-8">
+      {/* Header */}
+      <div className="text-center space-y-4">
+        <div className="flex justify-center">
+          <div className="w-16 h-16 bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl flex items-center justify-center shadow-lg">
+            <span className="text-white font-bold text-xl">L</span>
           </div>
-          <span className="text-xl font-semibold text-gray-900">Likemetric</span>
         </div>
-        <h1 className="text-2xl font-semibold text-gray-900 mb-2">
-          {isLogin ? 'Welcome back' : 'Create account'}
-        </h1>
-        <p className="text-gray-600 text-sm">
-          {isLogin ? 'Sign in to your account to continue' : 'Sign up to get started with Likemetric'}
-        </p>
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            {isLogin ? 'Welcome back' : 'Create account'}
+          </h1>
+          <p className="text-gray-600">
+            {isLogin ? 'Sign in to continue to Likemetric' : 'Join Likemetric to get started'}
+          </p>
+        </div>
       </div>
 
-      <div className="space-y-4 mb-6">
-        <Button
-          onClick={handleGoogleAuth}
-          variant="outline"
-          className="w-full h-11 border-gray-300 hover:border-gray-400 bg-white text-gray-700 font-medium"
-          type="button"
-        >
-          <Chrome className="w-4 h-4 mr-3" />
-          Continue with Google
-        </Button>
-      </div>
+      {/* Google Sign In */}
+      <Button
+        onClick={handleGoogleAuth}
+        variant="outline"
+        className="w-full h-12 border-2 border-gray-200 hover:border-gray-300 bg-white hover:bg-gray-50 text-gray-700 font-medium rounded-xl transition-all duration-200 group"
+        type="button"
+      >
+        <Chrome className="w-5 h-5 mr-3 text-gray-600 group-hover:text-gray-700" />
+        Continue with Google
+      </Button>
 
-      <div className="relative mb-6">
+      {/* Divider */}
+      <div className="relative">
         <div className="absolute inset-0 flex items-center">
           <span className="w-full border-t border-gray-200" />
         </div>
-        <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-gray-50 px-2 text-gray-500">or</span>
+        <div className="relative flex justify-center text-sm">
+          <span className="bg-white px-4 text-gray-500 font-medium">or continue with email</span>
         </div>
       </div>
 
-      <form onSubmit={handleEmailAuth} className="space-y-4">
+      {/* Email Form */}
+      <form onSubmit={handleEmailAuth} className="space-y-6">
         {!isLogin && (
           <div className="space-y-2">
-            <Label htmlFor="fullName" className="text-sm font-medium text-gray-700">
+            <Label htmlFor="fullName" className="text-sm font-semibold text-gray-700">
               Full name
             </Label>
-            <Input
-              id="fullName"
-              type="text"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              required={!isLogin}
-              className="h-11 border-gray-300 focus:border-green-500 focus:ring-green-500"
-              placeholder="Enter your full name"
-            />
+            <div className="relative">
+              <Input
+                id="fullName"
+                type="text"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                required={!isLogin}
+                className="h-12 pl-12 border-2 border-gray-200 focus:border-gray-900 focus:ring-0 rounded-xl bg-gray-50 focus:bg-white transition-all duration-200"
+                placeholder="Enter your full name"
+              />
+              <User className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+            </div>
           </div>
         )}
         
         <div className="space-y-2">
-          <Label htmlFor="email" className="text-sm font-medium text-gray-700">
+          <Label htmlFor="email" className="text-sm font-semibold text-gray-700">
             Email
           </Label>
-          <Input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            className="h-11 border-gray-300 focus:border-green-500 focus:ring-green-500"
-            placeholder="you@example.com"
-          />
+          <div className="relative">
+            <Input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="h-12 pl-12 border-2 border-gray-200 focus:border-gray-900 focus:ring-0 rounded-xl bg-gray-50 focus:bg-white transition-all duration-200"
+              placeholder="you@example.com"
+            />
+            <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+          </div>
         </div>
         
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <Label htmlFor="password" className="text-sm font-medium text-gray-700">
+            <Label htmlFor="password" className="text-sm font-semibold text-gray-700">
               Password
             </Label>
             {isLogin && (
               <button
                 type="button"
-                className="text-sm text-green-600 hover:text-green-700 font-medium"
+                className="text-sm text-gray-600 hover:text-gray-900 font-medium transition-colors duration-200"
               >
-                Forgot Password?
+                Forgot password?
               </button>
             )}
           </div>
-          <Input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            className="h-11 border-gray-300 focus:border-green-500 focus:ring-green-500"
-            placeholder="Enter your password"
-          />
+          <div className="relative">
+            <Input
+              id="password"
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="h-12 pl-12 pr-12 border-2 border-gray-200 focus:border-gray-900 focus:ring-0 rounded-xl bg-gray-50 focus:bg-white transition-all duration-200"
+              placeholder="Enter your password"
+            />
+            <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors duration-200"
+            >
+              {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+            </button>
+          </div>
         </div>
 
         <Button
           type="submit"
-          className="w-full h-11 bg-green-600 hover:bg-green-700 text-white font-medium"
+          className="w-full h-12 bg-gray-900 hover:bg-gray-800 text-white font-semibold rounded-xl transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]"
           disabled={loading}
         >
-          {loading ? 'Loading...' : (isLogin ? 'Sign In' : 'Create Account')}
+          {loading ? (
+            <div className="flex items-center space-x-2">
+              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+              <span>Loading...</span>
+            </div>
+          ) : (
+            isLogin ? 'Sign In' : 'Create Account'
+          )}
         </Button>
       </form>
 
-      <div className="mt-6 text-center">
+      {/* Switch between login/signup */}
+      <div className="text-center pt-4">
         <button
           type="button"
           onClick={() => setIsLogin(!isLogin)}
-          className="text-sm text-gray-600 hover:text-gray-800"
+          className="text-gray-600 hover:text-gray-900 transition-colors duration-200"
         >
           {isLogin ? "Don't have an account? " : "Already have an account? "}
-          <span className="text-green-600 hover:text-green-700 font-medium">
-            {isLogin ? 'Sign Up' : 'Sign In'}
+          <span className="font-semibold text-gray-900 hover:underline">
+            {isLogin ? 'Sign up' : 'Sign in'}
           </span>
         </button>
       </div>
 
-      <div className="mt-8 text-center text-xs text-gray-500">
-        By continuing, you agree to Likemetric's{' '}
-        <button className="text-green-600 hover:text-green-700 underline">
+      {/* Terms */}
+      <div className="text-center text-xs text-gray-500 leading-relaxed">
+        By continuing, you agree to our{' '}
+        <button className="text-gray-700 hover:text-gray-900 underline transition-colors duration-200">
           Terms of Service
         </button>{' '}
         and{' '}
-        <button className="text-green-600 hover:text-green-700 underline">
+        <button className="text-gray-700 hover:text-gray-900 underline transition-colors duration-200">
           Privacy Policy
         </button>
       </div>
