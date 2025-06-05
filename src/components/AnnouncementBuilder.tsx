@@ -41,7 +41,7 @@ export const AnnouncementBuilder: React.FC<AnnouncementBuilderProps> = ({
     show_close_button: true,
     auto_show: true,
     delay: 2000,
-    status: 'draft',
+    status: 'active', // Changed default to active for testing
     trigger_type: 'auto_show',
   });
 
@@ -117,6 +117,7 @@ export const AnnouncementBuilder: React.FC<AnnouncementBuilderProps> = ({
       // If the save was successful and returned an announcement with ID
       if (result && result.id) {
         setSavedAnnouncement(result);
+        console.log('Announcement saved successfully with ID:', result.id);
       }
     } catch (error) {
       console.error('Error saving announcement:', error);

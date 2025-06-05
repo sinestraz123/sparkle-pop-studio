@@ -28,6 +28,7 @@ export const ScriptModal: React.FC<ScriptModalProps> = ({ isOpen, onClose, annou
 (function(){
   var s=document.createElement('script');
   s.src='https://qpelvplxusbfyacgipgp.supabase.co/functions/v1/widget-loader?id=${announcementId}';
+  s.onerror=function(){console.error('Widget: Failed to load script');};
   document.head.appendChild(s);
 })();
 </script>`;
@@ -63,9 +64,22 @@ export const ScriptModal: React.FC<ScriptModalProps> = ({ isOpen, onClose, annou
 
     setTesting(true);
     
-    // Remove any existing widget
-    const existingWidgets = document.querySelectorAll('[id^="aw-"]');
+    // Remove any existing widgets first
+    const existingWidgets = document.querySelectorAll('[id^="aw-overlay-"]');
     existingWidgets.forEach(widget => widget.remove());
+    
+    // Remove existing scripts
+    const existingScripts = document.querySelectorAll('script[src*="widget-loader"]');
+    existingScripts.forEach(script => script.remove());
+    
+    // Clear widget flags
+    Object.keys(window).forEach(key => {
+      if (key.startsWith('aw_loaded_')) {
+        delete window[key];
+      }
+    });
+    
+    console.log('Testing widget for announcement:', announcement.id);
     
     // Load the script
     const script = document.createElement('script');
@@ -75,14 +89,15 @@ export const ScriptModal: React.FC<ScriptModalProps> = ({ isOpen, onClose, annou
       setTesting(false);
       toast({
         title: "Test Started",
-        description: "Check the preview for your announcement widget",
+        description: "The widget should appear in 1 second. Check your browser console for debugging info.",
       });
     };
     script.onerror = () => {
       setTesting(false);
+      console.error('Failed to load widget script');
       toast({
         title: "Test Failed",
-        description: "Failed to load widget script",
+        description: "Failed to load widget script. Check browser console for errors.",
         variant: "destructive",
       });
     };

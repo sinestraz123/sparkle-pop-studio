@@ -28,9 +28,16 @@ const Builder = () => {
   } = useAnnouncements();
 
   const handleCreateAnnouncement = (data: any) => {
+    // Ensure status is set to active for new announcements if not specified
+    const announcementData = {
+      ...data,
+      status: data.status || 'active'
+    };
+    
     return new Promise((resolve, reject) => {
-      createAnnouncement(data, {
+      createAnnouncement(announcementData, {
         onSuccess: (newAnnouncement) => {
+          console.log('New announcement created:', newAnnouncement);
           toast({
             title: "Success",
             description: "Announcement created successfully",
@@ -57,6 +64,7 @@ const Builder = () => {
     return new Promise((resolve, reject) => {
       updateAnnouncement({ id: editingAnnouncement.id, ...data }, {
         onSuccess: (updatedAnnouncement) => {
+          console.log('Announcement updated:', updatedAnnouncement);
           toast({
             title: "Success",
             description: "Announcement updated successfully",
