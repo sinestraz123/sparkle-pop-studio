@@ -67,28 +67,28 @@ const plans = [
 export function PricingModal({ open, onOpenChange }: PricingModalProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto !z-[9999] pointer-events-auto" style={{ zIndex: 9999 }}>
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-left mb-8">
+          <DialogTitle className="text-2xl font-bold text-center mb-8">
             Choose Your Plan
           </DialogTitle>
         </DialogHeader>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pointer-events-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {plans.map((plan) => (
             <Card 
               key={plan.name} 
-              className={`relative pointer-events-auto ${plan.popular ? 'border-primary shadow-lg scale-105' : ''}`}
+              className={`relative ${plan.popular ? 'border-primary shadow-lg scale-105' : ''}`}
             >
               {plan.popular && (
-                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 pointer-events-none">
+                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                   <span className="bg-primary text-primary-foreground px-3 py-1 rounded-full text-sm font-medium">
                     Most Popular
                   </span>
                 </div>
               )}
               
-              <CardHeader className="pb-4 pointer-events-auto">
+              <CardHeader className="pb-4">
                 <CardTitle className="text-xl font-bold text-left">{plan.name}</CardTitle>
                 <div className="mt-4 text-left">
                   <span className="text-3xl font-bold">{plan.price}</span>
@@ -97,7 +97,7 @@ export function PricingModal({ open, onOpenChange }: PricingModalProps) {
                 <p className="text-sm text-muted-foreground mt-2 text-left">{plan.description}</p>
               </CardHeader>
               
-              <CardContent className="space-y-4 pointer-events-auto">
+              <CardContent className="space-y-4">
                 <div className="space-y-3">
                   {plan.features.map((feature, index) => (
                     <div key={index} className="flex items-start gap-2">
@@ -109,9 +109,8 @@ export function PricingModal({ open, onOpenChange }: PricingModalProps) {
                 
                 <Button 
                   variant={plan.buttonVariant}
-                  className="w-full mt-6 pointer-events-auto !z-[9999] relative"
+                  className="w-full mt-6"
                   disabled={plan.comingSoon || plan.isDefault}
-                  style={{ zIndex: 9999, pointerEvents: 'auto' }}
                 >
                   {plan.buttonText}
                 </Button>
@@ -120,7 +119,7 @@ export function PricingModal({ open, onOpenChange }: PricingModalProps) {
           ))}
         </div>
         
-        <div className="text-center mt-8 pt-4 border-t pointer-events-auto">
+        <div className="text-center mt-8 pt-4 border-t">
           <p className="text-sm text-muted-foreground">
             All plans include support and regular updates
           </p>
