@@ -32,7 +32,6 @@ function App() {
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
-              <Route path="/pricing" element={<Pricing />} />
               <Route path="/*" element={
                 <ProtectedRoute>
                   <SidebarProvider>
@@ -46,6 +45,7 @@ function App() {
                             <Route path="/builder" element={<Builder />} />
                             <Route path="/checklist" element={<Checklist />} />
                             <Route path="/analytics" element={<Analytics />} />
+                            <Route path="/pricing" element={<Pricing />} />
                             <Route path="/settings" element={<Settings />} />
                             <Route path="*" element={<NotFound />} />
                           </Routes>
