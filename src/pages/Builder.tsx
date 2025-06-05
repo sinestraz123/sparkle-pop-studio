@@ -158,7 +158,7 @@ const Builder = () => {
         </div>
         <Button 
           onClick={() => setShowBuilder(true)}
-          className="bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700"
+          className="bg-black hover:bg-gray-800 text-white"
         >
           <Plus className="mr-2 h-4 w-4" />
           Create Announcement

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Plus, BarChart3, TrendingUp, Eye, MousePointer, CheckSquare } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -56,7 +55,7 @@ const Dashboard = () => {
             </Button>
           </Link>
           <Link to="/checklist">
-            <Button className="bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700">
+            <Button className="bg-black hover:bg-gray-800 text-white">
               <CheckSquare className="mr-2 h-4 w-4" />
               New Checklist
             </Button>
