@@ -5,6 +5,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { AuthForm } from '@/components/auth/AuthForm';
 import { User, Session } from '@supabase/supabase-js';
 import { Heart } from 'lucide-react';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+import PopupPreview from '@/components/PopupPreview';
 
 export default function Auth() {
   const navigate = useNavigate();
@@ -44,30 +46,101 @@ export default function Auth() {
     return null;
   }
 
+  // Sample popup configurations for the slideshow
+  const samplePopups = [
+    {
+      title: "New Product Feature!",
+      description: "Introducing our revolutionary Dark Mode - experience our platform like never before with a sleek, modern interface.",
+      buttonText: "Switch to Dark Mode",
+      buttonUrl: "#",
+      imageUrl: "",
+      videoUrl: "",
+      type: "modal",
+      position: "center",
+      backgroundColor: "#ffffff",
+      textColor: "#1f2937",
+      buttonColor: "#1f2937",
+      showCloseButton: true,
+      autoShow: true,
+      delay: 0
+    },
+    {
+      title: "Special Offer",
+      description: "Get 50% off your first month! Limited time offer for new users.",
+      buttonText: "Claim Offer",
+      buttonUrl: "#",
+      imageUrl: "",
+      videoUrl: "",
+      type: "popover",
+      position: "corner",
+      backgroundColor: "#3b82f6",
+      textColor: "#ffffff",
+      buttonColor: "#1d4ed8",
+      showCloseButton: true,
+      autoShow: true,
+      delay: 0
+    },
+    {
+      title: "Welcome to Our Platform!",
+      description: "Join thousands of users who trust our platform for their engagement needs.",
+      buttonText: "Get Started",
+      buttonUrl: "#",
+      imageUrl: "",
+      videoUrl: "",
+      type: "banner",
+      position: "top",
+      backgroundColor: "#10b981",
+      textColor: "#ffffff",
+      buttonColor: "#059669",
+      showCloseButton: true,
+      autoShow: true,
+      delay: 0
+    }
+  ];
+
   return (
     <div className="min-h-screen flex">
-      {/* Left Panel - Gradient Background */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-slate-900 via-purple-900 to-pink-900 relative overflow-hidden">
+      {/* Left Panel - Light Blue Background with Announcement Showcase */}
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-100 via-blue-200 to-blue-300 relative overflow-hidden">
         <div className="flex flex-col justify-center items-center w-full p-12 relative z-10">
           {/* Logo/Icon */}
-          <div className="mb-8">
-            <div className="w-16 h-16 bg-gradient-to-r from-pink-500 to-purple-500 rounded-2xl flex items-center justify-center">
-              <Heart className="w-8 h-8 text-white fill-current" />
+          <div className="mb-6">
+            <div className="w-12 h-12 bg-black rounded-xl flex items-center justify-center">
+              <span className="text-white font-bold text-lg">NEW</span>
             </div>
           </div>
           
           {/* Heading */}
-          <h1 className="text-4xl font-bold text-white text-center mb-4">
-            Create your account
+          <h1 className="text-3xl font-bold text-gray-900 text-center mb-2">
+            Introducing
           </h1>
+          <h2 className="text-4xl font-bold text-gray-900 text-center mb-8">
+            Announcements
+          </h2>
           
-          <p className="text-lg text-white/80 text-center max-w-md">
-            Join thousands of users who trust our platform for their engagement needs.
+          {/* Carousel with Popup Examples */}
+          <div className="w-full max-w-md">
+            <Carousel className="w-full" opts={{ align: "start", loop: true }}>
+              <CarouselContent>
+                {samplePopups.map((popup, index) => (
+                  <CarouselItem key={index}>
+                    <div className="p-2">
+                      <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+                        <PopupPreview config={popup} />
+                      </div>
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="left-2" />
+              <CarouselNext className="right-2" />
+            </Carousel>
+          </div>
+
+          <p className="text-sm text-gray-700 text-center max-w-md mt-6">
+            Create beautiful popups and announcements to engage your users and boost conversions.
           </p>
         </div>
-
-        {/* Decorative gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/50 via-purple-900/50 to-pink-900/50"></div>
       </div>
 
       {/* Right Panel - Auth Form */}
