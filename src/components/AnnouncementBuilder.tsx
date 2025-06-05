@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Accordion } from '@/components/ui/accordion';
 import { AnnouncementPreview } from './AnnouncementPreview';
@@ -13,7 +14,7 @@ type Announcement = Tables<'announcements'>;
 
 interface AnnouncementBuilderProps {
   announcement?: Announcement;
-  onSave: (data: any) => void;
+  onSave: (data: any) => Promise<any>;
   onBack: () => void;
   isLoading?: boolean;
 }
