@@ -8,8 +8,12 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Chrome, Mail, Lock, User, Eye, EyeOff } from 'lucide-react';
 
-export function AuthForm() {
-  const [isLogin, setIsLogin] = useState(false);
+interface AuthFormProps {
+  defaultIsLogin?: boolean;
+}
+
+export function AuthForm({ defaultIsLogin = false }: AuthFormProps) {
+  const [isLogin, setIsLogin] = useState(defaultIsLogin);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');

@@ -146,7 +146,7 @@ export default function Auth() {
       {/* Right Panel - Auth Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white">
         <div className="w-full max-w-md">
-          <AuthForm />
+          <AuthForm defaultIsLogin={true} />
         </div>
       </div>
     </div>
