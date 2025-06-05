@@ -1,83 +1,145 @@
+
+import { useState, useEffect } from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
+import { 
+  LayoutDashboard, 
+  Plus, 
+  Settings, 
+  BarChart3, 
+  Users, 
+  Bell,
+  HelpCircle,
+  Zap,
+  CheckSquare
+} from 'lucide-react';
+
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
-  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
-import { Home, Settings, Megaphone, BarChart3, CheckSquare, Newspaper } from "lucide-react"
-import { Link, useLocation } from "react-router-dom"
-import { useAuth } from "@/hooks/useAuth"
-import { Button } from "@/components/ui/button"
+  SidebarHeader,
+  SidebarFooter,
+  useSidebar,
+} from '@/components/ui/sidebar';
+import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
 
-const items = [
-  {
-    title: "Dashboard",
-    url: "/dashboard",
-    icon: Home,
-  },
-  {
-    title: "Announcements",
-    url: "/builder",
-    icon: Megaphone,
-  },
-  {
-    title: "Surveys",
-    url: "/surveys",
-    icon: BarChart3,
-  },
-  {
-    title: "Checklists",
-    url: "/checklist",
-    icon: CheckSquare,
-  },
-  {
-    title: "News",
-    url: "/news",
-    icon: Newspaper,
-  },
-  {
-    title: "Settings",
-    url: "/settings",
-    icon: Settings,
-  },
-]
+const mainItems = [
+  { title: 'Dashboard', url: '/', icon: LayoutDashboard },
+  { title: 'Announcements', url: '/builder', icon: Plus },
+  { title: 'Checklist', url: '/checklist', icon: CheckSquare },
+  { title: 'Analytics', url: '/analytics', icon: BarChart3 },
+  { title: 'Audience', url: '/audience', icon: Users },
+];
+
+const settingsItems = [
+  { title: 'Settings', url: '/settings', icon: Settings },
+  { title: 'Help', url: '/help', icon: HelpCircle },
+];
 
 export function AppSidebar() {
-  const location = useLocation()
-  const { signOut } = useAuth()
+  const { state } = useSidebar();
+  const { user } = useAuth();
+  const location = useLocation();
+  const currentPath = location.pathname;
+  const collapsed = state === 'collapsed';
+  const [userProfile, setUserProfile] = useState<{ full_name: string } | null>(null);
+
+  useEffect(() => {
+    if (user) {
+      loadUserProfile();
+    }
+  }, [user]);
+
+  const loadUserProfile = async () => {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('full_name')
+        .eq('id', user.id)
+        .single();
+
+      if (error && error.code !== 'PGRST116') {
+        console.error('Error loading user profile:', error);
+        return;
+      }
+
+      setUserProfile(data);
+    } catch (error) {
+      console.error('Error loading user profile:', error);
+    }
+  };
+
+  const isActive = (path: string) => currentPath === path;
+
+  const getNavClassName = (path: string) => {
+    return isActive(path) 
+      ? 'bg-sidebar-accent text-sidebar-accent-foreground font-medium' 
+      : 'hover:bg-sidebar-accent/50';
+  };
+
+  const getUserDisplayName = () => {
+    return userProfile?.full_name || user?.email?.split('@')[0] || 'User';
+  };
+
+  const getUserInitials = () => {
+    const name = getUserDisplayName();
+    return name.split(' ').map(word => word.charAt(0)).join('').toUpperCase().substring(0, 2);
+  };
 
   return (
-    <Sidebar>
-      <SidebarHeader>
-        <div className="px-4 py-2">
-          <h2 className="text-lg font-semibold">Dashboard</h2>
+    <Sidebar className={collapsed ? 'w-14' : 'w-64'} collapsible="offcanvas">
+      <SidebarHeader className="p-4 border-b border-sidebar-border">
+        <div className="flex items-center gap-2">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-r from-green-600 to-teal-600">
+            <Zap className="h-4 w-4 text-white" />
+          </div>
+          {!collapsed && (
+            <div>
+              <h2 className="text-lg font-semibold text-sidebar-foreground">EngageHub</h2>
+              <p className="text-xs text-sidebar-foreground/60">SaaS Engagement</p>
+            </div>
+          )}
         </div>
       </SidebarHeader>
+
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+          <SidebarGroupLabel>Main</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
+              {mainItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton 
-                    asChild 
-                    isActive={location.pathname === item.url || 
-                             (item.url === "/builder" && location.pathname.startsWith("/builder")) ||
-                             (item.url === "/surveys" && (location.pathname.startsWith("/surveys") || location.pathname.startsWith("/survey-builder"))) ||
-                             (item.url === "/checklist" && location.pathname.startsWith("/checklist")) ||
-                             (item.url === "/news" && location.pathname.startsWith("/news"))}
-                  >
-                    <Link to={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </Link>
+                  <SidebarMenuButton asChild>
+                    <NavLink to={item.url} className={getNavClassName(item.url)}>
+                      <item.icon className="h-4 w-4" />
+                      {!collapsed && <span>{item.title}</span>}
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup className="mt-auto">
+          <SidebarGroupLabel>Account</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {settingsItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild>
+                    <NavLink to={item.url} className={getNavClassName(item.url)}>
+                      <item.icon className="h-4 w-4" />
+                      {!collapsed && <span>{item.title}</span>}
+                    </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -85,17 +147,20 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter>
-        <div className="p-4">
-          <Button 
-            variant="outline" 
-            className="w-full"
-            onClick={signOut}
-          >
-            Sign Out
-          </Button>
+
+      <SidebarFooter className="p-4 border-t border-sidebar-border">
+        <div className="flex items-center gap-2">
+          <div className="h-8 w-8 rounded-full bg-gradient-to-r from-green-500 to-teal-500 flex items-center justify-center">
+            <span className="text-xs font-semibold text-white">{getUserInitials()}</span>
+          </div>
+          {!collapsed && (
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-sidebar-foreground truncate">{getUserDisplayName()}</p>
+              <p className="text-xs text-sidebar-foreground/60 truncate">{user?.email || ''}</p>
+            </div>
+          )}
         </div>
       </SidebarFooter>
     </Sidebar>
-  )
+  );
 }
