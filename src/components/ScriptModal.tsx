@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Copy, Check, Play, AlertTriangle } from 'lucide-react';
+import { Copy, Check, Play } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface ScriptModalProps {
@@ -18,7 +18,11 @@ export const ScriptModal: React.FC<ScriptModalProps> = ({ isOpen, onClose, annou
   const { toast } = useToast();
 
   const generateScript = () => {
-    const announcementId = announcement.id || 'YOUR_ANNOUNCEMENT_ID';
+    const announcementId = announcement.id;
+    
+    if (!announcementId) {
+      return `<!-- Save the announcement first to get the actual script -->`;
+    }
     
     return `<script>
 (function(){
@@ -94,17 +98,6 @@ export const ScriptModal: React.FC<ScriptModalProps> = ({ isOpen, onClose, annou
         </DialogHeader>
         
         <div className="space-y-4">
-          {!announcement.id && (
-            <div className="bg-red-50 p-3 rounded-lg border border-red-200">
-              <div className="flex items-center gap-2">
-                <AlertTriangle className="h-4 w-4 text-red-600" />
-                <p className="text-sm text-red-800 font-medium">
-                  Save this announcement first to get the actual script
-                </p>
-              </div>
-            </div>
-          )}
-
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <h4 className="font-medium">Embed Script</h4>
@@ -123,6 +116,7 @@ export const ScriptModal: React.FC<ScriptModalProps> = ({ isOpen, onClose, annou
                   onClick={handleCopy}
                   size="sm"
                   variant="outline"
+                  disabled={!announcement.id}
                 >
                   {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                   Copy Script

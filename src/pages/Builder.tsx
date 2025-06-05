@@ -56,45 +56,53 @@ const Builder = () => {
   };
 
   const handleCreateAnnouncement = (data: any) => {
-    createAnnouncement(data, {
-      onSuccess: () => {
-        toast({
-          title: "Success",
-          description: "Announcement created successfully",
-        });
-        setShowBuilder(false);
-      },
-      onError: (error) => {
-        toast({
-          title: "Error",
-          description: "Failed to create announcement",
-          variant: "destructive",
-        });
-        console.error('Error creating announcement:', error);
-      },
+    return new Promise((resolve, reject) => {
+      createAnnouncement(data, {
+        onSuccess: (newAnnouncement) => {
+          toast({
+            title: "Success",
+            description: "Announcement created successfully",
+          });
+          setShowBuilder(false);
+          resolve(newAnnouncement);
+        },
+        onError: (error) => {
+          toast({
+            title: "Error",
+            description: "Failed to create announcement",
+            variant: "destructive",
+          });
+          console.error('Error creating announcement:', error);
+          reject(error);
+        },
+      });
     });
   };
 
   const handleUpdateAnnouncement = (data: any) => {
-    if (!editingAnnouncement) return;
+    if (!editingAnnouncement) return Promise.reject('No announcement to update');
     
-    updateAnnouncement({ id: editingAnnouncement.id, ...data }, {
-      onSuccess: () => {
-        toast({
-          title: "Success",
-          description: "Announcement updated successfully",
-        });
-        setEditingAnnouncement(null);
-        setShowBuilder(false);
-      },
-      onError: (error) => {
-        toast({
-          title: "Error",
-          description: "Failed to update announcement",
-          variant: "destructive",
-        });
-        console.error('Error updating announcement:', error);
-      },
+    return new Promise((resolve, reject) => {
+      updateAnnouncement({ id: editingAnnouncement.id, ...data }, {
+        onSuccess: (updatedAnnouncement) => {
+          toast({
+            title: "Success",
+            description: "Announcement updated successfully",
+          });
+          setEditingAnnouncement(null);
+          setShowBuilder(false);
+          resolve(updatedAnnouncement);
+        },
+        onError: (error) => {
+          toast({
+            title: "Error",
+            description: "Failed to update announcement",
+            variant: "destructive",
+          });
+          console.error('Error updating announcement:', error);
+          reject(error);
+        },
+      });
     });
   };
 

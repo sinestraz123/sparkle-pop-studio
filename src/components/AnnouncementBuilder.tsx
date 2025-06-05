@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Accordion } from '@/components/ui/accordion';
 import { AnnouncementPreview } from './AnnouncementPreview';
@@ -48,6 +47,7 @@ export const AnnouncementBuilder: React.FC<AnnouncementBuilderProps> = ({
   const [showScript, setShowScript] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
   const [mediaType, setMediaType] = useState<'image' | 'video' | 'none'>('video');
+  const [savedAnnouncement, setSavedAnnouncement] = useState(announcement);
 
   // Initialize form data from announcement prop when component mounts or announcement changes
   useEffect(() => {
@@ -109,10 +109,23 @@ export const AnnouncementBuilder: React.FC<AnnouncementBuilderProps> = ({
     }
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     console.log('Saving announcement with data:', formData);
-    onSave(formData);
+    try {
+      const result = await onSave(formData);
+      // If the save was successful and returned an announcement with ID
+      if (result && result.id) {
+        setSavedAnnouncement(result);
+      }
+    } catch (error) {
+      console.error('Error saving announcement:', error);
+    }
   };
+
+  // Use savedAnnouncement for the script modal if available, otherwise use the current formData
+  const announcementForScript = savedAnnouncement && savedAnnouncement.id 
+    ? savedAnnouncement 
+    : { ...formData, id: announcement?.id };
 
   return (
     <div className="h-screen flex bg-gray-50">
@@ -171,7 +184,7 @@ export const AnnouncementBuilder: React.FC<AnnouncementBuilderProps> = ({
       <ScriptModal 
         isOpen={showScript}
         onClose={() => setShowScript(false)}
-        announcement={formData}
+        announcement={announcementForScript}
       />
     </div>
   );
