@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -16,6 +16,12 @@ interface SurveyPreviewProps {
 export const SurveyPreview = ({ survey }: SurveyPreviewProps) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [responses, setResponses] = useState<Record<number, any>>({});
+
+  // Reset to first question when survey changes
+  useEffect(() => {
+    setCurrentQuestionIndex(0);
+    setResponses({});
+  }, [survey?.questions]);
 
   if (!survey) {
     return (
