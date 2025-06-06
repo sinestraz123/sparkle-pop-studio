@@ -182,45 +182,6 @@ export type Database = {
         }
         Relationships: []
       }
-      news_items: {
-        Row: {
-          category: string | null
-          content: string | null
-          created_at: string
-          description: string | null
-          id: string
-          image_url: string | null
-          status: string
-          title: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          category?: string | null
-          content?: string | null
-          created_at?: string
-          description?: string | null
-          id?: string
-          image_url?: string | null
-          status?: string
-          title: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          category?: string | null
-          content?: string | null
-          created_at?: string
-          description?: string | null
-          id?: string
-          image_url?: string | null
-          status?: string
-          title?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -294,27 +255,27 @@ export type Database = {
       }
       survey_responses: {
         Row: {
+          created_at: string
           id: string
           question_id: string
-          response_text: string | null
-          response_value: number | null
-          submitted_at: string
+          response_data: Json
+          session_id: string | null
           survey_id: string
         }
         Insert: {
+          created_at?: string
           id?: string
           question_id: string
-          response_text?: string | null
-          response_value?: number | null
-          submitted_at?: string
+          response_data: Json
+          session_id?: string | null
           survey_id: string
         }
         Update: {
+          created_at?: string
           id?: string
           question_id?: string
-          response_text?: string | null
-          response_value?: number | null
-          submitted_at?: string
+          response_data?: Json
+          session_id?: string | null
           survey_id?: string
         }
         Relationships: [
@@ -346,10 +307,11 @@ export type Database = {
           position: string
           responses: number | null
           show_close_button: boolean | null
+          show_progress: boolean | null
           status: string
-          submit_button_text: string | null
           text_color: string | null
           title: string
+          trigger_type: string
           type: string
           updated_at: string
           user_id: string
@@ -366,10 +328,11 @@ export type Database = {
           position?: string
           responses?: number | null
           show_close_button?: boolean | null
+          show_progress?: boolean | null
           status?: string
-          submit_button_text?: string | null
           text_color?: string | null
           title: string
+          trigger_type?: string
           type?: string
           updated_at?: string
           user_id: string
@@ -386,10 +349,11 @@ export type Database = {
           position?: string
           responses?: number | null
           show_close_button?: boolean | null
+          show_progress?: boolean | null
           status?: string
-          submit_button_text?: string | null
           text_color?: string | null
           title?: string
+          trigger_type?: string
           type?: string
           updated_at?: string
           user_id?: string

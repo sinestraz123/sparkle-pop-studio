@@ -10,7 +10,8 @@ import {
   Zap,
   CheckSquare,
   LogOut,
-  CreditCard
+  CreditCard,
+  FileQuestion
 } from 'lucide-react';
 
 import {
@@ -34,6 +35,7 @@ const mainItems = [
   { title: 'Dashboard', url: '/', icon: LayoutDashboard },
   { title: 'Announcements', url: '/builder', icon: Plus },
   { title: 'Checklist', url: '/checklist', icon: CheckSquare },
+  { title: 'Surveys', url: '/surveys', icon: FileQuestion },
   { title: 'Analytics', url: '/analytics', icon: BarChart3 },
 ];
 
