@@ -1,18 +1,17 @@
-
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
-import { useSurvey, useSurveys, useSurveyQuestions } from '@/hooks/useSurveys';
+import { useSingleSurvey, useSurveysList, useSurveyQuestionsManager } from '@/hooks/useSurveys';
 
 export const useSurveyPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
   const { toast } = useToast();
-  const { survey, loading } = useSurvey(id);
-  const { createSurvey, updateSurvey } = useSurveys();
-  const { updateSurveyQuestions } = useSurveyQuestions(id);
+  const { survey, loading } = useSingleSurvey(id);
+  const { createSurvey, updateSurvey } = useSurveysList();
+  const { updateSurveyQuestions } = useSurveyQuestionsManager(id);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {

@@ -1,11 +1,10 @@
-
 import { useState, useEffect } from 'react';
 import { SurveyBuilderHeader } from '@/components/survey-builder/SurveyBuilderHeader';
 import { SurveyContentSection } from '@/components/survey-builder/SurveyContentSection';
 import { SurveyQuestionsSection } from '@/components/survey-builder/SurveyQuestionsSection';
 import { SurveySettingsSection } from '@/components/survey-builder/SurveySettingsSection';
 import { SurveyTriggerSection } from '@/components/survey-builder/SurveyTriggerSection';
-import { useSurveyQuestions } from '@/hooks/useSurveys';
+import { useSurveyQuestionsManager } from '@/hooks/useSurveys';
 
 interface SurveyBuilderProps {
   survey?: any;
@@ -15,7 +14,7 @@ interface SurveyBuilderProps {
 }
 
 export const SurveyBuilder = ({ survey, onSave, onBack, isLoading }: SurveyBuilderProps) => {
-  const { questions } = useSurveyQuestions(survey?.id);
+  const { questions } = useSurveyQuestionsManager(survey?.id);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
