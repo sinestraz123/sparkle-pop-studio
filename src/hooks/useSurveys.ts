@@ -59,13 +59,13 @@ export const useSurveys = () => {
     enabled: !!user,
   });
 
-  const createSurvey = useMutation({
+  const createSurveyMutation = useMutation({
     mutationFn: async (surveyData: Partial<Survey>) => {
       if (!user) throw new Error('User not authenticated');
 
       const { data, error } = await supabase
         .from('surveys')
-        .insert([{ ...surveyData, user_id: user.id }])
+        .insert({ ...surveyData, user_id: user.id })
         .select()
         .single();
 
@@ -89,7 +89,7 @@ export const useSurveys = () => {
     },
   });
 
-  const updateSurvey = useMutation({
+  const updateSurveyMutation = useMutation({
     mutationFn: async ({ id, ...updates }: Partial<Survey> & { id: string }) => {
       const { data, error } = await supabase
         .from('surveys')
@@ -143,8 +143,8 @@ export const useSurveys = () => {
   return {
     surveys,
     isLoading,
-    createSurvey: createSurvey.mutate,
-    updateSurvey: updateSurvey.mutate,
+    createSurvey: createSurveyMutation.mutateAsync,
+    updateSurvey: updateSurveyMutation.mutateAsync,
     deleteSurvey: deleteSurvey.mutate,
   };
 };

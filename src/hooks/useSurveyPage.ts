@@ -47,7 +47,7 @@ export const useSurveyPage = () => {
 
       if (id) {
         // Update existing survey
-        await updateSurvey({ id, ...surveyData });
+        const updatedSurvey = await updateSurvey({ id, ...surveyData });
         toast({
           title: "Success",
           description: "Survey updated successfully",
