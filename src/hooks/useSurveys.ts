@@ -37,6 +37,23 @@ interface SurveyQuestion {
   order_index: number;
 }
 
+interface SurveyInsert {
+  user_id: string;
+  title: string;
+  description?: string;
+  status?: string;
+  background_color?: string;
+  text_color?: string;
+  button_color?: string;
+  position?: string;
+  type?: string;
+  trigger_type?: string;
+  auto_show?: boolean;
+  delay?: number;
+  show_close_button?: boolean;
+  show_progress?: boolean;
+}
+
 export const useSurveys = () => {
   const { user } = useAuth();
   const { toast } = useToast();
@@ -63,9 +80,26 @@ export const useSurveys = () => {
     mutationFn: async (surveyData: Partial<Survey>) => {
       if (!user) throw new Error('User not authenticated');
 
+      const insertData: SurveyInsert = {
+        user_id: user.id,
+        title: surveyData.title || 'Untitled Survey',
+        description: surveyData.description,
+        status: surveyData.status || 'draft',
+        background_color: surveyData.background_color || '#ffffff',
+        text_color: surveyData.text_color || '#000000',
+        button_color: surveyData.button_color || '#3b82f6',
+        position: surveyData.position || 'center',
+        type: surveyData.type || 'modal',
+        trigger_type: surveyData.trigger_type || 'auto_show',
+        auto_show: surveyData.auto_show || false,
+        delay: surveyData.delay || 0,
+        show_close_button: surveyData.show_close_button !== false,
+        show_progress: surveyData.show_progress !== false,
+      };
+
       const { data, error } = await supabase
         .from('surveys')
-        .insert({ ...surveyData, user_id: user.id })
+        .insert(insertData as any)
         .select()
         .single();
 
@@ -93,7 +127,7 @@ export const useSurveys = () => {
     mutationFn: async ({ id, ...updates }: Partial<Survey> & { id: string }) => {
       const { data, error } = await supabase
         .from('surveys')
-        .update(updates)
+        .update(updates as any)
         .eq('id', id)
         .select()
         .single();
