@@ -30,7 +30,6 @@ export const SpotlightBuilder: React.FC<SpotlightBuilderProps> = ({
   });
 
   const [showScript, setShowScript] = useState(false);
-  const [previewMode, setPreviewMode] = useState(false);
   const [savedSpotlight, setSavedSpotlight] = useState(spotlight);
 
   useEffect(() => {
@@ -72,31 +71,27 @@ export const SpotlightBuilder: React.FC<SpotlightBuilderProps> = ({
       <div className="w-[480px] bg-white border-r border-gray-200 overflow-y-auto">
         <SpotlightBuilderHeader
           title={formData.title}
-          previewMode={previewMode}
           isLoading={isLoading}
           onBack={onBack}
-          onPreviewToggle={setPreviewMode}
           onSave={handleSave}
           status={formData.status}
           onStatusChange={(status) => updateFormData('status', status)}
         />
 
-        {!previewMode && (
-          <div className="p-6">
-            <Accordion type="multiple" defaultValue={["content"]} className="space-y-4">
-              <SpotlightContentSection
-                title={formData.title}
-                videoUrl={formData.video_url}
-                onTitleChange={(title) => updateFormData('title', title)}
-                onVideoUrlChange={(video_url) => updateFormData('video_url', video_url)}
-              />
+        <div className="p-6">
+          <Accordion type="multiple" defaultValue={["content"]} className="space-y-4">
+            <SpotlightContentSection
+              title={formData.title}
+              videoUrl={formData.video_url}
+              onTitleChange={(title) => updateFormData('title', title)}
+              onVideoUrlChange={(video_url) => updateFormData('video_url', video_url)}
+            />
 
-              <SpotlightScriptSection
-                onShowScript={() => setShowScript(true)}
-              />
-            </Accordion>
-          </div>
-        )}
+            <SpotlightScriptSection
+              onShowScript={() => setShowScript(true)}
+            />
+          </Accordion>
+        </div>
       </div>
 
       {/* Right Side - Preview */}

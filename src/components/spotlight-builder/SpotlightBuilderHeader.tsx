@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ArrowLeft, Eye } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -12,8 +12,6 @@ interface SpotlightBuilderHeaderProps {
   isLoading: boolean;
   status: string;
   onStatusChange: (status: string) => void;
-  previewMode: boolean;
-  onPreviewToggle: (preview: boolean) => void;
 }
 
 export const SpotlightBuilderHeader: React.FC<SpotlightBuilderHeaderProps> = ({
@@ -23,8 +21,6 @@ export const SpotlightBuilderHeader: React.FC<SpotlightBuilderHeaderProps> = ({
   isLoading,
   status,
   onStatusChange,
-  previewMode,
-  onPreviewToggle,
 }) => {
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -53,15 +49,6 @@ export const SpotlightBuilderHeader: React.FC<SpotlightBuilderHeaderProps> = ({
       </div>
 
       <div className="flex items-center space-x-3">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => onPreviewToggle(!previewMode)}
-        >
-          <Eye className="h-4 w-4 mr-2" />
-          {previewMode ? 'Edit' : 'Preview'}
-        </Button>
-
         <Select value={status} onValueChange={onStatusChange}>
           <SelectTrigger className="w-32">
             <SelectValue />
