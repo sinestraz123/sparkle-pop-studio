@@ -46,12 +46,17 @@ export const useSpotlights = () => {
     mutationFn: async (spotlightData: Partial<Spotlight>) => {
       if (!user) throw new Error('User not authenticated');
 
+      // Ensure required fields are present
+      const dataToInsert = {
+        user_id: user.id,
+        title: spotlightData.title || 'New Spotlight',
+        video_url: spotlightData.video_url || '',
+        status: spotlightData.status || 'draft',
+      };
+
       const { data, error } = await supabase
         .from('spotlights')
-        .insert({
-          ...spotlightData,
-          user_id: user.id,
-        })
+        .insert(dataToInsert)
         .select()
         .single();
 

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ArrowLeft, Eye, Code } from 'lucide-react';
+import { ArrowLeft, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -42,11 +42,11 @@ export const SpotlightBuilderHeader: React.FC<SpotlightBuilderHeaderProps> = ({
           Back
         </Button>
         
-        <div>
+        <div className="flex flex-col">
           <h1 className="text-lg font-semibold text-gray-900">
             {title || 'New Spotlight'}
           </h1>
-          <Badge className={getStatusColor(status)}>
+          <Badge className={`${getStatusColor(status)} w-fit mt-1`}>
             {status}
           </Badge>
         </div>
