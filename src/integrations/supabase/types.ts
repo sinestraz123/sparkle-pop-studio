@@ -209,6 +209,42 @@ export type Database = {
         }
         Relationships: []
       }
+      spotlights: {
+        Row: {
+          clicks: number | null
+          created_at: string
+          id: string
+          status: string
+          title: string
+          updated_at: string
+          user_id: string
+          video_url: string
+          views: number | null
+        }
+        Insert: {
+          clicks?: number | null
+          created_at?: string
+          id?: string
+          status?: string
+          title: string
+          updated_at?: string
+          user_id: string
+          video_url: string
+          views?: number | null
+        }
+        Update: {
+          clicks?: number | null
+          created_at?: string
+          id?: string
+          status?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+          video_url?: string
+          views?: number | null
+        }
+        Relationships: []
+      }
       survey_questions: {
         Row: {
           created_at: string

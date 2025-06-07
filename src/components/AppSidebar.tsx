@@ -11,7 +11,8 @@ import {
   CheckSquare,
   LogOut,
   CreditCard,
-  FileQuestion
+  FileQuestion,
+  Video
 } from 'lucide-react';
 
 import {
@@ -36,6 +37,7 @@ const mainItems = [
   { title: 'Announcements', url: '/builder', icon: Plus },
   { title: 'Checklist', url: '/checklist', icon: CheckSquare },
   { title: 'Surveys', url: '/surveys', icon: FileQuestion },
+  { title: 'Spotlight', url: '/spotlight', icon: Video },
   { title: 'Analytics', url: '/analytics', icon: BarChart3 },
 ];
 
