@@ -14,9 +14,10 @@ interface SurveyBuilderProps {
   onSave: (data: any) => void;
   onBack: () => void;
   isLoading: boolean;
+  onDataChange?: (data: any) => void;
 }
 
-export const SurveyBuilder = ({ survey, onSave, onBack, isLoading }: SurveyBuilderProps) => {
+export const SurveyBuilder = ({ survey, onSave, onBack, isLoading, onDataChange }: SurveyBuilderProps) => {
   const { questions } = useSurveyQuestionsManager(survey?.id);
   const [contentOpen, setContentOpen] = useState(true);
   const [questionsOpen, setQuestionsOpen] = useState(true);
@@ -75,6 +76,13 @@ export const SurveyBuilder = ({ survey, onSave, onBack, isLoading }: SurveyBuild
       }));
     }
   }, [questions]);
+
+  // Notify parent component when formData changes
+  useEffect(() => {
+    if (onDataChange) {
+      onDataChange(formData);
+    }
+  }, [formData, onDataChange]);
 
   const handleSave = () => {
     onSave(formData);
