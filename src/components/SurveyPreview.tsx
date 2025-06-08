@@ -34,38 +34,40 @@ export const SurveyPreview = ({ survey }: SurveyPreviewProps) => {
   const response = responses[currentQuestionIndex];
 
   return (
-    <div className="h-full flex items-center justify-center p-8" style={{ backgroundColor: '#f9fafb' }}>
-      <div
-        className="w-full max-w-md p-6 rounded-lg shadow-lg relative"
-        style={{ backgroundColor: survey.background_color }}
-      >
-        <SurveyHeader
-          title={survey.title}
-          description={survey.description}
-          textColor={survey.text_color}
-          showCloseButton={survey.show_close_button}
-          showProgress={survey.show_progress}
-          currentQuestionIndex={currentQuestionIndex}
-          totalQuestions={questions.length}
-          progress={progress}
-        />
+    <div className="h-full flex items-center justify-center p-8 bg-gray-100">
+      <div className="w-full max-w-2xl">
+        <div
+          className="bg-white rounded-2xl shadow-xl p-8 relative"
+          style={{ backgroundColor: survey.background_color || '#ffffff' }}
+        >
+          <SurveyHeader
+            title={survey.title}
+            description={survey.description}
+            textColor={survey.text_color || '#000000'}
+            showCloseButton={survey.show_close_button}
+            showProgress={survey.show_progress}
+            currentQuestionIndex={currentQuestionIndex}
+            totalQuestions={questions.length}
+            progress={progress}
+          />
 
-        <div className="mb-6">
-          <QuestionRenderer
-            question={currentQuestion}
-            response={response}
-            onResponse={handleResponse}
-            textColor={survey.text_color}
+          <div className="min-h-[200px]">
+            <QuestionRenderer
+              question={currentQuestion}
+              response={response}
+              onResponse={handleResponse}
+              textColor={survey.text_color || '#000000'}
+            />
+          </div>
+
+          <SurveyNavigation
+            currentQuestionIndex={currentQuestionIndex}
+            totalQuestions={questions.length}
+            onPrevious={handlePrevious}
+            onNext={handleNext}
+            buttonColor={survey.button_color || '#000000'}
           />
         </div>
-
-        <SurveyNavigation
-          currentQuestionIndex={currentQuestionIndex}
-          totalQuestions={questions.length}
-          onPrevious={handlePrevious}
-          onNext={handleNext}
-          buttonColor={survey.button_color}
-        />
       </div>
     </div>
   );

@@ -1,6 +1,5 @@
 
 import { X } from 'lucide-react';
-import { Progress } from '@/components/ui/progress';
 
 interface SurveyHeaderProps {
   title: string;
@@ -26,29 +25,37 @@ export const SurveyHeader = ({
   return (
     <>
       {showCloseButton && (
-        <button className="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
+        <button className="absolute top-6 right-6 text-gray-400 hover:text-gray-600 transition-colors">
           <X className="h-5 w-5" />
         </button>
       )}
 
-      <div className="mb-6">
-        <h2 className="text-xl font-bold mb-2" style={{ color: textColor }}>
-          {title || 'Survey Title'}
-        </h2>
-        {description && (
-          <p className="text-sm opacity-75" style={{ color: textColor }}>
-            {description}
-          </p>
-        )}
-      </div>
-
       {showProgress && totalQuestions > 0 && (
-        <div className="mb-6">
-          <div className="flex justify-between text-xs mb-2" style={{ color: textColor }}>
-            <span>Question {currentQuestionIndex + 1} of {totalQuestions}</span>
-            <span>{Math.round(progress)}%</span>
+        <div className="mb-8">
+          <div className="flex items-center mb-4">
+            <span className="text-sm text-gray-600">
+              Question {currentQuestionIndex + 1} of {totalQuestions}
+            </span>
           </div>
-          <Progress value={progress} className="h-2" />
+          <div className="w-full bg-gray-200 rounded-full h-1">
+            <div 
+              className="bg-gray-900 h-1 rounded-full transition-all duration-300"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+        </div>
+      )}
+
+      {title && (
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold mb-3" style={{ color: textColor }}>
+            {title}
+          </h2>
+          {description && (
+            <p className="text-gray-600 text-base leading-relaxed">
+              {description}
+            </p>
+          )}
         </div>
       )}
     </>

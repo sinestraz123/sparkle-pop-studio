@@ -1,7 +1,6 @@
 
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 
@@ -25,29 +24,36 @@ export const QuestionRenderer = ({ question, response, onResponse, textColor }: 
   switch (question.question_type) {
     case 'multiple_choice':
       return (
-        <div className="space-y-4">
-          <h3 className="text-lg font-medium" style={{ color: textColor }}>
-            {question.question_text}
-          </h3>
+        <div className="space-y-6">
+          <div>
+            <h3 className="text-lg font-semibold mb-2" style={{ color: textColor }}>
+              {question.question_text}
+            </h3>
+            {question.description && (
+              <p className="text-sm text-gray-600 mb-4">{question.description}</p>
+            )}
+            <p className="text-sm text-gray-500 italic mb-4">Select all that apply:</p>
+          </div>
           <div className="space-y-3">
             {question.options?.map((option: string, index: number) => (
-              <div key={index} className="flex items-center space-x-3">
-                <Checkbox
-                  id={`option-${index}`}
-                  checked={Array.isArray(response) && response.includes(option)}
-                  onCheckedChange={(checked) => {
-                    const currentResponses = Array.isArray(response) ? response : [];
-                    if (checked) {
-                      onResponse([...currentResponses, option]);
-                    } else {
-                      onResponse(currentResponses.filter((r: string) => r !== option));
-                    }
-                  }}
-                />
-                <Label htmlFor={`option-${index}`} className="text-sm">
-                  {option}
-                </Label>
-              </div>
+              <button
+                key={index}
+                onClick={() => {
+                  const currentResponses = Array.isArray(response) ? response : [];
+                  if (currentResponses.includes(option)) {
+                    onResponse(currentResponses.filter((r: string) => r !== option));
+                  } else {
+                    onResponse([...currentResponses, option]);
+                  }
+                }}
+                className={`w-full text-left px-4 py-3 rounded-lg border transition-all duration-200 ${
+                  Array.isArray(response) && response.includes(option)
+                    ? 'border-blue-500 bg-blue-50 text-blue-700'
+                    : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'
+                }`}
+              >
+                <span className="text-sm font-medium">{option}</span>
+              </button>
             ))}
           </div>
         </div>
@@ -55,51 +61,70 @@ export const QuestionRenderer = ({ question, response, onResponse, textColor }: 
 
     case 'single_choice':
       return (
-        <div className="space-y-4">
-          <h3 className="text-lg font-medium" style={{ color: textColor }}>
-            {question.question_text}
-          </h3>
-          <RadioGroup
-            value={response || ''}
-            onValueChange={onResponse}
-          >
+        <div className="space-y-6">
+          <div>
+            <h3 className="text-lg font-semibold mb-2" style={{ color: textColor }}>
+              {question.question_text}
+            </h3>
+            {question.description && (
+              <p className="text-sm text-gray-600 mb-4">{question.description}</p>
+            )}
+          </div>
+          <div className="space-y-3">
             {question.options?.map((option: string, index: number) => (
-              <div key={index} className="flex items-center space-x-2">
-                <RadioGroupItem value={option} id={`radio-${index}`} />
-                <Label htmlFor={`radio-${index}`} className="text-sm">
-                  {option}
-                </Label>
-              </div>
+              <button
+                key={index}
+                onClick={() => onResponse(option)}
+                className={`w-full text-left px-4 py-3 rounded-lg border transition-all duration-200 ${
+                  response === option
+                    ? 'border-blue-500 bg-blue-50 text-blue-700'
+                    : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'
+                }`}
+              >
+                <span className="text-sm font-medium">{option}</span>
+              </button>
             ))}
-          </RadioGroup>
+          </div>
         </div>
       );
 
     case 'text_input':
       return (
-        <div className="space-y-4">
-          <h3 className="text-lg font-medium" style={{ color: textColor }}>
-            {question.question_text}
-          </h3>
+        <div className="space-y-6">
+          <div>
+            <h3 className="text-lg font-semibold mb-2" style={{ color: textColor }}>
+              {question.question_text}
+            </h3>
+            {question.description && (
+              <p className="text-sm text-gray-600 mb-4">{question.description}</p>
+            )}
+          </div>
           <Input
             value={response || ''}
             onChange={(e) => onResponse(e.target.value)}
             placeholder="Type your answer..."
+            className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
           />
         </div>
       );
 
     case 'textarea':
       return (
-        <div className="space-y-4">
-          <h3 className="text-lg font-medium" style={{ color: textColor }}>
-            {question.question_text}
-          </h3>
+        <div className="space-y-6">
+          <div>
+            <h3 className="text-lg font-semibold mb-2" style={{ color: textColor }}>
+              {question.question_text}
+            </h3>
+            {question.description && (
+              <p className="text-sm text-gray-600 mb-4">{question.description}</p>
+            )}
+          </div>
           <Textarea
             value={response || ''}
             onChange={(e) => onResponse(e.target.value)}
             placeholder="Type your answer..."
             rows={4}
+            className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 resize-none"
           />
         </div>
       );
