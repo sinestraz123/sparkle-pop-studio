@@ -145,7 +145,7 @@ export const FeedbackWidget = ({ config }: FeedbackWidgetProps) => {
   return (
     <div className={`absolute ${getPositionClasses()} z-50`} style={{ zIndex: 50 + parseInt(config.id) }}>
       <div
-        className="max-w-sm rounded-xl shadow-2xl backdrop-blur-sm border border-white/20 p-6"
+        className="w-96 min-w-96 rounded-xl shadow-2xl backdrop-blur-sm border border-white/20 p-6"
         style={{ backgroundColor: config.backgroundColor }}
       >
         {config.showCloseButton && (
