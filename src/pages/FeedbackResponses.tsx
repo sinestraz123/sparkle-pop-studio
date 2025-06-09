@@ -26,6 +26,18 @@ const FeedbackResponses = () => {
     fetchFeedbackResponses();
   }, []);
 
+  // Type guard to check if an object is a valid StepResponse
+  const isValidStepResponse = (obj: any): obj is StepResponse => {
+    return (
+      obj &&
+      typeof obj === 'object' &&
+      typeof obj.stepId === 'string' &&
+      (obj.type === 'rating' || obj.type === 'text') &&
+      (typeof obj.value === 'string' || typeof obj.value === 'number') &&
+      typeof obj.question === 'string'
+    );
+  };
+
   const fetchFeedbackResponses = async () => {
     try {
       setLoading(true);
@@ -38,12 +50,12 @@ const FeedbackResponses = () => {
         setError('Failed to fetch feedback responses');
         console.error('Error fetching feedback responses:', error);
       } else {
-        // Transform the data to match our interface with proper type handling
+        // Transform the data to match our interface with proper type validation
         const transformedData = data?.map(item => ({
           id: item.id,
           submitted_at: item.submitted_at,
           responses: Array.isArray(item.responses) 
-            ? (item.responses as StepResponse[])
+            ? item.responses.filter(isValidStepResponse)
             : []
         })) || [];
         
