@@ -15,7 +15,7 @@ interface FeedbackBuilderPanelProps {
 
 export const FeedbackBuilderPanel = ({ config, onConfigChange }: FeedbackBuilderPanelProps) => {
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-6 max-w-2xl">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Feedback Widget</h2>
         <Button className="flex items-center gap-2">

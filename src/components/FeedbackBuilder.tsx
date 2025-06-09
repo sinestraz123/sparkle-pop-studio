@@ -19,14 +19,14 @@ export const FeedbackBuilder = () => {
   };
 
   return (
-    <div className="flex-1 flex">
-      <div className="w-1/2 border-r border-gray-200 overflow-y-auto">
+    <div className="flex-1 flex flex-col">
+      <div className="flex-1 p-6 overflow-y-auto">
         <FeedbackBuilderPanel 
           config={feedbackConfig}
           onConfigChange={handleConfigChange}
         />
       </div>
-      <div className="w-1/2 overflow-y-auto bg-gray-100">
+      <div className="flex-1 overflow-y-auto bg-gray-100">
         <FeedbackPreview config={feedbackConfig} />
       </div>
     </div>
