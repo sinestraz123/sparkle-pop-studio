@@ -21,5 +21,5 @@ export interface Banner {
   sender_name: string;
   show_dismiss: boolean;
   style: 'inline' | 'floating';
-  action_type: 'none' | 'open_url' | 'open_url_button' | 'ask_reactions' | 'collect_emails' | 'product_tour';
+  action_type: 'none' | 'open_url' | 'open_url_button' | 'ask_reactions' | 'collect_emails';
 }

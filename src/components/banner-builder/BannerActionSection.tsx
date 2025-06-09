@@ -35,7 +35,6 @@ export const BannerActionSection = ({ banner, onBannerChange }: BannerActionSect
               </SelectItem>
               <SelectItem value="ask_reactions">Ask for reactions</SelectItem>
               <SelectItem value="collect_emails">Collect visitor emails</SelectItem>
-              <SelectItem value="product_tour">Launch a Product Tour</SelectItem>
             </SelectContent>
           </Select>
         </div>
