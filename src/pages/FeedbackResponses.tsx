@@ -2,11 +2,12 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, MessageSquare, Star } from 'lucide-react';
+import { Calendar, MessageSquare, Star, Loader2 } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 interface FeedbackResponse {
   id: string;
-  submittedAt: string;
+  submitted_at: string;
   responses: Array<{
     stepId: string;
     type: 'rating' | 'text';
@@ -17,61 +18,34 @@ interface FeedbackResponse {
 
 const FeedbackResponses = () => {
   const [responses, setResponses] = useState<FeedbackResponse[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Mock data for demonstration - in real app this would come from your backend
   useEffect(() => {
-    const mockResponses: FeedbackResponse[] = [
-      {
-        id: '1',
-        submittedAt: '2024-01-15T10:30:00Z',
-        responses: [
-          {
-            stepId: 'step1',
-            type: 'rating',
-            value: 8,
-            question: 'How likely are you to recommend us to a friend?'
-          },
-          {
-            stepId: 'step2',
-            type: 'text',
-            value: 'Great service overall, could improve response time.',
-            question: 'What could we improve?'
-          }
-        ]
-      },
-      {
-        id: '2',
-        submittedAt: '2024-01-14T15:45:00Z',
-        responses: [
-          {
-            stepId: 'step1',
-            type: 'rating',
-            value: 9,
-            question: 'How likely are you to recommend us to a friend?'
-          }
-        ]
-      },
-      {
-        id: '3',
-        submittedAt: '2024-01-14T09:20:00Z',
-        responses: [
-          {
-            stepId: 'step1',
-            type: 'rating',
-            value: 6,
-            question: 'How likely are you to recommend us to a friend?'
-          },
-          {
-            stepId: 'step2',
-            type: 'text',
-            value: 'The product is good but the pricing seems a bit high.',
-            question: 'What could we improve?'
-          }
-        ]
-      }
-    ];
-    setResponses(mockResponses);
+    fetchFeedbackResponses();
   }, []);
+
+  const fetchFeedbackResponses = async () => {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('feedback_responses')
+        .select('*')
+        .order('submitted_at', { ascending: false });
+
+      if (error) {
+        setError('Failed to fetch feedback responses');
+        console.error('Error fetching feedback responses:', error);
+      } else {
+        setResponses(data || []);
+      }
+    } catch (err) {
+      setError('An unexpected error occurred');
+      console.error('Error:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -88,6 +62,43 @@ const FeedbackResponses = () => {
     if (score >= 7) return { label: 'Passive', color: 'bg-yellow-100 text-yellow-800' };
     return { label: 'Detractor', color: 'bg-red-100 text-red-800' };
   };
+
+  if (loading) {
+    return (
+      <div className="h-screen flex flex-col">
+        <div className="p-6 border-b border-gray-200">
+          <h1 className="text-2xl font-bold text-gray-900">Feedback Responses</h1>
+          <p className="text-gray-600 mt-1">View and analyze customer feedback submissions</p>
+        </div>
+        <div className="flex-1 flex items-center justify-center">
+          <div className="flex items-center gap-2">
+            <Loader2 className="h-6 w-6 animate-spin" />
+            <span>Loading feedback responses...</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="h-screen flex flex-col">
+        <div className="p-6 border-b border-gray-200">
+          <h1 className="text-2xl font-bold text-gray-900">Feedback Responses</h1>
+          <p className="text-gray-600 mt-1">View and analyze customer feedback submissions</p>
+        </div>
+        <div className="flex-1 flex items-center justify-center">
+          <Card>
+            <CardContent className="p-8 text-center">
+              <MessageSquare className="h-12 w-12 text-red-400 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">Error Loading Responses</h3>
+              <p className="text-red-600">{error}</p>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="h-screen flex flex-col">
@@ -111,10 +122,10 @@ const FeedbackResponses = () => {
               <Card key={response.id}>
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
-                    <CardTitle className="text-lg">Response #{response.id}</CardTitle>
+                    <CardTitle className="text-lg">Response #{response.id.slice(0, 8)}</CardTitle>
                     <div className="flex items-center gap-2 text-sm text-gray-500">
                       <Calendar className="h-4 w-4" />
-                      {formatDate(response.submittedAt)}
+                      {formatDate(response.submitted_at)}
                     </div>
                   </div>
                 </CardHeader>

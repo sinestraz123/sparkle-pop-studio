@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { X, ChevronRight, ChevronLeft } from 'lucide-react';
 import { FeedbackConfig } from '@/components/FeedbackBuilder';
+import { supabase } from '@/integrations/supabase/client';
 
 interface FeedbackWidgetProps {
   config: FeedbackConfig;
@@ -11,6 +12,7 @@ interface StepResponse {
   stepId: string;
   type: 'rating' | 'text';
   value: number | string;
+  question: string;
 }
 
 export const FeedbackWidget = ({ config }: FeedbackWidgetProps) => {
@@ -20,6 +22,7 @@ export const FeedbackWidget = ({ config }: FeedbackWidgetProps) => {
   const [currentRating, setCurrentRating] = useState<number | null>(null);
   const [currentText, setCurrentText] = useState('');
   const [isCompleted, setIsCompleted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!isVisible || isCompleted) return null;
 
@@ -48,19 +51,44 @@ export const FeedbackWidget = ({ config }: FeedbackWidgetProps) => {
     return currentRating !== null;
   };
 
-  const handleNext = () => {
+  const saveFeedbackToDatabase = async (allResponses: StepResponse[]) => {
+    try {
+      const { error } = await supabase
+        .from('feedback_responses')
+        .insert({
+          config_id: config.id,
+          responses: allResponses,
+          submitted_at: new Date().toISOString()
+        });
+
+      if (error) {
+        console.error('Error saving feedback:', error);
+      } else {
+        console.log('Feedback saved successfully');
+      }
+    } catch (error) {
+      console.error('Error saving feedback:', error);
+    }
+  };
+
+  const handleNext = async () => {
     // Save current response
     const response: StepResponse = {
       stepId: currentStep.id,
       type: currentStep.type === 'short' ? 'text' : 'rating',
       value: currentStep.type === 'short' ? currentText : currentRating!,
+      question: currentStep.question,
     };
 
-    setResponses(prev => [...prev.filter(r => r.stepId !== currentStep.id), response]);
+    const updatedResponses = [...responses.filter(r => r.stepId !== currentStep.id), response];
+    setResponses(updatedResponses);
 
     if (isLastStep) {
-      console.log('Feedback completed:', [...responses, response]);
+      setIsSubmitting(true);
+      await saveFeedbackToDatabase(updatedResponses);
+      console.log('Feedback completed:', updatedResponses);
       setIsCompleted(true);
+      setIsSubmitting(false);
     } else {
       setCurrentStepIndex(prev => prev + 1);
       setCurrentRating(null);
@@ -87,7 +115,7 @@ export const FeedbackWidget = ({ config }: FeedbackWidgetProps) => {
     if (currentStep.type === 'nps') {
       return (
         <div className="space-y-3">
-          <div className="flex justify-between text-xs opacity-80" style={{ color: config.textColor }}>
+          <div className="flex justify-between text-xs" style={{ color: config.textColor, opacity: 0.8 }}>
             <span>Not likely</span>
             <span>Very likely</span>
           </div>
@@ -192,7 +220,8 @@ export const FeedbackWidget = ({ config }: FeedbackWidgetProps) => {
             {!isFirstStep ? (
               <button
                 onClick={handleBack}
-                className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors text-sm font-medium"
+                disabled={isSubmitting}
+                className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors text-sm font-medium disabled:opacity-50"
                 style={{ color: config.textColor }}
               >
                 <ChevronLeft className="w-4 h-4" />
@@ -205,10 +234,11 @@ export const FeedbackWidget = ({ config }: FeedbackWidgetProps) => {
             {canAdvance() && (
               <button
                 onClick={handleNext}
-                className="flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors text-sm font-medium"
+                disabled={isSubmitting}
+                className="flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors text-sm font-medium disabled:opacity-50"
                 style={{ color: config.textColor }}
               >
-                <span>{isLastStep ? 'Submit' : 'Next'}</span>
+                <span>{isSubmitting ? 'Submitting...' : isLastStep ? 'Submit' : 'Next'}</span>
                 <ChevronRight className="w-4 h-4" />
               </button>
             )}

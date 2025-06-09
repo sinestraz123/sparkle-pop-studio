@@ -182,6 +182,36 @@ export type Database = {
         }
         Relationships: []
       }
+      feedback_responses: {
+        Row: {
+          config_id: string
+          created_at: string
+          id: string
+          responses: Json
+          submitted_at: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          config_id: string
+          created_at?: string
+          id?: string
+          responses: Json
+          submitted_at?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          config_id?: string
+          created_at?: string
+          id?: string
+          responses?: Json
+          submitted_at?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
