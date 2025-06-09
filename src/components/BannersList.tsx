@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useBanners } from '@/hooks/useBanners';
 import { Banner } from '@/types/banner';
-import { ScriptModal } from '@/components/ScriptModal';
+import { BannerScriptModal } from '@/components/BannerScriptModal';
 
 interface BannersListProps {
   onEditBanner: (banner: Banner) => void;
@@ -124,10 +124,10 @@ export const BannersList = ({ onEditBanner, onCreateNew }: BannersListProps) => 
         </div>
       )}
 
-      <ScriptModal
+      <BannerScriptModal
         isOpen={scriptModal.isOpen}
         onClose={() => setScriptModal({ isOpen: false, banner: null })}
-        announcement={scriptModal.banner}
+        banner={scriptModal.banner}
       />
     </div>
   );
