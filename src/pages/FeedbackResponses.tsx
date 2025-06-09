@@ -38,11 +38,13 @@ const FeedbackResponses = () => {
         setError('Failed to fetch feedback responses');
         console.error('Error fetching feedback responses:', error);
       } else {
-        // Transform the data to match our interface
+        // Transform the data to match our interface with proper type handling
         const transformedData = data?.map(item => ({
           id: item.id,
           submitted_at: item.submitted_at,
-          responses: item.responses as StepResponse[]
+          responses: Array.isArray(item.responses) 
+            ? (item.responses as StepResponse[])
+            : []
         })) || [];
         
         setResponses(transformedData);
