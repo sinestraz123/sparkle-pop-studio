@@ -87,6 +87,81 @@ export type Database = {
         }
         Relationships: []
       }
+      banners: {
+        Row: {
+          action_type: string | null
+          background_color: string | null
+          button_text: string | null
+          button_url: string | null
+          clicks: number | null
+          content: string | null
+          created_at: string
+          height: number | null
+          id: string
+          position: string | null
+          sender_name: string | null
+          show_button: boolean | null
+          show_dismiss: boolean | null
+          show_sender: boolean | null
+          status: string | null
+          style: string | null
+          text_color: string | null
+          title: string
+          updated_at: string
+          user_id: string
+          views: number | null
+          width: number | null
+        }
+        Insert: {
+          action_type?: string | null
+          background_color?: string | null
+          button_text?: string | null
+          button_url?: string | null
+          clicks?: number | null
+          content?: string | null
+          created_at?: string
+          height?: number | null
+          id?: string
+          position?: string | null
+          sender_name?: string | null
+          show_button?: boolean | null
+          show_dismiss?: boolean | null
+          show_sender?: boolean | null
+          status?: string | null
+          style?: string | null
+          text_color?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+          views?: number | null
+          width?: number | null
+        }
+        Update: {
+          action_type?: string | null
+          background_color?: string | null
+          button_text?: string | null
+          button_url?: string | null
+          clicks?: number | null
+          content?: string | null
+          created_at?: string
+          height?: number | null
+          id?: string
+          position?: string | null
+          sender_name?: string | null
+          show_button?: boolean | null
+          show_dismiss?: boolean | null
+          show_sender?: boolean | null
+          status?: string | null
+          style?: string | null
+          text_color?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+          views?: number | null
+          width?: number | null
+        }
+        Relationships: []
+      }
       checklist_items: {
         Row: {
           checklist_id: string

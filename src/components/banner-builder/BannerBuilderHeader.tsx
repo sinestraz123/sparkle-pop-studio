@@ -3,43 +3,51 @@ import { ArrowLeft, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Banner } from '@/types/banner';
-import { useNavigate } from 'react-router-dom';
 
 interface BannerBuilderHeaderProps {
   banner: Banner;
   onBannerChange: (updates: Partial<Banner>) => void;
+  onSave?: () => void;
+  onCancel?: () => void;
+  isEditing?: boolean;
 }
 
-export const BannerBuilderHeader = ({ banner, onBannerChange }: BannerBuilderHeaderProps) => {
-  const navigate = useNavigate();
-
-  const handleSave = () => {
-    console.log('Saving banner:', banner);
-  };
-
+export const BannerBuilderHeader = ({ 
+  banner, 
+  onBannerChange, 
+  onSave, 
+  onCancel, 
+  isEditing 
+}: BannerBuilderHeaderProps) => {
   return (
     <div className="p-6 border-b border-gray-200 bg-white">
       <div className="flex items-center justify-between mb-4">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => navigate('/')}
-          className="text-gray-600 hover:text-gray-900"
-        >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Dashboard
-        </Button>
+        {onCancel && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onCancel}
+            className="text-gray-600 hover:text-gray-900"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Banners
+          </Button>
+        )}
         
-        <Button onClick={handleSave} size="sm">
-          <Save className="h-4 w-4 mr-2" />
-          Save Banner
-        </Button>
+        {onSave && (
+          <Button onClick={onSave} size="sm">
+            <Save className="h-4 w-4 mr-2" />
+            {isEditing ? 'Update Banner' : 'Save Banner'}
+          </Button>
+        )}
       </div>
 
       <div className="space-y-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Banner Builder</h1>
-          <p className="text-gray-600">Create engaging banners for your SaaS</p>
+          <h1 className="text-2xl font-bold text-gray-900">
+            {isEditing ? 'Edit Banner' : 'Create Banner'}
+          </h1>
+          <p className="text-gray-600">Design engaging banners for your website</p>
         </div>
 
         <div className="flex items-center justify-between">

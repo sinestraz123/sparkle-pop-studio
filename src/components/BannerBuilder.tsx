@@ -1,12 +1,22 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { BannerBuilderPanel } from '@/components/banner-builder/BannerBuilderPanel';
 import { BannerPreview } from '@/components/BannerPreview';
 import { Banner } from '@/types/banner';
+import { useBanners } from '@/hooks/useBanners';
+import { useAuth } from '@/hooks/useAuth';
 
-export const BannerBuilder = () => {
+interface BannerBuilderProps {
+  initialBanner?: Banner | null;
+  onSave?: () => void;
+  onCancel?: () => void;
+}
+
+export const BannerBuilder = ({ initialBanner, onSave, onCancel }: BannerBuilderProps) => {
+  const { user } = useAuth();
+  const { saveBanner } = useBanners();
   const [banner, setBanner] = useState<Banner>({
-    id: '1',
+    id: '',
     title: 'Join our webinar on 4th Nov 🚀📅',
     content: 'Discover amazing features and boost your productivity',
     background_color: '#000000',
@@ -22,7 +32,7 @@ export const BannerBuilder = () => {
     clicks: 0,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
-    user_id: '',
+    user_id: user?.id || '',
     show_sender: true,
     sender_name: 'Daniel from Glyph',
     show_dismiss: true,
@@ -30,8 +40,21 @@ export const BannerBuilder = () => {
     action_type: 'open_url_button'
   });
 
+  useEffect(() => {
+    if (initialBanner) {
+      setBanner(initialBanner);
+    }
+  }, [initialBanner]);
+
   const handleBannerChange = (updates: Partial<Banner>) => {
     setBanner(prev => ({ ...prev, ...updates }));
+  };
+
+  const handleSave = async () => {
+    const result = await saveBanner(banner);
+    if (result && onSave) {
+      onSave();
+    }
   };
 
   return (
@@ -40,6 +63,9 @@ export const BannerBuilder = () => {
         <BannerBuilderPanel 
           banner={banner}
           onBannerChange={handleBannerChange}
+          onSave={handleSave}
+          onCancel={onCancel}
+          isEditing={!!initialBanner}
         />
       </div>
       <div className="flex-1 overflow-y-auto bg-gray-50 min-h-[400px] lg:min-h-0">
