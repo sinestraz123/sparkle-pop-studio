@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { 
@@ -12,7 +13,8 @@ import {
   LogOut,
   CreditCard,
   FileQuestion,
-  Video
+  Video,
+  MessageSquare
 } from 'lucide-react';
 
 import {
@@ -37,6 +39,7 @@ const mainItems = [
   { title: 'Announcements', url: '/builder', icon: Plus },
   { title: 'Checklist', url: '/checklist', icon: CheckSquare },
   { title: 'Surveys', url: '/surveys', icon: FileQuestion },
+  { title: 'Feedback', url: '/feedback', icon: MessageSquare },
   { title: 'Spotlight', url: '/spotlight', icon: Video },
   { title: 'Analytics', url: '/analytics', icon: BarChart3 },
 ];

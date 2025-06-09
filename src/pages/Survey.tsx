@@ -2,7 +2,6 @@
 import { SurveyBuilder } from '@/components/SurveyBuilder';
 import { SurveyPreview } from '@/components/SurveyPreview';
 import { SurveyResponsesTable } from '@/components/survey-analytics/SurveyResponsesTable';
-import { FeedbackBuilder } from '@/components/FeedbackBuilder';
 import { useSurveyPage } from '@/hooks/useSurveyPage';
 import { LoadingSpinner } from '@/components/survey/SurveyLoadingSpinner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -32,10 +31,9 @@ const Survey = () => {
     <div className="h-screen flex flex-col">
       <Tabs defaultValue="builder" className="flex-1 flex flex-col">
         <div className="border-b border-gray-200 px-4 py-2">
-          <TabsList className="grid w-full max-w-lg grid-cols-3">
+          <TabsList className="grid w-full max-w-md grid-cols-2">
             <TabsTrigger value="builder">Builder & Preview</TabsTrigger>
             <TabsTrigger value="responses">Responses</TabsTrigger>
-            <TabsTrigger value="feedback">Feedback</TabsTrigger>
           </TabsList>
         </div>
 
@@ -62,10 +60,6 @@ const Survey = () => {
               <p className="text-gray-500">Save your survey first to view responses</p>
             </div>
           )}
-        </TabsContent>
-
-        <TabsContent value="feedback" className="flex-1 flex m-0">
-          <FeedbackBuilder />
         </TabsContent>
       </Tabs>
     </div>
