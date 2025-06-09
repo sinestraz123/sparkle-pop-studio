@@ -24,8 +24,10 @@ export const BannerSettingsSection = ({ banner, onBannerChange }: BannerSettings
     const file = event.target.files?.[0];
     if (!file) return;
 
+    console.log('Uploading sender photo:', file.name);
     const imageUrl = await uploadImage(file);
     if (imageUrl) {
+      console.log('Sender photo uploaded successfully:', imageUrl);
       onBannerChange({ sender_photo: imageUrl });
     }
   };
