@@ -1,19 +1,20 @@
-
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Calendar, MessageSquare, Star, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
+interface StepResponse {
+  stepId: string;
+  type: 'rating' | 'text';
+  value: number | string;
+  question: string;
+}
+
 interface FeedbackResponse {
   id: string;
   submitted_at: string;
-  responses: Array<{
-    stepId: string;
-    type: 'rating' | 'text';
-    value: number | string;
-    question: string;
-  }>;
+  responses: StepResponse[];
 }
 
 const FeedbackResponses = () => {
@@ -37,7 +38,14 @@ const FeedbackResponses = () => {
         setError('Failed to fetch feedback responses');
         console.error('Error fetching feedback responses:', error);
       } else {
-        setResponses(data || []);
+        // Transform the data to match our interface
+        const transformedData = data?.map(item => ({
+          id: item.id,
+          submitted_at: item.submitted_at,
+          responses: item.responses as StepResponse[]
+        })) || [];
+        
+        setResponses(transformedData);
       }
     } catch (err) {
       setError('An unexpected error occurred');

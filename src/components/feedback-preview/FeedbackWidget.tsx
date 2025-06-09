@@ -57,7 +57,7 @@ export const FeedbackWidget = ({ config }: FeedbackWidgetProps) => {
         .from('feedback_responses')
         .insert({
           config_id: config.id,
-          responses: allResponses,
+          responses: allResponses as any,
           submitted_at: new Date().toISOString()
         });
 
