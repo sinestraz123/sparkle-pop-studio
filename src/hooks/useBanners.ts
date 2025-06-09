@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -55,6 +54,7 @@ export const useBanners = () => {
         height: banner.height,
         show_sender: banner.show_sender,
         sender_name: banner.sender_name,
+        sender_photo: banner.sender_photo,
         show_dismiss: banner.show_dismiss,
         style: banner.style,
         action_type: banner.action_type,

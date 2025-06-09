@@ -1,11 +1,14 @@
+
 import { Banner } from '@/types/banner';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { ChevronDown, Settings } from 'lucide-react';
-import { useState } from 'react';
+import { ChevronDown, Settings, Upload, X } from 'lucide-react';
+import { useState, useRef } from 'react';
+import { useImageUpload } from '@/hooks/useImageUpload';
+import { Button } from '@/components/ui/button';
 
 interface BannerSettingsSectionProps {
   banner: Banner;
@@ -14,6 +17,25 @@ interface BannerSettingsSectionProps {
 
 export const BannerSettingsSection = ({ banner, onBannerChange }: BannerSettingsSectionProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { uploadImage, isUploading } = useImageUpload();
+
+  const handlePhotoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const imageUrl = await uploadImage(file);
+    if (imageUrl) {
+      onBannerChange({ sender_photo: imageUrl });
+    }
+  };
+
+  const removeSenderPhoto = () => {
+    onBannerChange({ sender_photo: '' });
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
 
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
@@ -58,15 +80,64 @@ export const BannerSettingsSection = ({ banner, onBannerChange }: BannerSettings
         </div>
 
         {banner.show_sender && (
-          <div className="space-y-2">
-            <Label htmlFor="sender-name">Sender name</Label>
-            <Input
-              id="sender-name"
-              value={banner.sender_name}
-              onChange={(e) => onBannerChange({ sender_name: e.target.value })}
-              placeholder="Sender name"
-            />
-          </div>
+          <>
+            <div className="space-y-2">
+              <Label htmlFor="sender-name">Sender name</Label>
+              <Input
+                id="sender-name"
+                value={banner.sender_name}
+                onChange={(e) => onBannerChange({ sender_name: e.target.value })}
+                placeholder="Sender name"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Sender photo</Label>
+              <div className="flex items-center space-x-3">
+                {banner.sender_photo ? (
+                  <div className="relative">
+                    <img
+                      src={banner.sender_photo}
+                      alt="Sender"
+                      className="w-12 h-12 rounded-full object-cover border-2 border-gray-200"
+                    />
+                    <button
+                      onClick={removeSenderPhoto}
+                      className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-600 transition-colors"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
+                    <span className="text-gray-400 text-xs">No photo</span>
+                  </div>
+                )}
+                
+                <div className="flex-1">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handlePhotoUpload}
+                    className="hidden"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={isUploading}
+                    className="w-full"
+                  >
+                    <Upload className="w-4 h-4 mr-2" />
+                    {isUploading ? 'Uploading...' : 'Upload photo'}
+                  </Button>
+                </div>
+              </div>
+              <p className="text-xs text-gray-500">Upload a square image for best results</p>
+            </div>
+          </>
         )}
 
         <div className="flex items-center justify-between">

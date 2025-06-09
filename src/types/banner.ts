@@ -19,6 +19,7 @@ export interface Banner {
   user_id: string;
   show_sender: boolean;
   sender_name: string;
+  sender_photo: string;
   show_dismiss: boolean;
   style: 'inline' | 'floating';
   action_type: 'none' | 'open_url_button';

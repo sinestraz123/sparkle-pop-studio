@@ -28,10 +28,18 @@ export const BannerPreview = ({ banner }: BannerPreviewProps) => {
           >
             {banner.show_sender && (
               <div className="flex items-center gap-3 mr-4">
-                <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
-                  <span className="text-xs font-medium">
-                    {banner.sender_name.split(' ').map(n => n[0]).join('')}
-                  </span>
+                <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center overflow-hidden">
+                  {banner.sender_photo ? (
+                    <img
+                      src={banner.sender_photo}
+                      alt={banner.sender_name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-xs font-medium">
+                      {banner.sender_name.split(' ').map(n => n[0]).join('')}
+                    </span>
+                  )}
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium truncate">{banner.sender_name}</p>

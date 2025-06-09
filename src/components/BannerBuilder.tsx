@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { BannerBuilderPanel } from '@/components/banner-builder/BannerBuilderPanel';
 import { BannerPreview } from '@/components/BannerPreview';
@@ -35,6 +34,7 @@ export const BannerBuilder = ({ initialBanner, onSave, onCancel }: BannerBuilder
     user_id: user?.id || '',
     show_sender: true,
     sender_name: 'Daniel from Glyph',
+    sender_photo: '',
     show_dismiss: true,
     style: 'floating',
     action_type: 'open_url_button'
