@@ -7,9 +7,9 @@ import { Banner } from '@/types/banner';
 export const BannerBuilder = () => {
   const [banner, setBanner] = useState<Banner>({
     id: '1',
-    title: 'Your message...',
+    title: 'Join our webinar on 4th Nov 🚀📅',
     content: 'Discover amazing features and boost your productivity',
-    background_color: '#0071B2',
+    background_color: '#000000',
     text_color: '#ffffff',
     button_text: 'Get Started',
     button_url: 'https://example.com',
@@ -24,10 +24,10 @@ export const BannerBuilder = () => {
     updated_at: new Date().toISOString(),
     user_id: '',
     show_sender: true,
-    sender_name: 'Tint Tint Lwin',
+    sender_name: 'Daniel from Glyph',
     show_dismiss: true,
-    style: 'inline',
-    action_type: 'none'
+    style: 'floating',
+    action_type: 'open_url_button'
   });
 
   const handleBannerChange = (updates: Partial<Banner>) => {
