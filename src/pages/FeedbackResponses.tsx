@@ -51,7 +51,7 @@ const FeedbackResponses = () => {
         console.error('Error fetching feedback responses:', error);
       } else {
         // Transform the data to match our interface with proper type validation
-        const transformedData = data?.map(item => ({
+        const transformedData: FeedbackResponse[] = data?.map(item => ({
           id: item.id,
           submitted_at: item.submitted_at,
           responses: Array.isArray(item.responses) 

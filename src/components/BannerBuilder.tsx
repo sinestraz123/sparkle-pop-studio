@@ -49,14 +49,14 @@ export const BannerBuilder = () => {
   };
 
   return (
-    <div className="h-screen flex">
-      <div className="w-[480px] border-r border-gray-200 overflow-y-auto">
+    <div className="h-screen flex flex-col lg:flex-row">
+      <div className="w-full lg:w-[420px] border-b lg:border-b-0 lg:border-r border-gray-200 overflow-y-auto">
         <BannerBuilderPanel 
           banner={banner}
           onBannerChange={handleBannerChange}
         />
       </div>
-      <div className="flex-1 overflow-y-auto bg-gray-100">
+      <div className="flex-1 overflow-y-auto bg-gray-50 min-h-[400px] lg:min-h-0">
         <BannerPreview banner={banner} />
       </div>
     </div>
