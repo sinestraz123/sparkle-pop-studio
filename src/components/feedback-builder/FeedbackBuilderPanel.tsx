@@ -6,7 +6,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
-import { Save, Plus, Trash2 } from 'lucide-react';
+import { Save, Plus, Trash2, BarChart3 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { FeedbackConfig, FeedbackStep } from '@/components/FeedbackBuilder';
 
 interface FeedbackBuilderPanelProps {
@@ -35,10 +36,18 @@ export const FeedbackBuilderPanel = ({
     <div className="p-6 space-y-6 max-w-2xl">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Feedback Widget</h2>
-        <Button className="flex items-center gap-2">
-          <Save className="h-4 w-4" />
-          Save Changes
-        </Button>
+        <div className="flex gap-2">
+          <Button asChild variant="outline" className="flex items-center gap-2">
+            <Link to="/feedback/responses">
+              <BarChart3 className="h-4 w-4" />
+              View Responses
+            </Link>
+          </Button>
+          <Button className="flex items-center gap-2">
+            <Save className="h-4 w-4" />
+            Save Changes
+          </Button>
+        </div>
       </div>
 
       {/* Steps Configuration */}
