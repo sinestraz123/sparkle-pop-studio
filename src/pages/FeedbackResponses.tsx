@@ -55,7 +55,7 @@ const FeedbackResponses = () => {
           id: item.id,
           submitted_at: item.submitted_at,
           responses: Array.isArray(item.responses) 
-            ? item.responses.filter(isValidStepResponse)
+            ? (item.responses as any[]).filter(isValidStepResponse)
             : []
         })) || [];
         
