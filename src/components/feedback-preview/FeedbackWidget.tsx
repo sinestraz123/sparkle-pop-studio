@@ -1,9 +1,10 @@
 
 import { useState } from 'react';
 import { X, ChevronRight } from 'lucide-react';
+import { FeedbackConfig } from '@/components/FeedbackBuilder';
 
 interface FeedbackWidgetProps {
-  config: any;
+  config: FeedbackConfig;
 }
 
 export const FeedbackWidget = ({ config }: FeedbackWidgetProps) => {
@@ -85,7 +86,7 @@ export const FeedbackWidget = ({ config }: FeedbackWidgetProps) => {
   };
 
   return (
-    <div className={`absolute ${getPositionClasses()} z-50`}>
+    <div className={`absolute ${getPositionClasses()} z-50`} style={{ zIndex: 50 + parseInt(config.id) }}>
       <div
         className="max-w-sm rounded-xl shadow-2xl backdrop-blur-sm border border-white/20 p-6"
         style={{ backgroundColor: config.backgroundColor }}

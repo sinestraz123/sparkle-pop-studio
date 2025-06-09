@@ -6,32 +6,103 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
-import { Save } from 'lucide-react';
+import { Save, Plus, Trash2 } from 'lucide-react';
+import { FeedbackConfig } from '@/components/FeedbackBuilder';
 
 interface FeedbackBuilderPanelProps {
-  config: any;
-  onConfigChange: (updates: any) => void;
+  configs: FeedbackConfig[];
+  selectedConfig?: FeedbackConfig;
+  selectedConfigId: string;
+  onConfigChange: (updates: Partial<FeedbackConfig>) => void;
+  onSelectConfig: (configId: string) => void;
+  onAddConfig: () => void;
+  onDeleteConfig: (configId: string) => void;
 }
 
-export const FeedbackBuilderPanel = ({ config, onConfigChange }: FeedbackBuilderPanelProps) => {
+export const FeedbackBuilderPanel = ({ 
+  configs, 
+  selectedConfig, 
+  selectedConfigId,
+  onConfigChange, 
+  onSelectConfig,
+  onAddConfig,
+  onDeleteConfig
+}: FeedbackBuilderPanelProps) => {
+  if (!selectedConfig) return null;
+
   return (
     <div className="p-6 space-y-6 max-w-2xl">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">Feedback Widget</h2>
+        <h2 className="text-2xl font-bold">Feedback Widgets</h2>
         <Button className="flex items-center gap-2">
           <Save className="h-4 w-4" />
           Save Changes
         </Button>
       </div>
 
+      {/* Widget List */}
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+          <CardTitle>Your Widgets</CardTitle>
+          <Button onClick={onAddConfig} size="sm" className="flex items-center gap-2">
+            <Plus className="h-4 w-4" />
+            Add Widget
+          </Button>
+        </CardHeader>
+        <CardContent className="space-y-2">
+          {configs.map((config) => (
+            <div
+              key={config.id}
+              className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer transition-colors ${
+                selectedConfigId === config.id
+                  ? 'border-primary bg-primary/5'
+                  : 'border-gray-200 hover:border-gray-300'
+              }`}
+              onClick={() => onSelectConfig(config.id)}
+            >
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
+                  <Switch
+                    checked={config.isActive}
+                    onCheckedChange={(checked) => onConfigChange({ isActive: checked })}
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                  <span className="text-xs text-gray-500">
+                    {config.isActive ? 'Active' : 'Inactive'}
+                  </span>
+                </div>
+                <div>
+                  <div className="font-medium">{config.type.toUpperCase()}</div>
+                  <div className="text-sm text-gray-500">{config.position}</div>
+                </div>
+              </div>
+              {configs.length > 1 && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDeleteConfig(config.id);
+                  }}
+                  className="text-red-500 hover:text-red-700"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
+          ))}
+        </CardContent>
+      </Card>
+
+      {/* Selected Widget Configuration */}
       <Card>
         <CardHeader>
-          <CardTitle>Content</CardTitle>
+          <CardTitle>Widget Configuration</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <Label>Feedback Type</Label>
-            <Select value={config.type} onValueChange={(value) => onConfigChange({ type: value })}>
+            <Select value={selectedConfig.type} onValueChange={(value: 'nps' | 'csat' | 'short') => onConfigChange({ type: value })}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
@@ -46,7 +117,7 @@ export const FeedbackBuilderPanel = ({ config, onConfigChange }: FeedbackBuilder
           <div className="space-y-2">
             <Label>Question Text</Label>
             <Textarea
-              value={config.question}
+              value={selectedConfig.question}
               onChange={(e) => onConfigChange({ question: e.target.value })}
               placeholder="Enter your feedback question..."
               rows={3}
@@ -66,12 +137,12 @@ export const FeedbackBuilderPanel = ({ config, onConfigChange }: FeedbackBuilder
               <div className="flex gap-2">
                 <Input
                   type="color"
-                  value={config.backgroundColor}
+                  value={selectedConfig.backgroundColor}
                   onChange={(e) => onConfigChange({ backgroundColor: e.target.value })}
                   className="w-12 h-10 p-1 border rounded"
                 />
                 <Input
-                  value={config.backgroundColor}
+                  value={selectedConfig.backgroundColor}
                   onChange={(e) => onConfigChange({ backgroundColor: e.target.value })}
                   placeholder="#2563eb"
                 />
@@ -83,12 +154,12 @@ export const FeedbackBuilderPanel = ({ config, onConfigChange }: FeedbackBuilder
               <div className="flex gap-2">
                 <Input
                   type="color"
-                  value={config.textColor}
+                  value={selectedConfig.textColor}
                   onChange={(e) => onConfigChange({ textColor: e.target.value })}
                   className="w-12 h-10 p-1 border rounded"
                 />
                 <Input
-                  value={config.textColor}
+                  value={selectedConfig.textColor}
                   onChange={(e) => onConfigChange({ textColor: e.target.value })}
                   placeholder="#ffffff"
                 />
@@ -98,7 +169,7 @@ export const FeedbackBuilderPanel = ({ config, onConfigChange }: FeedbackBuilder
 
           <div className="space-y-2">
             <Label>Position</Label>
-            <Select value={config.position} onValueChange={(value) => onConfigChange({ position: value })}>
+            <Select value={selectedConfig.position} onValueChange={(value: 'bottom-left' | 'bottom-center' | 'bottom-right') => onConfigChange({ position: value })}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
@@ -113,7 +184,7 @@ export const FeedbackBuilderPanel = ({ config, onConfigChange }: FeedbackBuilder
           <div className="flex items-center justify-between">
             <Label>Show Close Button</Label>
             <Switch
-              checked={config.showCloseButton}
+              checked={selectedConfig.showCloseButton}
               onCheckedChange={(checked) => onConfigChange({ showCloseButton: checked })}
             />
           </div>

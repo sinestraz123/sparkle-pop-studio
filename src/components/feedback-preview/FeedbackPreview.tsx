@@ -1,11 +1,12 @@
 
 import { FeedbackWidget } from '@/components/feedback-preview/FeedbackWidget';
+import { FeedbackConfig } from '@/components/FeedbackBuilder';
 
 interface FeedbackPreviewProps {
-  config: any;
+  configs: FeedbackConfig[];
 }
 
-export const FeedbackPreview = ({ config }: FeedbackPreviewProps) => {
+export const FeedbackPreview = ({ configs }: FeedbackPreviewProps) => {
   return (
     <div className="h-full bg-gray-100 relative overflow-hidden">
       {/* Background content to simulate a real page */}
@@ -20,8 +21,10 @@ export const FeedbackPreview = ({ config }: FeedbackPreviewProps) => {
         </div>
       </div>
 
-      {/* Feedback Widget */}
-      <FeedbackWidget config={config} />
+      {/* Multiple Feedback Widgets */}
+      {configs.map((config) => (
+        <FeedbackWidget key={config.id} config={config} />
+      ))}
     </div>
   );
 };
