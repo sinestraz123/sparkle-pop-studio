@@ -1,4 +1,3 @@
-
 import { Banner } from '@/types/banner';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -13,7 +12,7 @@ interface BannerStyleSectionProps {
 }
 
 export const BannerStyleSection = ({ banner, onBannerChange }: BannerStyleSectionProps) => {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
