@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { BannerBuilderPanel } from '@/components/banner-builder/BannerBuilderPanel';
 import { BannerPreview } from '@/components/BannerPreview';
@@ -34,7 +35,7 @@ export const BannerBuilder = ({ initialBanner, onSave, onCancel }: BannerBuilder
     user_id: user?.id || '',
     show_sender: true,
     sender_name: 'Daniel from Glyph',
-    sender_photo: '',
+    sender_photo: '/lovable-uploads/fcfc67c6-7eb6-4f16-a061-ee4f6ddf1320.png',
     show_dismiss: true,
     style: 'floating',
     action_type: 'open_url_button'
