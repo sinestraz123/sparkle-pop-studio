@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { 
@@ -13,8 +14,7 @@ import {
   CreditCard,
   FileQuestion,
   Video,
-  MessageSquare,
-  RectangleHorizontal
+  MessageSquare
 } from 'lucide-react';
 
 import {
@@ -37,7 +37,6 @@ import { PricingModal } from '@/components/PricingModal';
 const mainItems = [
   { title: 'Dashboard', url: '/', icon: LayoutDashboard },
   { title: 'Announcements', url: '/builder', icon: Plus },
-  { title: 'Banner', url: '/banner', icon: RectangleHorizontal },
   { title: 'Checklist', url: '/checklist', icon: CheckSquare },
   { title: 'Surveys', url: '/surveys', icon: FileQuestion },
   { title: 'Feedback', url: '/feedback', icon: MessageSquare },

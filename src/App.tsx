@@ -10,7 +10,6 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import Dashboard from "./pages/Dashboard";
 import Builder from "./pages/Builder";
-import Banner from "./pages/Banner";
 import Checklist from "./pages/Checklist";
 import Survey from "./pages/Survey";
 import Feedback from "./pages/Feedback";
@@ -42,8 +41,6 @@ const App = () => (
                         <Route path="/" element={<Dashboard />} />
                         <Route path="/builder" element={<Builder />} />
                         <Route path="/builder/:id" element={<Builder />} />
-                        <Route path="/banner" element={<Banner />} />
-                        <Route path="/banner/:id" element={<Banner />} />
                         <Route path="/checklist" element={<Checklist />} />
                         <Route path="/checklist/:id" element={<Checklist />} />
                         <Route path="/surveys" element={<Survey />} />

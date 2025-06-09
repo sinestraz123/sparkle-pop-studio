@@ -87,66 +87,6 @@ export type Database = {
         }
         Relationships: []
       }
-      banners: {
-        Row: {
-          background_color: string | null
-          button_text: string | null
-          button_url: string | null
-          clicks: number | null
-          content: string | null
-          created_at: string
-          height: number | null
-          id: string
-          position: string
-          show_button: boolean | null
-          status: string
-          text_color: string | null
-          title: string
-          updated_at: string
-          user_id: string
-          views: number | null
-          width: number | null
-        }
-        Insert: {
-          background_color?: string | null
-          button_text?: string | null
-          button_url?: string | null
-          clicks?: number | null
-          content?: string | null
-          created_at?: string
-          height?: number | null
-          id?: string
-          position?: string
-          show_button?: boolean | null
-          status?: string
-          text_color?: string | null
-          title: string
-          updated_at?: string
-          user_id: string
-          views?: number | null
-          width?: number | null
-        }
-        Update: {
-          background_color?: string | null
-          button_text?: string | null
-          button_url?: string | null
-          clicks?: number | null
-          content?: string | null
-          created_at?: string
-          height?: number | null
-          id?: string
-          position?: string
-          show_button?: boolean | null
-          status?: string
-          text_color?: string | null
-          title?: string
-          updated_at?: string
-          user_id?: string
-          views?: number | null
-          width?: number | null
-        }
-        Relationships: []
-      }
       checklist_items: {
         Row: {
           checklist_id: string
