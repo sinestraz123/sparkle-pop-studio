@@ -22,7 +22,9 @@ export const useBanners = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setBanners(data || []);
+      
+      // Cast the data to Banner[] type to handle the type mismatch
+      setBanners((data || []) as Banner[]);
     } catch (error) {
       console.error('Error fetching banners:', error);
       toast({
@@ -40,7 +42,22 @@ export const useBanners = () => {
 
     try {
       const bannerData = {
-        ...banner,
+        title: banner.title || '',
+        content: banner.content,
+        background_color: banner.background_color,
+        text_color: banner.text_color,
+        button_text: banner.button_text,
+        button_url: banner.button_url,
+        show_button: banner.show_button,
+        status: banner.status,
+        position: banner.position,
+        width: banner.width,
+        height: banner.height,
+        show_sender: banner.show_sender,
+        sender_name: banner.sender_name,
+        show_dismiss: banner.show_dismiss,
+        style: banner.style,
+        action_type: banner.action_type,
         user_id: user.id,
         updated_at: new Date().toISOString(),
       };
@@ -57,12 +74,12 @@ export const useBanners = () => {
 
         if (error) throw error;
         
-        setBanners(prev => prev.map(b => b.id === banner.id ? data : b));
+        setBanners(prev => prev.map(b => b.id === banner.id ? data as Banner : b));
         toast({
           title: "Success",
           description: "Banner updated successfully",
         });
-        return data;
+        return data as Banner;
       } else {
         // Create new banner
         const { data, error } = await supabase
@@ -73,12 +90,12 @@ export const useBanners = () => {
 
         if (error) throw error;
         
-        setBanners(prev => [data, ...prev]);
+        setBanners(prev => [data as Banner, ...prev]);
         toast({
           title: "Success",
           description: "Banner created successfully",
         });
-        return data;
+        return data as Banner;
       }
     } catch (error) {
       console.error('Error saving banner:', error);
