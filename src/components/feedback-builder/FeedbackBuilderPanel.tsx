@@ -6,8 +6,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
-import { Save, Plus, Trash2 } from 'lucide-react';
-import { FeedbackConfig } from '@/components/FeedbackBuilder';
+import { Save, Plus, Trash2, ChevronUp, ChevronDown } from 'lucide-react';
+import { FeedbackConfig, FeedbackStep } from '@/components/FeedbackBuilder';
 
 interface FeedbackBuilderPanelProps {
   configs: FeedbackConfig[];
@@ -17,6 +17,9 @@ interface FeedbackBuilderPanelProps {
   onSelectConfig: (configId: string) => void;
   onAddConfig: () => void;
   onDeleteConfig: (configId: string) => void;
+  onStepChange: (stepId: string, updates: Partial<FeedbackStep>) => void;
+  onAddStep: () => void;
+  onDeleteStep: (stepId: string) => void;
 }
 
 export const FeedbackBuilderPanel = ({ 
@@ -26,7 +29,10 @@ export const FeedbackBuilderPanel = ({
   onConfigChange, 
   onSelectConfig,
   onAddConfig,
-  onDeleteConfig
+  onDeleteConfig,
+  onStepChange,
+  onAddStep,
+  onDeleteStep
 }: FeedbackBuilderPanelProps) => {
   if (!selectedConfig) return null;
 
@@ -72,7 +78,7 @@ export const FeedbackBuilderPanel = ({
                   </span>
                 </div>
                 <div>
-                  <div className="font-medium">{config.type.toUpperCase()}</div>
+                  <div className="font-medium">{config.steps.length} Step{config.steps.length !== 1 ? 's' : ''}</div>
                   <div className="text-sm text-gray-500">{config.position}</div>
                 </div>
               </div>
@@ -94,38 +100,73 @@ export const FeedbackBuilderPanel = ({
         </CardContent>
       </Card>
 
-      {/* Selected Widget Configuration */}
+      {/* Steps Configuration */}
       <Card>
-        <CardHeader>
-          <CardTitle>Widget Configuration</CardTitle>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+          <CardTitle>Feedback Steps</CardTitle>
+          <Button onClick={onAddStep} size="sm" className="flex items-center gap-2">
+            <Plus className="h-4 w-4" />
+            Add Step
+          </Button>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label>Feedback Type</Label>
-            <Select value={selectedConfig.type} onValueChange={(value: 'nps' | 'csat' | 'short') => onConfigChange({ type: value })}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="nps">Net Promoter Score</SelectItem>
-                <SelectItem value="csat">CSAT Rating</SelectItem>
-                <SelectItem value="short">Short Question</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          {selectedConfig.steps.map((step, index) => (
+            <div key={step.id} className="border rounded-lg p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium">Step {index + 1}</span>
+                  <Switch
+                    checked={step.required}
+                    onCheckedChange={(checked) => onStepChange(step.id, { required: checked })}
+                  />
+                  <span className="text-xs text-gray-500">
+                    {step.required ? 'Required' : 'Optional'}
+                  </span>
+                </div>
+                {selectedConfig.steps.length > 1 && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => onDeleteStep(step.id)}
+                    className="text-red-500 hover:text-red-700"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
 
-          <div className="space-y-2">
-            <Label>Question Text</Label>
-            <Textarea
-              value={selectedConfig.question}
-              onChange={(e) => onConfigChange({ question: e.target.value })}
-              placeholder="Enter your feedback question..."
-              rows={3}
-            />
-          </div>
+              <div className="space-y-2">
+                <Label>Step Type</Label>
+                <Select 
+                  value={step.type} 
+                  onValueChange={(value: 'nps' | 'csat' | 'short') => onStepChange(step.id, { type: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="nps">Net Promoter Score</SelectItem>
+                    <SelectItem value="csat">CSAT Rating</SelectItem>
+                    <SelectItem value="short">Short Question</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Question Text</Label>
+                <Textarea
+                  value={step.question}
+                  onChange={(e) => onStepChange(step.id, { question: e.target.value })}
+                  placeholder="Enter your question..."
+                  rows={2}
+                />
+              </div>
+            </div>
+          ))}
         </CardContent>
       </Card>
 
+      {/* Appearance Settings */}
       <Card>
         <CardHeader>
           <CardTitle>Appearance</CardTitle>

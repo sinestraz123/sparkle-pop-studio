@@ -1,18 +1,30 @@
 
 import { useState } from 'react';
-import { X, ChevronRight } from 'lucide-react';
+import { X, ChevronRight, ChevronLeft } from 'lucide-react';
 import { FeedbackConfig } from '@/components/FeedbackBuilder';
 
 interface FeedbackWidgetProps {
   config: FeedbackConfig;
 }
 
+interface StepResponse {
+  stepId: string;
+  type: 'rating' | 'text';
+  value: number | string;
+}
+
 export const FeedbackWidget = ({ config }: FeedbackWidgetProps) => {
   const [isVisible, setIsVisible] = useState(true);
-  const [selectedRating, setSelectedRating] = useState<number | null>(null);
-  const [textResponse, setTextResponse] = useState('');
+  const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const [responses, setResponses] = useState<StepResponse[]>([]);
+  const [currentRating, setCurrentRating] = useState<number | null>(null);
+  const [currentText, setCurrentText] = useState('');
 
   if (!isVisible) return null;
+
+  const currentStep = config.steps[currentStepIndex];
+  const isLastStep = currentStepIndex === config.steps.length - 1;
+  const isFirstStep = currentStepIndex === 0;
 
   const getPositionClasses = () => {
     switch (config.position) {
@@ -25,8 +37,53 @@ export const FeedbackWidget = ({ config }: FeedbackWidgetProps) => {
     }
   };
 
+  const canAdvance = () => {
+    if (!currentStep.required) return true;
+    
+    if (currentStep.type === 'short') {
+      return currentText.trim().length > 0;
+    }
+    
+    return currentRating !== null;
+  };
+
+  const handleNext = () => {
+    // Save current response
+    const response: StepResponse = {
+      stepId: currentStep.id,
+      type: currentStep.type === 'short' ? 'text' : 'rating',
+      value: currentStep.type === 'short' ? currentText : currentRating!,
+    };
+
+    setResponses(prev => [...prev.filter(r => r.stepId !== currentStep.id), response]);
+
+    if (isLastStep) {
+      console.log('Feedback completed:', [...responses, response]);
+      setIsVisible(false);
+    } else {
+      setCurrentStepIndex(prev => prev + 1);
+      setCurrentRating(null);
+      setCurrentText('');
+    }
+  };
+
+  const handleBack = () => {
+    if (!isFirstStep) {
+      setCurrentStepIndex(prev => prev - 1);
+      // Restore previous response
+      const prevResponse = responses.find(r => r.stepId === config.steps[currentStepIndex - 1].id);
+      if (prevResponse) {
+        if (prevResponse.type === 'rating') {
+          setCurrentRating(prevResponse.value as number);
+        } else {
+          setCurrentText(prevResponse.value as string);
+        }
+      }
+    }
+  };
+
   const renderRatingScale = () => {
-    if (config.type === 'nps') {
+    if (currentStep.type === 'nps') {
       return (
         <div className="space-y-3">
           <div className="flex justify-between text-xs opacity-80">
@@ -37,13 +94,13 @@ export const FeedbackWidget = ({ config }: FeedbackWidgetProps) => {
             {[...Array(11)].map((_, i) => (
               <button
                 key={i}
-                onClick={() => setSelectedRating(i)}
+                onClick={() => setCurrentRating(i)}
                 className={`w-8 h-8 rounded text-sm font-medium transition-all ${
-                  selectedRating === i
+                  currentRating === i
                     ? 'bg-white text-gray-900 shadow-md'
                     : 'bg-white/20 hover:bg-white/30'
                 }`}
-                style={{ color: selectedRating === i ? '#000' : config.textColor }}
+                style={{ color: currentRating === i ? '#000' : config.textColor }}
               >
                 {i}
               </button>
@@ -53,16 +110,16 @@ export const FeedbackWidget = ({ config }: FeedbackWidgetProps) => {
       );
     }
 
-    if (config.type === 'csat') {
+    if (currentStep.type === 'csat') {
       const ratings = ['😞', '😐', '🙂', '😊', '😍'];
       return (
         <div className="flex gap-2 justify-center">
           {ratings.map((emoji, i) => (
             <button
               key={i}
-              onClick={() => setSelectedRating(i)}
+              onClick={() => setCurrentRating(i)}
               className={`w-12 h-12 rounded-full text-2xl transition-all ${
-                selectedRating === i
+                currentRating === i
                   ? 'bg-white/30 scale-110'
                   : 'bg-white/10 hover:bg-white/20'
               }`}
@@ -76,8 +133,8 @@ export const FeedbackWidget = ({ config }: FeedbackWidgetProps) => {
 
     return (
       <textarea
-        value={textResponse}
-        onChange={(e) => setTextResponse(e.target.value)}
+        value={currentText}
+        onChange={(e) => setCurrentText(e.target.value)}
         placeholder="Type your response..."
         className="w-full h-20 p-3 rounded-lg bg-white/20 backdrop-blur-sm border border-white/30 placeholder-white/70 text-white resize-none focus:outline-none focus:ring-2 focus:ring-white/50"
         style={{ color: config.textColor }}
@@ -101,38 +158,60 @@ export const FeedbackWidget = ({ config }: FeedbackWidgetProps) => {
         )}
 
         <div className="space-y-4">
+          {/* Progress indicator */}
+          {config.steps.length > 1 && (
+            <div className="flex justify-between items-center text-xs opacity-70">
+              <span style={{ color: config.textColor }}>
+                Step {currentStepIndex + 1} of {config.steps.length}
+              </span>
+              <div className="flex gap-1">
+                {config.steps.map((_, index) => (
+                  <div
+                    key={index}
+                    className={`w-2 h-2 rounded-full ${
+                      index <= currentStepIndex ? 'bg-white' : 'bg-white/30'
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
           <h3
             className="text-sm font-medium leading-relaxed"
             style={{ color: config.textColor }}
           >
-            {config.question}
+            {currentStep.question}
           </h3>
 
           {renderRatingScale()}
 
-          {config.type !== 'short' && (
-            <div className="pt-2">
+          {/* Navigation */}
+          <div className="flex justify-between pt-2">
+            {!isFirstStep ? (
               <button
-                className="flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors text-sm font-medium"
+                onClick={handleBack}
+                className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors text-sm font-medium"
                 style={{ color: config.textColor }}
               >
-                <span>Continue</span>
-                <ChevronRight className="w-4 h-4" />
+                <ChevronLeft className="w-4 h-4" />
+                <span>Back</span>
               </button>
-            </div>
-          )}
+            ) : (
+              <div />
+            )}
 
-          {config.type === 'short' && textResponse && (
-            <div className="pt-2">
+            {canAdvance() && (
               <button
+                onClick={handleNext}
                 className="flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors text-sm font-medium"
                 style={{ color: config.textColor }}
               >
-                <span>Submit</span>
+                <span>{isLastStep ? 'Submit' : 'Next'}</span>
                 <ChevronRight className="w-4 h-4" />
               </button>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </div>
