@@ -6,7 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
-import { Save, Plus, Trash2, ChevronUp, ChevronDown } from 'lucide-react';
+import { Save, Plus, Trash2 } from 'lucide-react';
 import { FeedbackConfig, FeedbackStep } from '@/components/FeedbackBuilder';
 
 interface FeedbackBuilderPanelProps {
@@ -23,13 +23,8 @@ interface FeedbackBuilderPanelProps {
 }
 
 export const FeedbackBuilderPanel = ({ 
-  configs, 
   selectedConfig, 
-  selectedConfigId,
   onConfigChange, 
-  onSelectConfig,
-  onAddConfig,
-  onDeleteConfig,
   onStepChange,
   onAddStep,
   onDeleteStep
@@ -39,66 +34,12 @@ export const FeedbackBuilderPanel = ({
   return (
     <div className="p-6 space-y-6 max-w-2xl">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">Feedback Widgets</h2>
+        <h2 className="text-2xl font-bold">Feedback Widget</h2>
         <Button className="flex items-center gap-2">
           <Save className="h-4 w-4" />
           Save Changes
         </Button>
       </div>
-
-      {/* Widget List */}
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-          <CardTitle>Your Widgets</CardTitle>
-          <Button onClick={onAddConfig} size="sm" className="flex items-center gap-2">
-            <Plus className="h-4 w-4" />
-            Add Widget
-          </Button>
-        </CardHeader>
-        <CardContent className="space-y-2">
-          {configs.map((config) => (
-            <div
-              key={config.id}
-              className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer transition-colors ${
-                selectedConfigId === config.id
-                  ? 'border-primary bg-primary/5'
-                  : 'border-gray-200 hover:border-gray-300'
-              }`}
-              onClick={() => onSelectConfig(config.id)}
-            >
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2">
-                  <Switch
-                    checked={config.isActive}
-                    onCheckedChange={(checked) => onConfigChange({ isActive: checked })}
-                    onClick={(e) => e.stopPropagation()}
-                  />
-                  <span className="text-xs text-gray-500">
-                    {config.isActive ? 'Active' : 'Inactive'}
-                  </span>
-                </div>
-                <div>
-                  <div className="font-medium">{config.steps.length} Step{config.steps.length !== 1 ? 's' : ''}</div>
-                  <div className="text-sm text-gray-500">{config.position}</div>
-                </div>
-              </div>
-              {configs.length > 1 && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onDeleteConfig(config.id);
-                  }}
-                  className="text-red-500 hover:text-red-700"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              )}
-            </div>
-          ))}
-        </CardContent>
-      </Card>
 
       {/* Steps Configuration */}
       <Card>

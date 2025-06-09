@@ -22,57 +22,41 @@ export interface FeedbackConfig {
 }
 
 export const FeedbackBuilder = () => {
-  const [feedbackConfigs, setFeedbackConfigs] = useState<FeedbackConfig[]>([
-    {
-      id: '1',
-      steps: [
-        {
-          id: 'step1',
-          type: 'nps',
-          question: 'How likely are you to recommend us to a friend?',
-          required: true,
-        },
-        {
-          id: 'step2',
-          type: 'short',
-          question: "We're sorry to hear that. What could we have done differently to improve your experience?",
-          required: false,
-        }
-      ],
-      backgroundColor: '#2563eb',
-      textColor: '#ffffff',
-      buttonColor: '#ffffff',
-      position: 'bottom-center',
-      showCloseButton: true,
-      isActive: true,
-    }
-  ]);
-
-  const [selectedConfigId, setSelectedConfigId] = useState<string>('1');
+  const [feedbackConfig, setFeedbackConfig] = useState<FeedbackConfig>({
+    id: '1',
+    steps: [
+      {
+        id: 'step1',
+        type: 'nps',
+        question: 'How likely are you to recommend us to a friend?',
+        required: true,
+      },
+      {
+        id: 'step2',
+        type: 'short',
+        question: "We're sorry to hear that. What could we have done differently to improve your experience?",
+        required: false,
+      }
+    ],
+    backgroundColor: '#2563eb',
+    textColor: '#ffffff',
+    buttonColor: '#ffffff',
+    position: 'bottom-center',
+    showCloseButton: true,
+    isActive: true,
+  });
 
   const handleConfigChange = (updates: Partial<FeedbackConfig>) => {
-    setFeedbackConfigs(prev => 
-      prev.map(config => 
-        config.id === selectedConfigId 
-          ? { ...config, ...updates }
-          : config
-      )
-    );
+    setFeedbackConfig(prev => ({ ...prev, ...updates }));
   };
 
   const handleStepChange = (stepId: string, updates: Partial<FeedbackStep>) => {
-    setFeedbackConfigs(prev => 
-      prev.map(config => 
-        config.id === selectedConfigId 
-          ? {
-              ...config,
-              steps: config.steps.map(step => 
-                step.id === stepId ? { ...step, ...updates } : step
-              )
-            }
-          : config
+    setFeedbackConfig(prev => ({
+      ...prev,
+      steps: prev.steps.map(step => 
+        step.id === stepId ? { ...step, ...updates } : step
       )
-    );
+    }));
   };
 
   const handleAddStep = () => {
@@ -84,80 +68,37 @@ export const FeedbackBuilder = () => {
       required: false,
     };
     
-    setFeedbackConfigs(prev => 
-      prev.map(config => 
-        config.id === selectedConfigId 
-          ? { ...config, steps: [...config.steps, newStep] }
-          : config
-      )
-    );
+    setFeedbackConfig(prev => ({
+      ...prev,
+      steps: [...prev.steps, newStep]
+    }));
   };
 
   const handleDeleteStep = (stepId: string) => {
-    setFeedbackConfigs(prev => 
-      prev.map(config => 
-        config.id === selectedConfigId 
-          ? { ...config, steps: config.steps.filter(step => step.id !== stepId) }
-          : config
-      )
-    );
+    setFeedbackConfig(prev => ({
+      ...prev,
+      steps: prev.steps.filter(step => step.id !== stepId)
+    }));
   };
-
-  const handleAddConfig = () => {
-    const newId = Date.now().toString();
-    const newConfig: FeedbackConfig = {
-      id: newId,
-      steps: [
-        {
-          id: 'step1',
-          type: 'nps',
-          question: 'How likely are you to recommend us to a friend?',
-          required: true,
-        }
-      ],
-      backgroundColor: '#2563eb',
-      textColor: '#ffffff',
-      buttonColor: '#ffffff',
-      position: 'bottom-center',
-      showCloseButton: true,
-      isActive: true,
-    };
-    
-    setFeedbackConfigs(prev => [...prev, newConfig]);
-    setSelectedConfigId(newId);
-  };
-
-  const handleDeleteConfig = (configId: string) => {
-    if (feedbackConfigs.length <= 1) return;
-    
-    setFeedbackConfigs(prev => prev.filter(config => config.id !== configId));
-    
-    if (selectedConfigId === configId) {
-      const remainingConfigs = feedbackConfigs.filter(config => config.id !== configId);
-      setSelectedConfigId(remainingConfigs[0]?.id || '');
-    }
-  };
-
-  const selectedConfig = feedbackConfigs.find(config => config.id === selectedConfigId);
 
   return (
     <div className="h-screen flex">
       <div className="w-1/2 border-r border-gray-200 overflow-y-auto">
         <FeedbackBuilderPanel 
-          configs={feedbackConfigs}
-          selectedConfig={selectedConfig}
-          selectedConfigId={selectedConfigId}
+          configs={[feedbackConfig]}
+          selectedConfig={feedbackConfig}
+          selectedConfigId={feedbackConfig.id}
           onConfigChange={handleConfigChange}
-          onSelectConfig={setSelectedConfigId}
-          onAddConfig={handleAddConfig}
-          onDeleteConfig={handleDeleteConfig}
+          onSelectConfig={() => {}}
+          onAddConfig={() => {}}
+          onDeleteConfig={() => {}}
           onStepChange={handleStepChange}
           onAddStep={handleAddStep}
           onDeleteStep={handleDeleteStep}
         />
       </div>
       <div className="w-1/2 overflow-y-auto bg-gray-100">
-        <FeedbackPreview configs={feedbackConfigs.filter(config => config.isActive)} />
+        <FeedbackPreview configs={[feedbackConfig]} />
       </div>
     </div>
   );
