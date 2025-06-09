@@ -85,7 +85,7 @@ export const FeedbackWidget = ({ config }: FeedbackWidgetProps) => {
   };
 
   return (
-    <div className={`fixed ${getPositionClasses()} z-50`}>
+    <div className={`absolute ${getPositionClasses()} z-50`}>
       <div
         className="max-w-sm rounded-xl shadow-2xl backdrop-blur-sm border border-white/20 p-6"
         style={{ backgroundColor: config.backgroundColor }}
