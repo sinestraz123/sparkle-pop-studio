@@ -3,6 +3,9 @@ import { Banner } from '@/types/banner';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { ChevronDown, Palette } from 'lucide-react';
+import { useState } from 'react';
 
 interface BannerStyleSectionProps {
   banner: Banner;
@@ -10,11 +13,24 @@ interface BannerStyleSectionProps {
 }
 
 export const BannerStyleSection = ({ banner, onBannerChange }: BannerStyleSectionProps) => {
+  const [isOpen, setIsOpen] = useState(true);
+
   return (
-    <div className="space-y-6">
-      <h3 className="text-lg font-semibold text-gray-900">Style</h3>
+    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+      <CollapsibleTrigger className="flex items-center justify-between w-full p-4 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+        <div className="flex items-center space-x-3">
+          <div className="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center">
+            <Palette className="h-4 w-4 text-green-600" />
+          </div>
+          <div className="text-left">
+            <div className="font-medium text-gray-900">Style</div>
+            <div className="text-sm text-gray-500">Appearance and layout</div>
+          </div>
+        </div>
+        <ChevronDown className={`h-4 w-4 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+      </CollapsibleTrigger>
       
-      <div className="space-y-4">
+      <CollapsibleContent className="mt-4 space-y-4">
         <div className="space-y-2">
           <Label>Display Style</Label>
           <ToggleGroup 
@@ -88,7 +104,7 @@ export const BannerStyleSection = ({ banner, onBannerChange }: BannerStyleSectio
             />
           </div>
         </div>
-      </div>
-    </div>
+      </CollapsibleContent>
+    </Collapsible>
   );
 };

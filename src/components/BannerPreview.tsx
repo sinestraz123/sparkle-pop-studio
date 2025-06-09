@@ -1,6 +1,6 @@
 
 import { Banner } from '@/types/banner';
-import { X, ThumbsUp, ThumbsDown, Heart } from 'lucide-react';
+import { X } from 'lucide-react';
 
 interface BannerPreviewProps {
   banner: Banner;
@@ -50,46 +50,6 @@ export const BannerPreview = ({ banner }: BannerPreviewProps) => {
               >
                 {banner.button_text}
               </button>
-            )}
-
-            {banner.action_type === 'ask_reactions' && (
-              <div className="ml-4 flex items-center gap-2 flex-shrink-0">
-                <button
-                  className="p-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors"
-                  style={{ color: banner.text_color }}
-                >
-                  <ThumbsUp className="h-4 w-4" />
-                </button>
-                <button
-                  className="p-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors"
-                  style={{ color: banner.text_color }}
-                >
-                  <ThumbsDown className="h-4 w-4" />
-                </button>
-                <button
-                  className="p-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors"
-                  style={{ color: banner.text_color }}
-                >
-                  <Heart className="h-4 w-4" />
-                </button>
-              </div>
-            )}
-
-            {banner.action_type === 'collect_emails' && (
-              <div className="ml-4 flex items-center gap-2 flex-shrink-0">
-                <input
-                  type="email"
-                  placeholder="Enter your email"
-                  className="px-3 py-1.5 bg-white/20 border border-white/30 rounded text-xs lg:text-sm placeholder-white/60 text-white focus:outline-none focus:ring-2 focus:ring-white/50"
-                  style={{ color: banner.text_color }}
-                />
-                <button
-                  className="px-3 py-1.5 bg-white/20 hover:bg-white/30 rounded text-xs lg:text-sm font-medium transition-colors"
-                  style={{ color: banner.text_color }}
-                >
-                  Submit
-                </button>
-              </div>
             )}
 
             {banner.show_dismiss && (
