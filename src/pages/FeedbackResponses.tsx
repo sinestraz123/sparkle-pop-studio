@@ -26,6 +26,18 @@ const FeedbackResponses = () => {
     fetchFeedbackResponses();
   }, []);
 
+  // Type guard to check if an object is a valid StepResponse
+  const isValidStepResponse = (obj: any): obj is StepResponse => {
+    return (
+      obj &&
+      typeof obj === 'object' &&
+      typeof obj.stepId === 'string' &&
+      (obj.type === 'rating' || obj.type === 'text') &&
+      (typeof obj.value === 'string' || typeof obj.value === 'number') &&
+      typeof obj.question === 'string'
+    );
+  };
+
   const fetchFeedbackResponses = async () => {
     try {
       setLoading(true);
@@ -38,28 +50,15 @@ const FeedbackResponses = () => {
         setError('Failed to fetch feedback responses');
         console.error('Error fetching feedback responses:', error);
       } else {
-        // Transform the data to match our interface
-        const transformedData: FeedbackResponse[] = (data || []).map(item => {
-          let parsedResponses: StepResponse[] = [];
-          
-          try {
-            // Handle the Json type conversion safely
-            if (Array.isArray(item.responses)) {
-              parsedResponses = item.responses.filter((r: any) => 
-                r && typeof r === 'object' && 'stepId' in r && 'type' in r && 'value' in r && 'question' in r
-              ) as StepResponse[];
-            }
-          } catch (e) {
-            console.warn('Failed to parse responses for item:', item.id);
-          }
-
-          return {
-            id: item.id,
-            submitted_at: item.submitted_at,
-            responses: parsedResponses
-          };
-        });
-
+        // Transform the data to match our interface with proper type validation
+        const transformedData: FeedbackResponse[] = data?.map(item => ({
+          id: item.id,
+          submitted_at: item.submitted_at,
+          responses: Array.isArray(item.responses) 
+            ? (item.responses as any[]).filter(isValidStepResponse)
+            : []
+        })) || [];
+        
         setResponses(transformedData);
       }
     } catch (err) {
