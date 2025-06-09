@@ -19,8 +19,9 @@ export const FeedbackWidget = ({ config }: FeedbackWidgetProps) => {
   const [responses, setResponses] = useState<StepResponse[]>([]);
   const [currentRating, setCurrentRating] = useState<number | null>(null);
   const [currentText, setCurrentText] = useState('');
+  const [isCompleted, setIsCompleted] = useState(false);
 
-  if (!isVisible) return null;
+  if (!isVisible || isCompleted) return null;
 
   const currentStep = config.steps[currentStepIndex];
   const isLastStep = currentStepIndex === config.steps.length - 1;
@@ -59,7 +60,7 @@ export const FeedbackWidget = ({ config }: FeedbackWidgetProps) => {
 
     if (isLastStep) {
       console.log('Feedback completed:', [...responses, response]);
-      setIsVisible(false);
+      setIsCompleted(true);
     } else {
       setCurrentStepIndex(prev => prev + 1);
       setCurrentRating(null);
@@ -86,7 +87,7 @@ export const FeedbackWidget = ({ config }: FeedbackWidgetProps) => {
     if (currentStep.type === 'nps') {
       return (
         <div className="space-y-3">
-          <div className="flex justify-between text-xs opacity-80">
+          <div className="flex justify-between text-xs opacity-80" style={{ color: config.textColor }}>
             <span>Not likely</span>
             <span>Very likely</span>
           </div>
