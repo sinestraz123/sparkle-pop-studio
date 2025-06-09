@@ -2,46 +2,32 @@
 import { useState } from 'react';
 import { BannerBuilderPanel } from '@/components/banner-builder/BannerBuilderPanel';
 import { BannerPreview } from '@/components/BannerPreview';
-
-export interface Banner {
-  id: string;
-  title: string;
-  content: string;
-  background_color: string;
-  text_color: string;
-  button_text: string;
-  button_url: string;
-  show_button: boolean;
-  status: string;
-  position: string;
-  width: number;
-  height: number;
-  views: number;
-  clicks: number;
-  created_at: string;
-  updated_at: string;
-  user_id: string;
-}
+import { Banner } from '@/types/banner';
 
 export const BannerBuilder = () => {
   const [banner, setBanner] = useState<Banner>({
     id: '1',
-    title: 'Welcome to our platform',
+    title: 'Your message...',
     content: 'Discover amazing features and boost your productivity',
-    background_color: '#2563eb',
+    background_color: '#0071B2',
     text_color: '#ffffff',
     button_text: 'Get Started',
     button_url: 'https://example.com',
     show_button: true,
     status: 'draft',
     position: 'top',
-    width: 193,
-    height: 63,
+    width: 100,
+    height: 60,
     views: 0,
     clicks: 0,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
-    user_id: ''
+    user_id: '',
+    show_sender: true,
+    sender_name: 'Tint Tint Lwin',
+    show_dismiss: true,
+    style: 'inline',
+    action_type: 'none'
   });
 
   const handleBannerChange = (updates: Partial<Banner>) => {
@@ -50,7 +36,7 @@ export const BannerBuilder = () => {
 
   return (
     <div className="h-screen flex flex-col lg:flex-row">
-      <div className="w-full lg:w-[420px] border-b lg:border-b-0 lg:border-r border-gray-200 overflow-y-auto">
+      <div className="w-full lg:w-[420px] border-b lg:border-b-0 lg:border-r border-gray-200 overflow-y-auto bg-white">
         <BannerBuilderPanel 
           banner={banner}
           onBannerChange={handleBannerChange}

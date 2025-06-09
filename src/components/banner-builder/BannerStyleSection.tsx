@@ -1,10 +1,8 @@
 
-import { Banner } from '@/components/BannerBuilder';
+import { Banner } from '@/types/banner';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { ChevronDown } from 'lucide-react';
-import { useState } from 'react';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 
 interface BannerStyleSectionProps {
   banner: Banner;
@@ -12,18 +10,49 @@ interface BannerStyleSectionProps {
 }
 
 export const BannerStyleSection = ({ banner, onBannerChange }: BannerStyleSectionProps) => {
-  const [isOpen, setIsOpen] = useState(true);
-
   return (
-    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-      <CollapsibleTrigger className="flex items-center justify-between w-full p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-        <h3 className="font-semibold text-gray-900">Style</h3>
-        <ChevronDown className={`h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
-      </CollapsibleTrigger>
+    <div className="space-y-6">
+      <h3 className="text-lg font-semibold text-gray-900">Style</h3>
       
-      <CollapsibleContent className="mt-4 space-y-4">
+      <div className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="background-color">Background Color</Label>
+          <Label>Display Style</Label>
+          <ToggleGroup 
+            type="single" 
+            value={banner.style} 
+            onValueChange={(value: Banner['style']) => value && onBannerChange({ style: value })}
+            className="grid grid-cols-2 gap-2"
+          >
+            <ToggleGroupItem value="inline" className="flex items-center gap-2">
+              <div className="w-4 h-4 border border-gray-400"></div>
+              Inline
+            </ToggleGroupItem>
+            <ToggleGroupItem value="floating" className="flex items-center gap-2">
+              <div className="w-4 h-4 bg-gray-400 rounded"></div>
+              Floating
+            </ToggleGroupItem>
+          </ToggleGroup>
+        </div>
+
+        <div className="space-y-2">
+          <Label>Position</Label>
+          <ToggleGroup 
+            type="single" 
+            value={banner.position} 
+            onValueChange={(value: Banner['position']) => value && onBannerChange({ position: value })}
+            className="grid grid-cols-2 gap-2"
+          >
+            <ToggleGroupItem value="top" className="flex items-center gap-2">
+              ↑ Top
+            </ToggleGroupItem>
+            <ToggleGroupItem value="bottom" className="flex items-center gap-2">
+              ↓ Bottom
+            </ToggleGroupItem>
+          </ToggleGroup>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="background-color">Background color</Label>
           <div className="flex items-center space-x-2">
             <Input
               id="background-color"
@@ -35,14 +64,14 @@ export const BannerStyleSection = ({ banner, onBannerChange }: BannerStyleSectio
             <Input
               value={banner.background_color}
               onChange={(e) => onBannerChange({ background_color: e.target.value })}
-              placeholder="#2563eb"
+              placeholder="#0071B2"
               className="flex-1"
             />
           </div>
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="text-color">Text Color</Label>
+          <Label htmlFor="text-color">Text color</Label>
           <div className="flex items-center space-x-2">
             <Input
               id="text-color"
@@ -59,7 +88,7 @@ export const BannerStyleSection = ({ banner, onBannerChange }: BannerStyleSectio
             />
           </div>
         </div>
-      </CollapsibleContent>
-    </Collapsible>
+      </div>
+    </div>
   );
 };

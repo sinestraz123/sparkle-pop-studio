@@ -2,7 +2,7 @@
 import { ArrowLeft, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
-import { Banner } from '@/components/BannerBuilder';
+import { Banner } from '@/types/banner';
 import { useNavigate } from 'react-router-dom';
 
 interface BannerBuilderHeaderProps {
@@ -14,7 +14,6 @@ export const BannerBuilderHeader = ({ banner, onBannerChange }: BannerBuilderHea
   const navigate = useNavigate();
 
   const handleSave = () => {
-    // TODO: Implement save functionality
     console.log('Saving banner:', banner);
   };
 
@@ -24,7 +23,7 @@ export const BannerBuilderHeader = ({ banner, onBannerChange }: BannerBuilderHea
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => navigate('/dashboard')}
+          onClick={() => navigate('/')}
           className="text-gray-600 hover:text-gray-900"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
@@ -39,8 +38,8 @@ export const BannerBuilderHeader = ({ banner, onBannerChange }: BannerBuilderHea
 
       <div className="space-y-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">{banner.title}</h1>
-          <p className="text-gray-600">Design and customize your banner</p>
+          <h1 className="text-2xl font-bold text-gray-900">Banner Builder</h1>
+          <p className="text-gray-600">Create engaging banners for your SaaS</p>
         </div>
 
         <div className="flex items-center justify-between">

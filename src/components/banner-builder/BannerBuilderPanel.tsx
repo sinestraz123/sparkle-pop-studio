@@ -1,9 +1,8 @@
 
-import { Banner } from '@/components/BannerBuilder';
+import { Banner } from '@/types/banner';
 import { BannerBuilderHeader } from './BannerBuilderHeader';
-import { BannerContentSection } from './BannerContentSection';
 import { BannerSettingsSection } from './BannerSettingsSection';
-import { BannerActionsSection } from './BannerActionsSection';
+import { BannerActionSection } from './BannerActionSection';
 import { BannerStyleSection } from './BannerStyleSection';
 
 interface BannerBuilderPanelProps {
@@ -17,9 +16,8 @@ export const BannerBuilderPanel = ({ banner, onBannerChange }: BannerBuilderPane
       <BannerBuilderHeader banner={banner} onBannerChange={onBannerChange} />
       
       <div className="flex-1 overflow-y-auto p-6 space-y-6">
-        <BannerContentSection banner={banner} onBannerChange={onBannerChange} />
         <BannerSettingsSection banner={banner} onBannerChange={onBannerChange} />
-        <BannerActionsSection banner={banner} onBannerChange={onBannerChange} />
+        <BannerActionSection banner={banner} onBannerChange={onBannerChange} />
         <BannerStyleSection banner={banner} onBannerChange={onBannerChange} />
       </div>
     </div>

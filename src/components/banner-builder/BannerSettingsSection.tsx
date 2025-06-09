@@ -1,11 +1,9 @@
 
-import { Banner } from '@/components/BannerBuilder';
+import { Banner } from '@/types/banner';
 import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { ChevronDown } from 'lucide-react';
-import { useState } from 'react';
 
 interface BannerSettingsSectionProps {
   banner: Banner;
@@ -13,39 +11,58 @@ interface BannerSettingsSectionProps {
 }
 
 export const BannerSettingsSection = ({ banner, onBannerChange }: BannerSettingsSectionProps) => {
-  const [isOpen, setIsOpen] = useState(true);
-
   return (
-    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-      <CollapsibleTrigger className="flex items-center justify-between w-full p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-        <h3 className="font-semibold text-gray-900">Settings</h3>
-        <ChevronDown className={`h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
-      </CollapsibleTrigger>
+    <div className="space-y-6">
+      <h3 className="text-lg font-semibold text-gray-900">Settings</h3>
       
-      <CollapsibleContent className="mt-4 space-y-4">
-        <div className="flex items-center justify-between">
-          <Label htmlFor="show-button">Show floating button</Label>
-          <Switch
-            id="show-button"
-            checked={banner.show_button}
-            onCheckedChange={(checked) => onBannerChange({ show_button: checked })}
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="message">Message</Label>
+          <Input
+            id="message"
+            value={banner.title}
+            onChange={(e) => onBannerChange({ title: e.target.value })}
+            placeholder="Your message..."
           />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="position">Position</Label>
-          <Select value={banner.position} onValueChange={(value) => onBannerChange({ position: value })}>
+          <Label htmlFor="show-sender">Show sender</Label>
+          <Select 
+            value={banner.show_sender ? 'show' : 'hide'} 
+            onValueChange={(value) => onBannerChange({ show_sender: value === 'show' })}
+          >
             <SelectTrigger>
-              <SelectValue placeholder="Select position" />
+              <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="top">Top</SelectItem>
-              <SelectItem value="bottom">Bottom</SelectItem>
-              <SelectItem value="center">Center</SelectItem>
+              <SelectItem value="show">Show sender</SelectItem>
+              <SelectItem value="hide">Hide sender</SelectItem>
             </SelectContent>
           </Select>
         </div>
-      </CollapsibleContent>
-    </Collapsible>
+
+        {banner.show_sender && (
+          <div className="space-y-2">
+            <Label htmlFor="sender-name">Sender name</Label>
+            <Input
+              id="sender-name"
+              value={banner.sender_name}
+              onChange={(e) => onBannerChange({ sender_name: e.target.value })}
+              placeholder="Sender name"
+            />
+          </div>
+        )}
+
+        <div className="flex items-center justify-between">
+          <Label htmlFor="show-dismiss">Show a dismiss button</Label>
+          <Switch
+            id="show-dismiss"
+            checked={banner.show_dismiss}
+            onCheckedChange={(checked) => onBannerChange({ show_dismiss: checked })}
+          />
+        </div>
+      </div>
+    </div>
   );
 };
