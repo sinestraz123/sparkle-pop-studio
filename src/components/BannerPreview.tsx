@@ -1,6 +1,6 @@
 
 import { Banner } from '@/types/banner';
-import { X } from 'lucide-react';
+import { X, ThumbsUp, ThumbsDown, Heart } from 'lucide-react';
 
 interface BannerPreviewProps {
   banner: Banner;
@@ -50,6 +50,29 @@ export const BannerPreview = ({ banner }: BannerPreviewProps) => {
               >
                 {banner.button_text}
               </button>
+            )}
+
+            {banner.action_type === 'ask_reactions' && (
+              <div className="ml-4 flex items-center gap-2 flex-shrink-0">
+                <button
+                  className="p-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors"
+                  style={{ color: banner.text_color }}
+                >
+                  <ThumbsUp className="h-4 w-4" />
+                </button>
+                <button
+                  className="p-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors"
+                  style={{ color: banner.text_color }}
+                >
+                  <ThumbsDown className="h-4 w-4" />
+                </button>
+                <button
+                  className="p-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors"
+                  style={{ color: banner.text_color }}
+                >
+                  <Heart className="h-4 w-4" />
+                </button>
+              </div>
             )}
 
             {banner.show_dismiss && (
