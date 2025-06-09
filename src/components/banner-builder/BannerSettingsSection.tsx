@@ -24,8 +24,8 @@ export const BannerSettingsSection = ({ banner, onBannerChange }: BannerSettings
     const file = event.target.files?.[0];
     if (!file) return;
 
-    console.log('Uploading sender photo:', file.name);
-    const imageUrl = await uploadImage(file);
+    console.log('Uploading sender photo to banner-images bucket:', file.name);
+    const imageUrl = await uploadImage(file, 'banner-images');
     if (imageUrl) {
       console.log('Sender photo uploaded successfully:', imageUrl);
       onBannerChange({ sender_photo: imageUrl });
@@ -87,7 +87,7 @@ export const BannerSettingsSection = ({ banner, onBannerChange }: BannerSettings
               <Label htmlFor="sender-name">Sender name</Label>
               <Input
                 id="sender-name"
-                value={banner.sender_name}
+                value={banner.sender_name || ''}
                 onChange={(e) => onBannerChange({ sender_name: e.target.value })}
                 placeholder="Sender name"
               />

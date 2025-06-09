@@ -7,7 +7,7 @@ export const useImageUpload = () => {
   const [isUploading, setIsUploading] = useState(false);
   const { toast } = useToast();
 
-  const uploadImage = async (file: File): Promise<string | null> => {
+  const uploadImage = async (file: File, bucketName: string = 'banner-images'): Promise<string | null> => {
     if (!file) return null;
 
     setIsUploading(true);
@@ -16,11 +16,11 @@ export const useImageUpload = () => {
       // Generate unique filename
       const fileExt = file.name.split('.').pop();
       const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
-      const filePath = `announcements/${fileName}`;
+      const filePath = `${bucketName}/${fileName}`;
 
       // Upload file to Supabase storage
       const { data, error } = await supabase.storage
-        .from('announcement-images')
+        .from(bucketName)
         .upload(filePath, file);
 
       if (error) {
@@ -29,7 +29,7 @@ export const useImageUpload = () => {
 
       // Get public URL
       const { data: { publicUrl } } = supabase.storage
-        .from('announcement-images')
+        .from(bucketName)
         .getPublicUrl(filePath);
 
       toast({

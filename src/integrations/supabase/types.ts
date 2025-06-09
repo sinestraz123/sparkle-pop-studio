@@ -100,6 +100,7 @@ export type Database = {
           id: string
           position: string | null
           sender_name: string | null
+          sender_photo: string | null
           show_button: boolean | null
           show_dismiss: boolean | null
           show_sender: boolean | null
@@ -124,6 +125,7 @@ export type Database = {
           id?: string
           position?: string | null
           sender_name?: string | null
+          sender_photo?: string | null
           show_button?: boolean | null
           show_dismiss?: boolean | null
           show_sender?: boolean | null
@@ -148,6 +150,7 @@ export type Database = {
           id?: string
           position?: string | null
           sender_name?: string | null
+          sender_photo?: string | null
           show_button?: boolean | null
           show_dismiss?: boolean | null
           show_sender?: boolean | null
