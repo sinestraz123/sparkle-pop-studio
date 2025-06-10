@@ -25,7 +25,7 @@ export const useFeedback = () => {
       if (error) throw error;
       return data.map(item => ({
         id: item.id,
-        steps: item.steps,
+        steps: item.steps as any, // Type assertion for Json to FeedbackStep[]
         backgroundColor: item.background_color,
         textColor: item.text_color,
         buttonColor: item.button_color,
@@ -45,7 +45,7 @@ export const useFeedback = () => {
         .from('feedback_widgets')
         .insert({
           user_id: user.id,
-          steps: feedback.steps,
+          steps: feedback.steps as any, // Type assertion for FeedbackStep[] to Json
           background_color: feedback.backgroundColor,
           text_color: feedback.textColor,
           button_color: feedback.buttonColor,
@@ -59,7 +59,7 @@ export const useFeedback = () => {
       if (error) throw error;
       return {
         id: data.id,
-        steps: data.steps,
+        steps: data.steps as any,
         backgroundColor: data.background_color,
         textColor: data.text_color,
         buttonColor: data.button_color,
