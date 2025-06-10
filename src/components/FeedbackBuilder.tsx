@@ -23,14 +23,8 @@ export interface FeedbackConfig {
 }
 
 export const FeedbackBuilder = () => {
-  const { feedbacks, addFeedback, updateFeedback, deleteFeedback, saveFeedback } = useFeedback();
+  const { feedbacks, addFeedback, updateFeedback, deleteFeedback, isLoading } = useFeedback();
   const [selectedFeedbackId, setSelectedFeedbackId] = useState<string | null>(null);
-
-  // Initialize with one feedback if none exist
-  if (feedbacks.length === 0) {
-    const initialFeedback = addFeedback();
-    setSelectedFeedbackId(initialFeedback.id);
-  }
 
   const selectedFeedback = feedbacks.find(f => f.id === selectedFeedbackId) || feedbacks[0];
 
@@ -76,8 +70,7 @@ export const FeedbackBuilder = () => {
   };
 
   const handleAddConfig = () => {
-    const newFeedback = addFeedback();
-    setSelectedFeedbackId(newFeedback.id);
+    addFeedback();
   };
 
   const handleDeleteConfig = (configId: string) => {
@@ -86,6 +79,14 @@ export const FeedbackBuilder = () => {
       setSelectedFeedbackId(feedbacks.length > 1 ? feedbacks[0].id : null);
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <div className="text-lg">Loading feedback widgets...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="h-screen flex">
