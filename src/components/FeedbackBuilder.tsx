@@ -1,5 +1,6 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { FeedbackBuilderPanel } from '@/components/feedback-builder/FeedbackBuilderPanel';
 import { FeedbackPreview } from '@/components/feedback-preview/FeedbackPreview';
 import { useFeedback } from '@/hooks/useFeedback';
@@ -23,89 +24,82 @@ export interface FeedbackConfig {
 }
 
 export const FeedbackBuilder = () => {
-  const { feedbacks, addFeedback, updateFeedback, deleteFeedback, isLoading } = useFeedback();
-  const [selectedFeedbackId, setSelectedFeedbackId] = useState<string | null>(null);
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const { feedbacks, updateFeedback, isLoading } = useFeedback();
+  
+  const currentFeedback = feedbacks.find(f => f.id === id);
 
-  const selectedFeedback = feedbacks.find(f => f.id === selectedFeedbackId) || feedbacks[0];
-
-  const handleConfigChange = (updates: Partial<FeedbackConfig>) => {
-    if (selectedFeedback) {
-      updateFeedback(selectedFeedback.id, updates);
+  useEffect(() => {
+    if (!isLoading && !currentFeedback && id) {
+      // Redirect to feedback list if widget not found
+      navigate('/feedback');
     }
-  };
-
-  const handleStepChange = (stepId: string, updates: Partial<FeedbackStep>) => {
-    if (selectedFeedback) {
-      const updatedSteps = selectedFeedback.steps.map(step => 
-        step.id === stepId ? { ...step, ...updates } : step
-      );
-      updateFeedback(selectedFeedback.id, { steps: updatedSteps });
-    }
-  };
-
-  const handleAddStep = () => {
-    if (selectedFeedback) {
-      const newStepId = Date.now().toString();
-      const newStep: FeedbackStep = {
-        id: newStepId,
-        type: 'short',
-        question: 'What else would you like to share?',
-        required: false,
-      };
-      
-      const updatedSteps = [...selectedFeedback.steps, newStep];
-      updateFeedback(selectedFeedback.id, { steps: updatedSteps });
-    }
-  };
-
-  const handleDeleteStep = (stepId: string) => {
-    if (selectedFeedback) {
-      const updatedSteps = selectedFeedback.steps.filter(step => step.id !== stepId);
-      updateFeedback(selectedFeedback.id, { steps: updatedSteps });
-    }
-  };
-
-  const handleSelectConfig = (configId: string) => {
-    setSelectedFeedbackId(configId);
-  };
-
-  const handleAddConfig = () => {
-    addFeedback();
-  };
-
-  const handleDeleteConfig = (configId: string) => {
-    deleteFeedback(configId);
-    if (selectedFeedbackId === configId) {
-      setSelectedFeedbackId(feedbacks.length > 1 ? feedbacks[0].id : null);
-    }
-  };
+  }, [currentFeedback, isLoading, id, navigate]);
 
   if (isLoading) {
     return (
       <div className="h-screen flex items-center justify-center">
-        <div className="text-lg">Loading feedback widgets...</div>
+        <div className="text-lg">Loading feedback widget...</div>
       </div>
     );
   }
+
+  if (!currentFeedback) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <div className="text-lg">Feedback widget not found</div>
+      </div>
+    );
+  }
+
+  const handleConfigChange = (updates: Partial<FeedbackConfig>) => {
+    updateFeedback(currentFeedback.id, updates);
+  };
+
+  const handleStepChange = (stepId: string, updates: Partial<FeedbackStep>) => {
+    const updatedSteps = currentFeedback.steps.map(step => 
+      step.id === stepId ? { ...step, ...updates } : step
+    );
+    updateFeedback(currentFeedback.id, { steps: updatedSteps });
+  };
+
+  const handleAddStep = () => {
+    const newStepId = Date.now().toString();
+    const newStep: FeedbackStep = {
+      id: newStepId,
+      type: 'short',
+      question: 'What else would you like to share?',
+      required: false,
+    };
+    
+    const updatedSteps = [...currentFeedback.steps, newStep];
+    updateFeedback(currentFeedback.id, { steps: updatedSteps });
+  };
+
+  const handleDeleteStep = (stepId: string) => {
+    const updatedSteps = currentFeedback.steps.filter(step => step.id !== stepId);
+    updateFeedback(currentFeedback.id, { steps: updatedSteps });
+  };
 
   return (
     <div className="h-screen flex">
       <div className="w-1/2 border-r border-gray-200 overflow-y-auto">
         <FeedbackBuilderPanel 
-          configs={feedbacks}
-          selectedConfig={selectedFeedback}
-          selectedConfigId={selectedFeedbackId || ''}
+          configs={[currentFeedback]}
+          selectedConfig={currentFeedback}
+          selectedConfigId={currentFeedback.id}
           onConfigChange={handleConfigChange}
-          onSelectConfig={handleSelectConfig}
-          onAddConfig={handleAddConfig}
-          onDeleteConfig={handleDeleteConfig}
+          onSelectConfig={() => {}} // Not needed for single widget
+          onAddConfig={() => {}} // Not needed for single widget
+          onDeleteConfig={() => {}} // Not needed for single widget
           onStepChange={handleStepChange}
           onAddStep={handleAddStep}
           onDeleteStep={handleDeleteStep}
         />
       </div>
       <div className="w-1/2 overflow-y-auto bg-gray-100">
-        <FeedbackPreview configs={feedbacks.filter(f => f.isActive)} />
+        <FeedbackPreview configs={currentFeedback.isActive ? [currentFeedback] : []} />
       </div>
     </div>
   );
