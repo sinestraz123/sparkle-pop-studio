@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { FeedbackBuilderPanel } from '@/components/feedback-builder/FeedbackBuilderPanel';
 import { FeedbackPreview } from '@/components/feedback-preview/FeedbackPreview';
+import { useFeedback } from '@/hooks/useFeedback';
 
 export interface FeedbackStep {
   id: string;
@@ -22,83 +23,88 @@ export interface FeedbackConfig {
 }
 
 export const FeedbackBuilder = () => {
-  const [feedbackConfig, setFeedbackConfig] = useState<FeedbackConfig>({
-    id: '1',
-    steps: [
-      {
-        id: 'step1',
-        type: 'nps',
-        question: 'How likely are you to recommend us to a friend?',
-        required: true,
-      },
-      {
-        id: 'step2',
-        type: 'short',
-        question: "We're sorry to hear that. What could we have done differently to improve your experience?",
-        required: false,
-      }
-    ],
-    backgroundColor: '#2563eb',
-    textColor: '#ffffff',
-    buttonColor: '#ffffff',
-    position: 'bottom-center',
-    showCloseButton: true,
-    isActive: true,
-  });
+  const { feedbacks, addFeedback, updateFeedback, deleteFeedback, saveFeedback } = useFeedback();
+  const [selectedFeedbackId, setSelectedFeedbackId] = useState<string | null>(null);
+
+  // Initialize with one feedback if none exist
+  if (feedbacks.length === 0) {
+    const initialFeedback = addFeedback();
+    setSelectedFeedbackId(initialFeedback.id);
+  }
+
+  const selectedFeedback = feedbacks.find(f => f.id === selectedFeedbackId) || feedbacks[0];
 
   const handleConfigChange = (updates: Partial<FeedbackConfig>) => {
-    setFeedbackConfig(prev => ({ ...prev, ...updates }));
+    if (selectedFeedback) {
+      updateFeedback(selectedFeedback.id, updates);
+    }
   };
 
   const handleStepChange = (stepId: string, updates: Partial<FeedbackStep>) => {
-    setFeedbackConfig(prev => ({
-      ...prev,
-      steps: prev.steps.map(step => 
+    if (selectedFeedback) {
+      const updatedSteps = selectedFeedback.steps.map(step => 
         step.id === stepId ? { ...step, ...updates } : step
-      )
-    }));
+      );
+      updateFeedback(selectedFeedback.id, { steps: updatedSteps });
+    }
   };
 
   const handleAddStep = () => {
-    const newStepId = Date.now().toString();
-    const newStep: FeedbackStep = {
-      id: newStepId,
-      type: 'short',
-      question: 'What else would you like to share?',
-      required: false,
-    };
-    
-    setFeedbackConfig(prev => ({
-      ...prev,
-      steps: [...prev.steps, newStep]
-    }));
+    if (selectedFeedback) {
+      const newStepId = Date.now().toString();
+      const newStep: FeedbackStep = {
+        id: newStepId,
+        type: 'short',
+        question: 'What else would you like to share?',
+        required: false,
+      };
+      
+      const updatedSteps = [...selectedFeedback.steps, newStep];
+      updateFeedback(selectedFeedback.id, { steps: updatedSteps });
+    }
   };
 
   const handleDeleteStep = (stepId: string) => {
-    setFeedbackConfig(prev => ({
-      ...prev,
-      steps: prev.steps.filter(step => step.id !== stepId)
-    }));
+    if (selectedFeedback) {
+      const updatedSteps = selectedFeedback.steps.filter(step => step.id !== stepId);
+      updateFeedback(selectedFeedback.id, { steps: updatedSteps });
+    }
+  };
+
+  const handleSelectConfig = (configId: string) => {
+    setSelectedFeedbackId(configId);
+  };
+
+  const handleAddConfig = () => {
+    const newFeedback = addFeedback();
+    setSelectedFeedbackId(newFeedback.id);
+  };
+
+  const handleDeleteConfig = (configId: string) => {
+    deleteFeedback(configId);
+    if (selectedFeedbackId === configId) {
+      setSelectedFeedbackId(feedbacks.length > 1 ? feedbacks[0].id : null);
+    }
   };
 
   return (
     <div className="h-screen flex">
       <div className="w-1/2 border-r border-gray-200 overflow-y-auto">
         <FeedbackBuilderPanel 
-          configs={[feedbackConfig]}
-          selectedConfig={feedbackConfig}
-          selectedConfigId={feedbackConfig.id}
+          configs={feedbacks}
+          selectedConfig={selectedFeedback}
+          selectedConfigId={selectedFeedbackId || ''}
           onConfigChange={handleConfigChange}
-          onSelectConfig={() => {}}
-          onAddConfig={() => {}}
-          onDeleteConfig={() => {}}
+          onSelectConfig={handleSelectConfig}
+          onAddConfig={handleAddConfig}
+          onDeleteConfig={handleDeleteConfig}
           onStepChange={handleStepChange}
           onAddStep={handleAddStep}
           onDeleteStep={handleDeleteStep}
         />
       </div>
       <div className="w-1/2 overflow-y-auto bg-gray-100">
-        <FeedbackPreview configs={[feedbackConfig]} />
+        <FeedbackPreview configs={feedbacks.filter(f => f.isActive)} />
       </div>
     </div>
   );
