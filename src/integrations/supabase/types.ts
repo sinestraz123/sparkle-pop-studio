@@ -290,6 +290,54 @@ export type Database = {
         }
         Relationships: []
       }
+      feedback_widgets: {
+        Row: {
+          background_color: string | null
+          button_color: string | null
+          created_at: string | null
+          id: string
+          position: string | null
+          responses: number | null
+          show_close_button: boolean | null
+          status: string | null
+          steps: Json
+          text_color: string | null
+          updated_at: string | null
+          user_id: string
+          views: number | null
+        }
+        Insert: {
+          background_color?: string | null
+          button_color?: string | null
+          created_at?: string | null
+          id?: string
+          position?: string | null
+          responses?: number | null
+          show_close_button?: boolean | null
+          status?: string | null
+          steps: Json
+          text_color?: string | null
+          updated_at?: string | null
+          user_id: string
+          views?: number | null
+        }
+        Update: {
+          background_color?: string | null
+          button_color?: string | null
+          created_at?: string | null
+          id?: string
+          position?: string | null
+          responses?: number | null
+          show_close_button?: boolean | null
+          status?: string | null
+          steps?: Json
+          text_color?: string | null
+          updated_at?: string | null
+          user_id?: string
+          views?: number | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
