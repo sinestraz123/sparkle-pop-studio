@@ -1,13 +1,13 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
-import { Plus, Trash2, Video, Save } from 'lucide-react';
+import { Plus, Trash2, Video, Save, Code } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { VideoTutorialScriptModal } from '../VideoTutorialScriptModal';
 
 interface VideoTutorialBuilderPanelProps {
   videoTutorial: any;
@@ -18,6 +18,8 @@ export const VideoTutorialBuilderPanel: React.FC<VideoTutorialBuilderPanelProps>
   videoTutorial,
   onChange
 }) => {
+  const [isScriptModalOpen, setIsScriptModalOpen] = useState(false);
+
   const updateTutorial = (index: number, field: string, value: string) => {
     const updatedTutorials = [...videoTutorial.tutorials];
     updatedTutorials[index] = { ...updatedTutorials[index], [field]: value };
@@ -56,10 +58,19 @@ export const VideoTutorialBuilderPanel: React.FC<VideoTutorialBuilderPanelProps>
         {/* Header */}
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold">Video Tutorial Builder</h1>
-          <Button className="bg-black hover:bg-gray-800">
-            <Save className="h-4 w-4 mr-2" />
-            Save
-          </Button>
+          <div className="flex gap-2">
+            <Button 
+              variant="outline"
+              onClick={() => setIsScriptModalOpen(true)}
+            >
+              <Code className="h-4 w-4 mr-2" />
+              Get Script
+            </Button>
+            <Button className="bg-black hover:bg-gray-800">
+              <Save className="h-4 w-4 mr-2" />
+              Save
+            </Button>
+          </div>
         </div>
 
         {/* General Settings */}
@@ -183,6 +194,12 @@ export const VideoTutorialBuilderPanel: React.FC<VideoTutorialBuilderPanelProps>
           </CardContent>
         </Card>
       </div>
+
+      <VideoTutorialScriptModal 
+        isOpen={isScriptModalOpen}
+        onClose={() => setIsScriptModalOpen(false)}
+        videoTutorial={videoTutorial}
+      />
     </div>
   );
 };
