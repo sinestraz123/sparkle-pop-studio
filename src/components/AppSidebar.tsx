@@ -14,7 +14,9 @@ import {
   FileQuestion,
   Video,
   MessageSquare,
-  RectangleHorizontal
+  RectangleHorizontal,
+  Target,
+  Users
 } from 'lucide-react';
 
 import {
@@ -36,13 +38,25 @@ import { PricingModal } from '@/components/PricingModal';
 
 const mainItems = [
   { title: 'Dashboard', url: '/', icon: LayoutDashboard },
+];
+
+const engagementItems = [
   { title: 'Announcements', url: '/builder', icon: Plus },
   { title: 'Banner', url: '/banner', icon: RectangleHorizontal },
+  { title: 'Spotlight', url: '/spotlight', icon: Target },
+];
+
+const interactionItems = [
   { title: 'Checklist', url: '/checklist', icon: CheckSquare },
   { title: 'Surveys', url: '/surveys', icon: FileQuestion },
   { title: 'Feedback', url: '/feedback', icon: MessageSquare },
-  { title: 'Spotlight', url: '/spotlight', icon: Video },
+];
+
+const supportItems = [
   { title: 'Video Tutorials', url: '/video-tutorials', icon: Video },
+];
+
+const analyticsItems = [
   { title: 'Analytics', url: '/analytics', icon: BarChart3 },
 ];
 
@@ -119,6 +133,37 @@ export function AppSidebar() {
     return name.split(' ').map(word => word.charAt(0)).join('').toUpperCase().substring(0, 2);
   };
 
+  const renderMenuGroup = (items: any[], groupLabel: string) => (
+    <SidebarGroup>
+      <SidebarGroupLabel>{groupLabel}</SidebarGroupLabel>
+      <SidebarGroupContent>
+        <SidebarMenu>
+          {items.map((item) => (
+            <SidebarMenuItem key={item.title}>
+              <SidebarMenuButton 
+                asChild={!!item.url}
+                onClick={!item.url ? () => handleItemClick(item) : undefined}
+                className="hover:bg-sidebar-accent/50"
+              >
+                {item.url ? (
+                  <NavLink to={item.url} className={getNavClassName(item.url)}>
+                    <item.icon className="h-4 w-4" />
+                    {!collapsed && <span>{item.title}</span>}
+                  </NavLink>
+                ) : (
+                  <div className="flex items-center">
+                    <item.icon className="h-4 w-4" />
+                    {!collapsed && <span>{item.title}</span>}
+                  </div>
+                )}
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          ))}
+        </SidebarMenu>
+      </SidebarGroupContent>
+    </SidebarGroup>
+  );
+
   return (
     <>
       <Sidebar className={collapsed ? 'w-14' : 'w-64'} collapsible="offcanvas">
@@ -141,23 +186,11 @@ export function AppSidebar() {
         </SidebarHeader>
 
         <SidebarContent>
-          <SidebarGroup>
-            <SidebarGroupLabel>Main</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {mainItems.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild>
-                      <NavLink to={item.url} className={getNavClassName(item.url)}>
-                        <item.icon className="h-4 w-4" />
-                        {!collapsed && <span>{item.title}</span>}
-                      </NavLink>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
+          {renderMenuGroup(mainItems, 'Overview')}
+          {renderMenuGroup(engagementItems, 'Engagement')}
+          {renderMenuGroup(interactionItems, 'User Interaction')}
+          {renderMenuGroup(supportItems, 'Support')}
+          {renderMenuGroup(analyticsItems, 'Insights')}
 
           <SidebarGroup className="mt-auto">
             <SidebarGroupLabel>Account</SidebarGroupLabel>
