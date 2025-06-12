@@ -17,6 +17,7 @@ import Feedback from "./pages/Feedback";
 import FeedbackList from "./pages/FeedbackList";
 import FeedbackResponses from "./pages/FeedbackResponses";
 import Spotlight from "./pages/Spotlight";
+import VideoTutorials from "./pages/VideoTutorials";
 import Analytics from "./pages/Analytics";
 import Settings from "./pages/Settings";
 import Auth from "./pages/Auth";
@@ -55,6 +56,8 @@ const App = () => (
                         <Route path="/feedback/:id" element={<Feedback />} />
                         <Route path="/spotlight" element={<Spotlight />} />
                         <Route path="/spotlight/:id" element={<Spotlight />} />
+                        <Route path="/video-tutorials" element={<VideoTutorials />} />
+                        <Route path="/video-tutorials/:id" element={<VideoTutorials />} />
                         <Route path="/analytics" element={<Analytics />} />
                         <Route path="/settings" element={<Settings />} />
                         <Route path="*" element={<NotFound />} />

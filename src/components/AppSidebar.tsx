@@ -42,6 +42,7 @@ const mainItems = [
   { title: 'Surveys', url: '/surveys', icon: FileQuestion },
   { title: 'Feedback', url: '/feedback', icon: MessageSquare },
   { title: 'Spotlight', url: '/spotlight', icon: Video },
+  { title: 'Video Tutorials', url: '/video-tutorials', icon: Video },
   { title: 'Analytics', url: '/analytics', icon: BarChart3 },
 ];
 
