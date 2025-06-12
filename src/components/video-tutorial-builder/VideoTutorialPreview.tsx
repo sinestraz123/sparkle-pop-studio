@@ -29,13 +29,13 @@ export const VideoTutorialPreview: React.FC<VideoTutorialPreviewProps> = ({ vide
   }
 
   return (
-    <div className="h-full bg-gray-50 flex items-center justify-center p-4 md:p-6">
-      <div className="relative w-full">
+    <div className="fixed inset-0 bg-gray-50 flex items-center justify-center p-4 md:p-6 z-10">
+      <div className="relative w-full max-w-[780px]">
         {videoTutorial.settings.overlay && (
           <div className="fixed inset-0 bg-black bg-opacity-50 z-40" />
         )}
         
-        <Card className="w-full min-w-[320px] max-w-[780px] mx-auto max-h-[80vh] overflow-hidden z-50 relative">
+        <Card className="w-full min-w-[320px] max-h-[80vh] overflow-hidden z-50 relative">
           <div className="border-b px-6 py-3 bg-background">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold">Video Tutorials</h3>
