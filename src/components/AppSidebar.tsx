@@ -14,8 +14,7 @@ import {
   FileQuestion,
   Video,
   MessageSquare,
-  RectangleHorizontal,
-  Play
+  RectangleHorizontal
 } from 'lucide-react';
 
 import {
@@ -34,7 +33,6 @@ import {
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { PricingModal } from '@/components/PricingModal';
-import { VideoTutorialsModal } from '@/components/VideoTutorialsModal';
 
 const mainItems = [
   { title: 'Dashboard', url: '/', icon: LayoutDashboard },
@@ -44,7 +42,6 @@ const mainItems = [
   { title: 'Surveys', url: '/surveys', icon: FileQuestion },
   { title: 'Feedback', url: '/feedback', icon: MessageSquare },
   { title: 'Spotlight', url: '/spotlight', icon: Video },
-  { title: 'Video Tutorials', url: '/video-tutorials', icon: Play },
   { title: 'Analytics', url: '/analytics', icon: BarChart3 },
 ];
 
@@ -62,7 +59,6 @@ export function AppSidebar() {
   const collapsed = state === 'collapsed';
   const [userProfile, setUserProfile] = useState<{ full_name: string } | null>(null);
   const [isPricingOpen, setIsPricingOpen] = useState(false);
-  const [isTutorialsOpen, setIsTutorialsOpen] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -102,8 +98,6 @@ export function AppSidebar() {
   const handleItemClick = (item: any) => {
     if (item.action === 'pricing') {
       setIsPricingOpen(true);
-    } else if (item.action === 'tutorials') {
-      setIsTutorialsOpen(true);
     }
   };
 
@@ -216,7 +210,6 @@ export function AppSidebar() {
       </Sidebar>
 
       <PricingModal open={isPricingOpen} onOpenChange={setIsPricingOpen} />
-      <VideoTutorialsModal isOpen={isTutorialsOpen} onClose={() => setIsTutorialsOpen(false)} />
     </>
   );
 }

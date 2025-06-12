@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAnnouncements } from '@/hooks/useAnnouncements';
-import { VideoTutorialsButton } from '@/components/VideoTutorialsButton';
 
 const Dashboard = () => {
   const { announcements, isLoading } = useAnnouncements();
@@ -41,15 +40,14 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
+    <div className="p-6 space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Dashboard</h1>
-          <p className="text-gray-600 mt-1">Welcome back! Here's what's happening with your widgets.</p>
+          <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
+          <p className="text-muted-foreground mt-1">Monitor your engagement performance and activity</p>
         </div>
-        <div className="flex gap-3">
-          <VideoTutorialsButton />
+        <div className="flex space-x-3">
           <Link to="/builder">
             <Button variant="outline">
               <Plus className="mr-2 h-4 w-4" />
