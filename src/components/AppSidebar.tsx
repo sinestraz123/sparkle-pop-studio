@@ -44,13 +44,13 @@ const mainItems = [
   { title: 'Surveys', url: '/surveys', icon: FileQuestion },
   { title: 'Feedback', url: '/feedback', icon: MessageSquare },
   { title: 'Spotlight', url: '/spotlight', icon: Video },
+  { title: 'Video Tutorials', url: '/video-tutorials', icon: Play },
   { title: 'Analytics', url: '/analytics', icon: BarChart3 },
 ];
 
 const settingsItems = [
   { title: 'Settings', url: '/settings', icon: Settings },
   { title: 'Pricing', url: null, icon: CreditCard, action: 'pricing' },
-  { title: 'Video Tutorials', url: null, icon: Play, action: 'tutorials' },
   { title: 'Help', url: '/help', icon: HelpCircle },
 ];
 
