@@ -1,6 +1,6 @@
 
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import React, { useState, useEffect } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { X, ChevronDown, ChevronUp, Play } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -12,6 +12,13 @@ interface VideoTutorialPreviewProps {
 export const VideoTutorialPreview: React.FC<VideoTutorialPreviewProps> = ({ videoTutorial }) => {
   const [isVisible, setIsVisible] = useState(true);
   const [expandedVideo, setExpandedVideo] = useState<string | null>(null);
+
+  // Always start with the first video expanded
+  useEffect(() => {
+    if (videoTutorial.tutorials && videoTutorial.tutorials.length > 0) {
+      setExpandedVideo(videoTutorial.tutorials[0].id);
+    }
+  }, [videoTutorial.tutorials]);
 
   if (!isVisible) {
     return (
@@ -28,18 +35,10 @@ export const VideoTutorialPreview: React.FC<VideoTutorialPreviewProps> = ({ vide
           <div className="fixed inset-0 bg-black bg-opacity-50 z-40" />
         )}
         
-        <Card className="w-full max-w-2xl max-h-[80vh] overflow-hidden z-50 relative">
-          <CardHeader className="border-b">
+        <Card className="w-full max-w-xl max-h-[70vh] overflow-hidden z-50 relative">
+          <div className="border-b px-6 py-3 bg-background">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                  <span className="text-white text-sm font-bold">GA</span>
-                </div>
-                <div>
-                  <CardTitle className="text-lg">{videoTutorial.title}</CardTitle>
-                  <p className="text-sm text-muted-foreground">Glyph AI</p>
-                </div>
-              </div>
+              <h3 className="text-lg font-semibold">Video Tutorials</h3>
               {videoTutorial.settings.showCloseButton && (
                 <Button
                   variant="ghost"
@@ -50,7 +49,7 @@ export const VideoTutorialPreview: React.FC<VideoTutorialPreviewProps> = ({ vide
                 </Button>
               )}
             </div>
-          </CardHeader>
+          </div>
           
           <CardContent className="p-0 max-h-96 overflow-y-auto">
             <Accordion type="single" collapsible value={expandedVideo || undefined} onValueChange={setExpandedVideo}>
