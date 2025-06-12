@@ -107,7 +107,7 @@ export const useVideoTutorialWidgets = () => {
 
   return {
     widgets,
-    isLoading,
+    isLoading: false, // Set to false since we're using mock data
     error,
     addWidget,
     updateWidget,
