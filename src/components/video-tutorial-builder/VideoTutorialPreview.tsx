@@ -29,13 +29,13 @@ export const VideoTutorialPreview: React.FC<VideoTutorialPreviewProps> = ({ vide
   }
 
   return (
-    <div className="h-full bg-gray-50 flex items-center justify-center p-6">
-      <div className="relative">
+    <div className="h-full bg-gray-50 flex items-center justify-center p-4 md:p-6">
+      <div className="relative w-full">
         {videoTutorial.settings.overlay && (
           <div className="fixed inset-0 bg-black bg-opacity-50 z-40" />
         )}
         
-        <Card className="w-full max-w-xl max-h-[70vh] overflow-hidden z-50 relative">
+        <Card className="w-full min-w-[320px] max-w-[780px] mx-auto max-h-[80vh] overflow-hidden z-50 relative">
           <div className="border-b px-6 py-3 bg-background">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold">Video Tutorials</h3>
@@ -51,7 +51,7 @@ export const VideoTutorialPreview: React.FC<VideoTutorialPreviewProps> = ({ vide
             </div>
           </div>
           
-          <CardContent className="p-0 max-h-96 overflow-y-auto">
+          <CardContent className="p-0 max-h-[calc(80vh-60px)] overflow-y-auto">
             <Accordion type="single" collapsible value={expandedVideo || undefined} onValueChange={setExpandedVideo}>
               {videoTutorial.tutorials.map((tutorial: any, index: number) => (
                 <AccordionItem key={tutorial.id} value={tutorial.id} className="border-b last:border-b-0">
