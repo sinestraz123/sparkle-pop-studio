@@ -20,7 +20,7 @@ export const VideoTutorialBuilder: React.FC<VideoTutorialBuilderProps> = ({ vide
     title: 'Video Tutorials',
     tutorials: [
       {
-        id: '1',
+        id: crypto.randomUUID(), // Generate proper UUID
         title: 'How to start a document and build an outline with Glyph AI',
         description: 'Learn how to submit a document prompt and accept an autocomplete',
         videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'

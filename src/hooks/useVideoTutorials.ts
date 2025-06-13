@@ -41,7 +41,21 @@ export const useVideoTutorials = () => {
 
       if (error) throw error;
 
-      setVideoTutorials(data || []);
+      // Transform the data to match our interface
+      const transformedData: VideoTutorial[] = (data || []).map(item => ({
+        id: item.id,
+        title: item.title,
+        tutorials: Array.isArray(item.tutorials) ? item.tutorials : [],
+        settings: typeof item.settings === 'object' && item.settings ? item.settings as any : {
+          showCloseButton: true,
+          autoPlay: false,
+          overlay: true
+        },
+        status: (item.status as 'draft' | 'active') || 'draft',
+        views: item.views || 0
+      }));
+
+      setVideoTutorials(transformedData);
     } catch (error) {
       console.error('Error loading video tutorials:', error);
       toast({

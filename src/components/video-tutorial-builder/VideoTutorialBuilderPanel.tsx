@@ -32,7 +32,7 @@ export const VideoTutorialBuilderPanel: React.FC<VideoTutorialBuilderPanelProps>
 
   const addTutorial = () => {
     const newTutorial = {
-      id: Date.now().toString(),
+      id: crypto.randomUUID(), // Generate proper UUID
       title: 'New Tutorial',
       description: 'Tutorial description',
       videoUrl: '',
