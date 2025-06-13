@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
@@ -52,10 +51,10 @@ export const useVideoTutorials = () => {
           videoUrl: tutorial.videoUrl || '',
           thumbnail: tutorial.thumbnail
         })) : [],
-        settings: typeof item.settings === 'object' && item.settings ? {
-          showCloseButton: Boolean(item.settings.showCloseButton ?? true),
-          autoPlay: Boolean(item.settings.autoPlay ?? false),
-          overlay: Boolean(item.settings.overlay ?? true)
+        settings: typeof item.settings === 'object' && item.settings && !Array.isArray(item.settings) ? {
+          showCloseButton: Boolean((item.settings as any).showCloseButton ?? true),
+          autoPlay: Boolean((item.settings as any).autoPlay ?? false),
+          overlay: Boolean((item.settings as any).overlay ?? true)
         } : {
           showCloseButton: true,
           autoPlay: false,
