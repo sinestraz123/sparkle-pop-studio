@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,15 +9,18 @@ import { Switch } from '@/components/ui/switch';
 import { Plus, Trash2, Video, Save, Code } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { VideoTutorialScriptModal } from '../VideoTutorialScriptModal';
+import { VideoTutorial } from '@/hooks/useVideoTutorials';
 
 interface VideoTutorialBuilderPanelProps {
-  videoTutorial: any;
-  onChange: (videoTutorial: any) => void;
+  videoTutorial: VideoTutorial;
+  onChange: (videoTutorial: VideoTutorial) => void;
+  onSave: () => void;
 }
 
 export const VideoTutorialBuilderPanel: React.FC<VideoTutorialBuilderPanelProps> = ({
   videoTutorial,
-  onChange
+  onChange,
+  onSave
 }) => {
   const [isScriptModalOpen, setIsScriptModalOpen] = useState(false);
 
@@ -52,6 +56,30 @@ export const VideoTutorialBuilderPanel: React.FC<VideoTutorialBuilderPanelProps>
     });
   };
 
+  // Function to convert YouTube watch URL to embed URL
+  const convertToEmbedUrl = (url: string) => {
+    if (!url) return '';
+    
+    // Check if it's already an embed URL
+    if (url.includes('youtube.com/embed/')) {
+      return url;
+    }
+    
+    // Convert youtube.com/watch?v= to embed format
+    const watchMatch = url.match(/youtube\.com\/watch\?v=([^&]+)/);
+    if (watchMatch) {
+      return `https://www.youtube.com/embed/${watchMatch[1]}`;
+    }
+    
+    // Convert youtu.be/ to embed format
+    const shortMatch = url.match(/youtu\.be\/([^?]+)/);
+    if (shortMatch) {
+      return `https://www.youtube.com/embed/${shortMatch[1]}`;
+    }
+    
+    return url;
+  };
+
   return (
     <div className="h-full overflow-y-auto border-r bg-background">
       <div className="p-6 space-y-6">
@@ -66,7 +94,7 @@ export const VideoTutorialBuilderPanel: React.FC<VideoTutorialBuilderPanelProps>
               <Code className="h-4 w-4 mr-2" />
               Get Script
             </Button>
-            <Button className="bg-black hover:bg-gray-800">
+            <Button onClick={onSave} className="bg-black hover:bg-gray-800">
               <Save className="h-4 w-4 mr-2" />
               Save
             </Button>
@@ -131,17 +159,23 @@ export const VideoTutorialBuilderPanel: React.FC<VideoTutorialBuilderPanelProps>
                       />
                     </div>
                     <div>
-                      <Label>Video URL (YouTube Embed)</Label>
+                      <Label>YouTube Video URL</Label>
                       <Input
                         value={tutorial.videoUrl}
-                        onChange={(e) => updateTutorial(index, 'videoUrl', e.target.value)}
-                        placeholder="https://www.youtube.com/embed/..."
+                        onChange={(e) => {
+                          const embedUrl = convertToEmbedUrl(e.target.value);
+                          updateTutorial(index, 'videoUrl', embedUrl);
+                        }}
+                        placeholder="https://www.youtube.com/watch?v=... or https://youtu.be/..."
                       />
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Paste any YouTube URL - it will be automatically converted to embed format
+                      </p>
                     </div>
                     <div>
                       <Label>Thumbnail URL (Optional)</Label>
                       <Input
-                        value={tutorial.thumbnail}
+                        value={tutorial.thumbnail || ''}
                         onChange={(e) => updateTutorial(index, 'thumbnail', e.target.value)}
                         placeholder="https://example.com/thumbnail.jpg"
                       />

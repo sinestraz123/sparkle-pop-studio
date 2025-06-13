@@ -553,6 +553,42 @@ export type Database = {
         }
         Relationships: []
       }
+      video_tutorials: {
+        Row: {
+          created_at: string | null
+          id: string
+          settings: Json
+          status: string | null
+          title: string
+          tutorials: Json
+          updated_at: string | null
+          user_id: string
+          views: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          settings?: Json
+          status?: string | null
+          title: string
+          tutorials?: Json
+          updated_at?: string | null
+          user_id: string
+          views?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          settings?: Json
+          status?: string | null
+          title?: string
+          tutorials?: Json
+          updated_at?: string | null
+          user_id?: string
+          views?: number | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

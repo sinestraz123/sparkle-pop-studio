@@ -3,27 +3,22 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Plus, Video, Eye, Settings } from 'lucide-react';
+import { Plus, Video, Eye, Settings, Trash2 } from 'lucide-react';
+import { useVideoTutorials } from '@/hooks/useVideoTutorials';
 
 export const VideoTutorialsList: React.FC = () => {
-  const videoTutorials = [
-    {
-      id: '1',
-      title: 'Glyph AI Onboarding Tutorials',
-      description: 'Help users get started with Glyph AI features',
-      tutorialCount: 4,
-      views: 1250,
-      status: 'active'
-    },
-    {
-      id: '2', 
-      title: 'Advanced Features Guide',
-      description: 'Deep dive into advanced Glyph AI capabilities',
-      tutorialCount: 6,
-      views: 890,
-      status: 'draft'
-    }
-  ];
+  const { videoTutorials, isLoading, deleteVideoTutorial } = useVideoTutorials();
+
+  if (isLoading) {
+    return (
+      <div className="p-6 flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+          <p className="text-lg mt-4 text-muted-foreground">Loading video tutorials...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 space-y-6">
@@ -49,7 +44,9 @@ export const VideoTutorialsList: React.FC = () => {
                   <Video className="h-5 w-5 text-blue-600" />
                   <div>
                     <CardTitle className="text-lg">{widget.title}</CardTitle>
-                    <CardDescription className="mt-1">{widget.description}</CardDescription>
+                    <CardDescription className="mt-1">
+                      {widget.tutorials.length} tutorial{widget.tutorials.length !== 1 ? 's' : ''}
+                    </CardDescription>
                   </div>
                 </div>
                 <div className={`px-2 py-1 rounded-full text-xs font-medium ${
@@ -63,7 +60,7 @@ export const VideoTutorialsList: React.FC = () => {
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-between text-sm text-muted-foreground mb-4">
-                <span>{widget.tutorialCount} tutorials</span>
+                <span>{widget.tutorials.length} tutorials</span>
                 <span className="flex items-center gap-1">
                   <Eye className="h-3 w-3" />
                   {widget.views} views
@@ -76,9 +73,12 @@ export const VideoTutorialsList: React.FC = () => {
                     Edit
                   </Button>
                 </Link>
-                <Button variant="outline" size="sm">
-                  <Eye className="h-3 w-3 mr-1" />
-                  Preview
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => deleteVideoTutorial(widget.id)}
+                >
+                  <Trash2 className="h-3 w-3" />
                 </Button>
               </div>
             </CardContent>
