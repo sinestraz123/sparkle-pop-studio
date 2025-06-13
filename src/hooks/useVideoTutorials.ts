@@ -45,8 +45,18 @@ export const useVideoTutorials = () => {
       const transformedData: VideoTutorial[] = (data || []).map(item => ({
         id: item.id,
         title: item.title,
-        tutorials: Array.isArray(item.tutorials) ? item.tutorials : [],
-        settings: typeof item.settings === 'object' && item.settings ? item.settings as any : {
+        tutorials: Array.isArray(item.tutorials) ? item.tutorials.map((tutorial: any) => ({
+          id: tutorial.id || crypto.randomUUID(),
+          title: tutorial.title || '',
+          description: tutorial.description || '',
+          videoUrl: tutorial.videoUrl || '',
+          thumbnail: tutorial.thumbnail
+        })) : [],
+        settings: typeof item.settings === 'object' && item.settings ? {
+          showCloseButton: Boolean(item.settings.showCloseButton ?? true),
+          autoPlay: Boolean(item.settings.autoPlay ?? false),
+          overlay: Boolean(item.settings.overlay ?? true)
+        } : {
           showCloseButton: true,
           autoPlay: false,
           overlay: true
