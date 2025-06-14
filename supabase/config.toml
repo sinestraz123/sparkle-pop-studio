@@ -45,6 +45,9 @@ verify_jwt = false
 [functions.widget-loader]
 verify_jwt = false
 
+[functions.video-tutorial-widget]
+verify_jwt = false
+
 [edge_runtime]
 enabled = true
 port = 54329
