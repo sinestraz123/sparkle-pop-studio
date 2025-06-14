@@ -48,7 +48,6 @@ const engagementItems = [
 
 const interactionItems = [
   { title: 'Checklist', url: '/checklist', icon: CheckSquare },
-  { title: 'Surveys', url: '/surveys', icon: FileQuestion },
   { title: 'Feedback', url: '/feedback', icon: MessageSquare },
 ];
 

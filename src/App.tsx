@@ -1,9 +1,8 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { AuthProvider } from "@/hooks/useAuth";
@@ -47,6 +46,8 @@ const App = () => (
                         <Route path="/banner/:id" element={<Banner />} />
                         <Route path="/checklist" element={<Checklist />} />
                         <Route path="/checklist/:id" element={<Checklist />} />
+                        <Route path="/surveys" element={<Navigate to="/feedback" replace />} />
+                        <Route path="/surveys/:id" element={<Navigate to="/feedback" replace />} />
                         <Route path="/feedback" element={<FeedbackList />} />
                         <Route path="/feedback/builder" element={<Feedback />} />
                         <Route path="/feedback/responses" element={<FeedbackResponses />} />
