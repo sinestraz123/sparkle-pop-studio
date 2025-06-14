@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -68,11 +67,17 @@ const FeedbackResponses = () => {
         return;
       }
 
-      setWidgets(widgetsData || []);
-      console.log('Fetched widgets:', widgetsData);
+      // Transform widgets data with proper type casting
+      const transformedWidgets: FeedbackWidget[] = (widgetsData || []).map(widget => ({
+        id: widget.id,
+        steps: Array.isArray(widget.steps) ? widget.steps : []
+      }));
+
+      setWidgets(transformedWidgets);
+      console.log('Fetched widgets:', transformedWidgets);
 
       // Fetch feedback responses for user's widgets
-      const widgetIds = widgetsData?.map(w => w.id) || [];
+      const widgetIds = transformedWidgets.map(w => w.id);
       
       if (widgetIds.length === 0) {
         setResponses([]);
