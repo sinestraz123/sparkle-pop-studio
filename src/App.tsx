@@ -12,7 +12,6 @@ import Dashboard from "./pages/Dashboard";
 import Builder from "./pages/Builder";
 import Banner from "./pages/Banner";
 import Checklist from "./pages/Checklist";
-import Survey from "./pages/Survey";
 import Feedback from "./pages/Feedback";
 import FeedbackList from "./pages/FeedbackList";
 import FeedbackResponses from "./pages/FeedbackResponses";
@@ -48,8 +47,6 @@ const App = () => (
                         <Route path="/banner/:id" element={<Banner />} />
                         <Route path="/checklist" element={<Checklist />} />
                         <Route path="/checklist/:id" element={<Checklist />} />
-                        <Route path="/surveys" element={<Survey />} />
-                        <Route path="/surveys/:id" element={<Survey />} />
                         <Route path="/feedback" element={<FeedbackList />} />
                         <Route path="/feedback/builder" element={<Feedback />} />
                         <Route path="/feedback/responses" element={<FeedbackResponses />} />
