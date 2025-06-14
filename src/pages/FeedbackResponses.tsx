@@ -1,8 +1,11 @@
+
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Calendar, MessageSquare, Star, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface StepResponse {
   stepId: string;
@@ -13,18 +16,29 @@ interface StepResponse {
 
 interface FeedbackResponse {
   id: string;
+  config_id: string;
   submitted_at: string;
   responses: StepResponse[];
 }
 
+interface FeedbackWidget {
+  id: string;
+  steps: any[];
+}
+
 const FeedbackResponses = () => {
+  const { user } = useAuth();
   const [responses, setResponses] = useState<FeedbackResponse[]>([]);
+  const [widgets, setWidgets] = useState<FeedbackWidget[]>([]);
+  const [selectedWidget, setSelectedWidget] = useState<string>('all');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchFeedbackResponses();
-  }, []);
+    if (user) {
+      fetchData();
+    }
+  }, [user]);
 
   // Type guard to check if an object is a valid StepResponse
   const isValidStepResponse = (obj: any): obj is StepResponse => {
@@ -38,29 +52,58 @@ const FeedbackResponses = () => {
     );
   };
 
-  const fetchFeedbackResponses = async () => {
+  const fetchData = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
+      
+      // Fetch user's feedback widgets
+      const { data: widgetsData, error: widgetsError } = await supabase
+        .from('feedback_widgets')
+        .select('id, steps')
+        .eq('user_id', user!.id);
+
+      if (widgetsError) {
+        console.error('Error fetching widgets:', widgetsError);
+        setError('Failed to fetch feedback widgets');
+        return;
+      }
+
+      setWidgets(widgetsData || []);
+      console.log('Fetched widgets:', widgetsData);
+
+      // Fetch feedback responses for user's widgets
+      const widgetIds = widgetsData?.map(w => w.id) || [];
+      
+      if (widgetIds.length === 0) {
+        setResponses([]);
+        return;
+      }
+
+      const { data: responsesData, error: responsesError } = await supabase
         .from('feedback_responses')
         .select('*')
+        .in('config_id', widgetIds)
         .order('submitted_at', { ascending: false });
 
-      if (error) {
+      if (responsesError) {
+        console.error('Error fetching responses:', responsesError);
         setError('Failed to fetch feedback responses');
-        console.error('Error fetching feedback responses:', error);
-      } else {
-        // Transform the data to match our interface with proper type validation
-        const transformedData: FeedbackResponse[] = data?.map(item => ({
-          id: item.id,
-          submitted_at: item.submitted_at,
-          responses: Array.isArray(item.responses) 
-            ? (item.responses as any[]).filter(isValidStepResponse)
-            : []
-        })) || [];
-        
-        setResponses(transformedData);
+        return;
       }
+
+      console.log('Fetched responses:', responsesData);
+
+      // Transform the data to match our interface with proper type validation
+      const transformedData: FeedbackResponse[] = responsesData?.map(item => ({
+        id: item.id,
+        config_id: item.config_id,
+        submitted_at: item.submitted_at,
+        responses: Array.isArray(item.responses) 
+          ? (item.responses as any[]).filter(isValidStepResponse)
+          : []
+      })) || [];
+      
+      setResponses(transformedData);
     } catch (err) {
       setError('An unexpected error occurred');
       console.error('Error:', err);
@@ -84,6 +127,16 @@ const FeedbackResponses = () => {
     if (score >= 7) return { label: 'Passive', color: 'bg-yellow-100 text-yellow-800' };
     return { label: 'Detractor', color: 'bg-red-100 text-red-800' };
   };
+
+  const getWidgetTitle = (configId: string) => {
+    const widget = widgets.find(w => w.id === configId);
+    const widgetIndex = widgets.findIndex(w => w.id === configId);
+    return widget ? `Feedback Widget #${widgetIndex + 1}` : 'Unknown Widget';
+  };
+
+  const filteredResponses = selectedWidget === 'all' 
+    ? responses 
+    : responses.filter(r => r.config_id === selectedWidget);
 
   if (loading) {
     return (
@@ -125,26 +178,61 @@ const FeedbackResponses = () => {
   return (
     <div className="h-screen flex flex-col">
       <div className="p-6 border-b border-gray-200">
-        <h1 className="text-2xl font-bold text-gray-900">Feedback Responses</h1>
-        <p className="text-gray-600 mt-1">View and analyze customer feedback submissions</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Feedback Responses</h1>
+            <p className="text-gray-600 mt-1">View and analyze customer feedback submissions</p>
+          </div>
+          
+          {widgets.length > 0 && (
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-600">Filter by widget:</span>
+              <Select value={selectedWidget} onValueChange={setSelectedWidget}>
+                <SelectTrigger className="w-48">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Widgets</SelectItem>
+                  {widgets.map((widget, index) => (
+                    <SelectItem key={widget.id} value={widget.id}>
+                      Feedback Widget #{index + 1}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="flex-1 overflow-y-auto p-6">
         <div className="space-y-4">
-          {responses.length === 0 ? (
+          {filteredResponses.length === 0 ? (
             <Card>
               <CardContent className="p-8 text-center">
                 <MessageSquare className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No responses yet</h3>
-                <p className="text-gray-500">Feedback responses will appear here once customers start submitting feedback.</p>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  {selectedWidget === 'all' ? 'No responses yet' : 'No responses for this widget'}
+                </h3>
+                <p className="text-gray-500">
+                  {selectedWidget === 'all' 
+                    ? 'Feedback responses will appear here once customers start submitting feedback.'
+                    : 'This feedback widget hasn\'t received any responses yet.'
+                  }
+                </p>
               </CardContent>
             </Card>
           ) : (
-            responses.map((response) => (
+            filteredResponses.map((response) => (
               <Card key={response.id}>
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
-                    <CardTitle className="text-lg">Response #{response.id.slice(0, 8)}</CardTitle>
+                    <div>
+                      <CardTitle className="text-lg">Response #{response.id.slice(0, 8)}</CardTitle>
+                      <p className="text-sm text-gray-500 mt-1">
+                        From: {getWidgetTitle(response.config_id)}
+                      </p>
+                    </div>
                     <div className="flex items-center gap-2 text-sm text-gray-500">
                       <Calendar className="h-4 w-4" />
                       {formatDate(response.submitted_at)}

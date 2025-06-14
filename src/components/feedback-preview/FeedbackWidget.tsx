@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { X, ChevronRight, ChevronLeft } from 'lucide-react';
 import { FeedbackConfig } from '@/components/FeedbackBuilder';
@@ -53,10 +52,13 @@ export const FeedbackWidget = ({ config }: FeedbackWidgetProps) => {
 
   const saveFeedbackToDatabase = async (allResponses: StepResponse[]) => {
     try {
+      console.log('Saving feedback for widget:', config.id);
+      console.log('Responses:', allResponses);
+      
       const { error } = await supabase
         .from('feedback_responses')
         .insert({
-          config_id: config.id,
+          config_id: config.id, // This should be the actual widget ID from the database
           responses: allResponses as any,
           submitted_at: new Date().toISOString()
         });
@@ -64,7 +66,7 @@ export const FeedbackWidget = ({ config }: FeedbackWidgetProps) => {
       if (error) {
         console.error('Error saving feedback:', error);
       } else {
-        console.log('Feedback saved successfully');
+        console.log('Feedback saved successfully for widget:', config.id);
       }
     } catch (error) {
       console.error('Error saving feedback:', error);
@@ -86,7 +88,7 @@ export const FeedbackWidget = ({ config }: FeedbackWidgetProps) => {
     if (isLastStep) {
       setIsSubmitting(true);
       await saveFeedbackToDatabase(updatedResponses);
-      console.log('Feedback completed:', updatedResponses);
+      console.log('Feedback completed for widget:', config.id, updatedResponses);
       setIsCompleted(true);
       setIsSubmitting(false);
     } else {
