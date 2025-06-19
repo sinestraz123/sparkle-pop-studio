@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Plus, BarChart3, TrendingUp, Eye, MousePointer, CheckSquare, Calendar, Activity, Target, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -76,20 +75,6 @@ const Dashboard = () => {
       icon: Plus,
       href: "/builder",
       color: "bg-blue-500 hover:bg-blue-600"
-    },
-    {
-      title: "Create Checklist",
-      description: "Guide users through processes",
-      icon: CheckSquare,
-      href: "/checklist",
-      color: "bg-green-500 hover:bg-green-600"
-    },
-    {
-      title: "Create Survey",
-      description: "Collect user feedback and insights",
-      icon: Users,
-      href: "/surveys",
-      color: "bg-purple-500 hover:bg-purple-600"
     },
     {
       title: "View Analytics",

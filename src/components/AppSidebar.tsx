@@ -47,8 +47,8 @@ const engagementItems = [
 ];
 
 const interactionItems = [
-  { title: 'Checklist', url: '/checklist', icon: CheckSquare },
-  { title: 'Feedback', url: '/feedback', icon: MessageSquare },
+  // { title: 'Checklist', url: '/checklist', icon: CheckSquare },
+  // { title: 'Feedback', url: '/feedback', icon: MessageSquare },
 ];
 
 const supportItems = [

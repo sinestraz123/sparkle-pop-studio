@@ -10,10 +10,6 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 import Dashboard from "./pages/Dashboard";
 import Builder from "./pages/Builder";
 import Banner from "./pages/Banner";
-import Checklist from "./pages/Checklist";
-import Feedback from "./pages/Feedback";
-import FeedbackList from "./pages/FeedbackList";
-import FeedbackResponses from "./pages/FeedbackResponses";
 import Spotlight from "./pages/Spotlight";
 import VideoTutorials from "./pages/VideoTutorials";
 import Analytics from "./pages/Analytics";
@@ -44,14 +40,6 @@ const App = () => (
                         <Route path="/builder/:id" element={<Builder />} />
                         <Route path="/banner" element={<Banner />} />
                         <Route path="/banner/:id" element={<Banner />} />
-                        <Route path="/checklist" element={<Checklist />} />
-                        <Route path="/checklist/:id" element={<Checklist />} />
-                        <Route path="/surveys" element={<Navigate to="/feedback" replace />} />
-                        <Route path="/surveys/:id" element={<Navigate to="/feedback" replace />} />
-                        <Route path="/feedback" element={<FeedbackList />} />
-                        <Route path="/feedback/builder" element={<Feedback />} />
-                        <Route path="/feedback/responses" element={<FeedbackResponses />} />
-                        <Route path="/feedback/:id" element={<Feedback />} />
                         <Route path="/spotlight" element={<Spotlight />} />
                         <Route path="/spotlight/:id" element={<Spotlight />} />
                         <Route path="/video-tutorials" element={<VideoTutorials />} />

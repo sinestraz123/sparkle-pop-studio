@@ -1,4 +1,3 @@
-
 import {
   Dialog,
   DialogContent,
@@ -22,7 +21,6 @@ const plans = [
     description: "Perfect for getting started",
     features: [
       "1 announcement",
-      "1 checklist"
     ],
     buttonText: "Current Plan",
     buttonVariant: "outline" as const,
@@ -33,10 +31,9 @@ const plans = [
     name: "Standard",
     price: "$5",
     period: "per month",
-    description: "Unlimited announcements and checklists",
+    description: "Unlimited announcements",
     features: [
       "Unlimited announcements",
-      "Unlimited checklists"
     ],
     buttonText: "Buy Now",
     buttonVariant: "default" as const,
@@ -50,7 +47,6 @@ const plans = [
     description: "Everything plus advanced features",
     features: [
       "Unlimited announcements",
-      "Unlimited checklists",
       "Banners",
       "Tooltips", 
       "Survey",
